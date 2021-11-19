@@ -1,2 +1,2 @@
-# mapac
-A compiled, stack-based programming language
+# mapac!
+A stack-based programming language which compiles to assembly.
