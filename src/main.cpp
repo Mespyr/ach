@@ -1,7 +1,8 @@
-#include <vector>
-
 #include "../include/ops.h"
 #include "../include/compiler.h"
+
+#include <cstdlib>
+#include <vector>
 
 int main(int argc, char* argv[]) 
 {
@@ -16,7 +17,10 @@ int main(int argc, char* argv[])
         dump()
     };
 
-    compile(program);
+    compile_to_asm(program, "out.asm");
+
+    std::system("nasm -felf64 out.asm");
+    std::system("ld out.o");
 
     return 0;
 }

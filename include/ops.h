@@ -8,7 +8,7 @@ enum OpType
     OP_PLUS,
     OP_MINUS,
 };
-
+    
 class Op
 {
 public:

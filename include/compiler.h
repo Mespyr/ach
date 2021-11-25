@@ -1,9 +1,12 @@
 #ifndef ILU_COMPILER_H
 #define ILU_COMPILER_H
 
-#include <vector>
 #include "ops.h"
+#include "file.h"
 
-void compile(std::vector<Op> program);
+#include <vector>
+#include <string>
+
+void compile_to_asm(std::vector<Op> program, std::string output_file);
 
 #endif
