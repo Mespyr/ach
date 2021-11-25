@@ -1,0 +1,11 @@
+pchar:
+    1 ax     # syscall write
+    1 di     # stdout (fd=1)
+    si       # char to print (set si to top of stack)
+    1 dx     # size of buf
+    syscall
+end
+
+main:
+    33 pchar
+end
