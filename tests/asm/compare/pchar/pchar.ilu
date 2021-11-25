@@ -1,11 +1,11 @@
 fn pchar:
     1 ax     # syscall write
     1 di     # stdout (fd=1)
-    si       # char to print (set si to top of stack)
     1 dx     # size of buf
     syscall
 end
 
 fn main: 
-    33 si pchar
+    33 si  # set si to char 33 (!)
+    pchar  # call function/macro
 end
