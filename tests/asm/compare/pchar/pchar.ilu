@@ -1,4 +1,4 @@
-pchar:
+fn pchar:
     1 ax     # syscall write
     1 di     # stdout (fd=1)
     si       # char to print (set si to top of stack)
@@ -6,6 +6,6 @@ pchar:
     syscall
 end
 
-main:
-    33 pchar
+fn main: 
+    33 si pchar
 end

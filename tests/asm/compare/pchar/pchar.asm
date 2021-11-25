@@ -1,9 +1,8 @@
 section .text
     global _start
 
-; print single digit numbers
+; print char at register rdi
 pchar:
-    push rdi
     mov     rax, 1    ; sys_write call number 
     mov     rdi, 1    ; write to stdout (fd=1)
     mov     rsi, rsp  ; use char on stack
