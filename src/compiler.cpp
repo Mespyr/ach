@@ -1,17 +1,84 @@
 #include "../include/compiler.h"
+
 #include <iostream>
 
 void compile_to_asm(std::vector<Op> program, std::string output_filename)
 {
     File outfile(output_filename);
+    
+    // write boilerplate into file
+    outfile.writeln("section .text");
+    outfile.writeln("global _start");
+ 
+    outfile.writeln("print:\n");
+    outfile.writeln("\tmov r9, -3689348814741910323\n");
+    outfile.writeln("\tsub rsp, 40\n");
+    outfile.writeln("\tmov BYTE [rsp+31], 10\n");
+    outfile.writeln("\tlea rcx, [rsp+30]\n");
+    outfile.writeln(".L2:\n");
+    outfile.writeln("\tmov rax, rdi\n");
+    outfile.writeln("\tlea r8, [rsp+32]\n");
+    outfile.writeln("\tmul r9\n");
+    outfile.writeln("\tmov rax, rdi\n");
+    outfile.writeln("\tsub r8, rcx\n");
+    outfile.writeln("\tshr rdx, 3\n");
+    outfile.writeln("\tlea rsi, [rdx+rdx*4]\n");
+    outfile.writeln("\tadd rsi, rsi\n");
+    outfile.writeln("\tsub rax, rsi\n");
+    outfile.writeln("\tadd eax, 48\n");
+    outfile.writeln("\tmov BYTE [rcx], al\n");
+    outfile.writeln("\tmov rax, rdi\n");
+    outfile.writeln("\tmov rdi, rdx\n");
+    outfile.writeln("\tmov rdx, rcx\n");
+    outfile.writeln("\tsub rcx, 1\n");
+    outfile.writeln("\tcmp rax, 9\n");
+    outfile.writeln("\tja .L2\n");
+    outfile.writeln("\tlea rax, [rsp+32]\n");
+    outfile.writeln("\tmov edi, 1\n");
+    outfile.writeln("\tsub rdx, rax\n");
+    outfile.writeln("\txor eax, eax\n");
+    outfile.writeln("\tlea rsi, [rsp+32+rdx]\n");
+    outfile.writeln("\tmov rdx, r8\n");
+    outfile.writeln("\tmov rax, 1\n");
+    outfile.writeln("\tsyscall\n");
+    outfile.writeln("\tadd rsp, 40\n");
+    outfile.writeln("\tret\n");
 
-    outfile.write("section .text\n");
-    outfile.write("global _start\n");
-    outfile.write("_start:\n");
+    outfile.writeln("_start:");
 
-    for (Op op : program) {}
+    for (Op op : program) 
+    {
+        if (op.type == OP_PUSH)
+            outfile.writeln("\tpush " + std::to_string(op.n));
 
-    outfile.write("\tmov rax, 60\n");
-    outfile.write("\tmov rdi, 0\n");
-    outfile.write("\tsyscall\n");
+        else if (op.type == OP_PLUS)
+        {
+            outfile.writeln("\t; plus");
+            outfile.writeln("\tpop rax");
+            outfile.writeln("\tpop rbx");
+            outfile.writeln("\tadd rax, rbx");
+            outfile.writeln("\tpush rax");
+        }
+
+        else if (op.type == OP_MINUS)
+        {
+            outfile.writeln("\t; minus");
+            outfile.writeln("\tpop rax");
+            outfile.writeln("\tpop rbx");
+            outfile.writeln("\tsub rbx, rax");
+            outfile.writeln("\tpush rbx");
+        }
+
+        else if (op.type == OP_PRINT)
+        {
+            outfile.writeln("\t; print");
+            outfile.writeln("\tpop rdi");
+            outfile.writeln("\tcall print");
+        }
+    }
+    
+    // exit syscall at end of file
+    outfile.writeln("\tmov rax, 60");
+    outfile.writeln("\tmov rdi, 0");
+    outfile.writeln("\tsyscall");
 }

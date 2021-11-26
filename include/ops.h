@@ -4,7 +4,7 @@
 enum OpType 
 {
     OP_PUSH,
-    OP_DUMP,
+    OP_PRINT,
     OP_PLUS,
     OP_MINUS,
 };
@@ -19,6 +19,6 @@ public:
 Op push(int n);
 Op plus();
 Op minus();
-Op dump();
+Op print();
 
 #endif

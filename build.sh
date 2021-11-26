@@ -1,9 +1,9 @@
 #!/bin/sh
+set -xe
 
 SOURCES=""
 EXEC="ilu"
 
-set -xe
 for f in src/* 
 do
     SOURCES="$SOURCES $f"

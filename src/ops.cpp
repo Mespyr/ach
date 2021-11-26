@@ -8,10 +8,10 @@ Op push(int n)
     return op;
 }
 
-Op dump()
+Op print()
 {
     Op op;
-    op.type = OP_DUMP;
+    op.type = OP_PRINT;
     return op;
 }
 

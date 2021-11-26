@@ -15,7 +15,8 @@ File::~File()
     file.close();
 }
 
-void File::write(std::string buf)
+void File::writeln(std::string buf)
 {
+    buf.push_back('\n');
     file.write(buf.c_str(), buf.length());
 }

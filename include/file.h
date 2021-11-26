@@ -10,7 +10,7 @@ class File
 public:
     File(std::string filename);
     ~File();
-    void write(std::string buf);
+    void writeln(std::string buf);
 private:
     std::fstream file;
 };
