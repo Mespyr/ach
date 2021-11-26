@@ -4,7 +4,7 @@
 
 void compile_to_asm(std::vector<Op> program, std::string output_filename)
 {
-    File outfile(output_filename);
+    File outfile(output_filename, MODE_WRITE);
     
     // write boilerplate into file
     outfile.writeln("section .text");
@@ -49,7 +49,7 @@ void compile_to_asm(std::vector<Op> program, std::string output_filename)
     for (Op op : program) 
     {
         if (op.type == OP_PUSH)
-            outfile.writeln("\tpush " + std::to_string(op.n));
+            outfile.writeln("\tpush " + std::to_string(op.push_val));
 
         else if (op.type == OP_PLUS)
         {

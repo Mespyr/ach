@@ -33,5 +33,9 @@ int main(int argc, char* argv[])
     return_code = std::system("ld out.o");
     if (return_code != 0) exit(1);
 
+    /* File f("build.sh", MODE_READ); */
+    /* std::string c = f.read(); */
+    /* std::cout << c; */
+
     return 0;
 }

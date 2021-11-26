@@ -1,9 +1,9 @@
 #include "../include/ops.h"
 
-Op push(int n)
+Op push(int push_val)
 {
     Op op;
-    op.n = n;
+    op.push_val = push_val;
     op.type = OP_PUSH;
     return op;
 }

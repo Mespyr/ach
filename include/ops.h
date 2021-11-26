@@ -13,10 +13,10 @@ class Op
 {
 public:
     OpType type;
-    int n;
+    int push_val;
 };
 
-Op push(int n);
+Op push(int push_val);
 Op plus();
 Op minus();
 Op print();
