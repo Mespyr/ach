@@ -1,15 +1,5 @@
 #include "../include/parser.h"
 
-bool is_number(std::string s)
-{
-    if (s.at(0) == '-')
-        s = s.substr(1);
-
-    std::string::const_iterator it = s.begin();
-    while (it != s.end() && std::isdigit(*it)) ++it;
-    return !s.empty() && it == s.end();
-}
-
 std::vector<Op> parse_tokens(std::vector<std::string> tokens)
 {
     std::vector<Op> program;
@@ -27,6 +17,12 @@ std::vector<Op> parse_tokens(std::vector<std::string> tokens)
 
         else if (is_number(tok)) 
             program.push_back(push(atoi(tok.c_str())));
+
+        else
+        {
+            std::cerr << "[error] Unknown keyword '" << tok << "'" << std::endl;
+            exit(1);
+        }
     }
 
     return program;

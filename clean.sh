@@ -1,3 +1,3 @@
 #!/bin/sh
 set -xe
-rm ilu *.asm *.o a.out
+rm ilu *.asm a.out

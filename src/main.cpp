@@ -6,9 +6,21 @@
 #include <vector>
 #include <iostream>
 
+void usage(char* exec_name)
+{
+    std::cout << "[usage] " << exec_name << " <filename>" << std::endl;
+}
+
 int main(int argc, char* argv[]) 
 {
-    File f("examples/1.ilu", MODE_READ);
+    if (argc == 1)
+    {
+        usage(argv[0]);
+        std::cerr << "[error] no file provided for compiler" << std::endl;
+        exit(1);
+    }
+
+    File f(argv[1], MODE_READ);
     std::string code = f.read();
 
     std::vector<std::string> tokens = tokenize(code);
@@ -24,6 +36,9 @@ int main(int argc, char* argv[])
     std::cout << "[info] linking to ./a.out" << std::endl;
     return_code = std::system("ld out.o");
     if (return_code != 0) exit(1);
+
+    std::cout << "[info] cleaning up" << std::endl;
+    std::system("rm out.o");
 
     return 0;
 }

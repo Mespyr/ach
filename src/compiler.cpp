@@ -48,12 +48,14 @@ void compile_to_asm(std::vector<Op> program, std::string output_filename)
     {
         if (op.type == OP_PUSH)
         {
-            outfile.writeln("\tpush " + std::to_string(op.push_val) + " ; push");
+            outfile.writeln("; push");
+            outfile.writeln("\tpush " + std::to_string(op.push_val));
         }
 
         else if (op.type == OP_PLUS)
         {
-            outfile.writeln("\tpop rax ; add");
+            outfile.writeln("; plus");
+            outfile.writeln("\tpop rax");
             outfile.writeln("\tpop rbx");
             outfile.writeln("\tadd rax, rbx");
             outfile.writeln("\tpush rax");
@@ -61,7 +63,8 @@ void compile_to_asm(std::vector<Op> program, std::string output_filename)
 
         else if (op.type == OP_MINUS)
         {
-            outfile.writeln("\tpop rax ; subtract");
+            outfile.writeln("; minus");
+            outfile.writeln("\tpop rax");
             outfile.writeln("\tpop rbx");
             outfile.writeln("\tsub rbx, rax");
             outfile.writeln("\tpush rbx");
@@ -69,7 +72,8 @@ void compile_to_asm(std::vector<Op> program, std::string output_filename)
 
         else if (op.type == OP_PRINT)
         {
-            outfile.writeln("\tpop rdi ; print");
+            outfile.writeln("; print");
+            outfile.writeln("\tpop rdi");
             outfile.writeln("\tcall print");
         }
     }
