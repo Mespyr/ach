@@ -1,30 +1,28 @@
 #include "../include/ops.h"
 
+Op::Op(OpType type)
+{
+    this->type = type;
+}
+
 Op push(int push_val)
 {
-    Op op;
+    Op op(OP_PUSH);
     op.push_val = push_val;
-    op.type = OP_PUSH;
     return op;
 }
 
 Op print()
 {
-    Op op;
-    op.type = OP_PRINT;
-    return op;
+    return Op(OP_PRINT);
 }
 
 Op plus()
 {
-    Op op;
-    op.type = OP_PLUS;
-    return op;
+    return Op(OP_PLUS);
 }
 
 Op minus()
 {
-    Op op;
-    op.type = OP_MINUS;
-    return op;
+    return Op(OP_MINUS);
 }

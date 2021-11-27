@@ -15,7 +15,6 @@ std::vector<std::string> tokenize(std::string code)
                 continue;
             }
         current_word.push_back(current_char);
-
     }
 
     return tokens;
