@@ -1,7 +1,5 @@
 #include "../include/compiler.h"
 
-#include <iostream>
-
 void compile_to_asm(std::vector<Op> program, std::string output_filename)
 {
     File outfile(output_filename, MODE_WRITE);
