@@ -1,6 +1,6 @@
-#include "../include/lex.h"
+#include "../include/lexer.h"
 
-std::vector<std::string> tokenize(std::string& code)
+std::vector<std::string> tokenize(std::string code)
 {
     std::vector<std::string> tokens;
     std::string current_word;
