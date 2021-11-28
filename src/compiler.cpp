@@ -48,13 +48,13 @@ void compile_to_asm(std::vector<Op> program, std::string output_filename)
     {
         if (op.type == OP_PUSH)
         {
-            outfile.writeln("; push");
+            outfile.writeln("\t; push");
             outfile.writeln("\tpush " + std::to_string(op.push_val));
         }
 
         else if (op.type == OP_PLUS)
         {
-            outfile.writeln("; plus");
+            outfile.writeln("\t; plus");
             outfile.writeln("\tpop rax");
             outfile.writeln("\tpop rbx");
             outfile.writeln("\tadd rax, rbx");
@@ -63,7 +63,7 @@ void compile_to_asm(std::vector<Op> program, std::string output_filename)
 
         else if (op.type == OP_MINUS)
         {
-            outfile.writeln("; minus");
+            outfile.writeln("\t; minus");
             outfile.writeln("\tpop rax");
             outfile.writeln("\tpop rbx");
             outfile.writeln("\tsub rbx, rax");
@@ -72,14 +72,15 @@ void compile_to_asm(std::vector<Op> program, std::string output_filename)
 
         else if (op.type == OP_PRINT)
         {
-            outfile.writeln("; print");
+            outfile.writeln("\t; print");
             outfile.writeln("\tpop rdi");
             outfile.writeln("\tcall print");
         }
     }
     
     // exit syscall at end of file
-    outfile.writeln("\tmov rax, 60 ; exit");
+    outfile.writeln("\t; exit");
+    outfile.writeln("\tmov rax, 60");
     outfile.writeln("\tmov rdi, 0");
     outfile.writeln("\tsyscall");
 }

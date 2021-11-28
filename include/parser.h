@@ -3,10 +3,11 @@
 
 #include "ops.h"
 #include "util.h"
+#include "token.h"
 #include <vector>
 #include <string>
 #include <iostream>
 
-std::vector<Op> parse_tokens(std::vector<std::string> tokens);
+std::vector<Op> parse_tokens(std::vector<Token> tokens);
 
 #endif
