@@ -1,4 +1,5 @@
 #include "../include/ops.h"
+#include "../include/util.h"
 #include "../include/compiler.h"
 #include "../include/lexer.h"
 #include "../include/parser.h"
@@ -16,14 +17,34 @@ int main(int argc, char* argv[])
     if (argc == 1)
     {
         usage(argv[0]);
-        std::cerr << "ERROR: no file provided for compilation." << std::endl;
+        std::cerr << ERROR_COLOR << "ERROR: no file provided for compilation." << RESET_COLOR << std::endl;
         exit(1);
     }
 
     std::vector<Token> tokens = load_tokens_from_file(argv[1]);
     std::vector<Op> program = parse_tokens(tokens);
-    
+
+    // compile
+    std::cout << INFO_COLOR << "[info] generating asm from '" << argv[1] << "'." << RESET_COLOR << std::endl;
     compile_to_asm(program, "out.asm");
+
+    // nasm
+    std::cout << INFO_COLOR << "[info] generating object file." << RESET_COLOR << std::endl;
+    int exit_code = std::system("nasm -felf64 out.asm");
+    if (exit_code == 1)
+        exit(1);
+
+    // link
+    std::cout << INFO_COLOR << "[info] linking object file." << RESET_COLOR << std::endl;
+    exit_code = std::system("ld -o out out.o");
+    if (exit_code == 1)
+        exit(1);
+    
+    // cleanup
+    std::cout << INFO_COLOR << "[info] cleaning up object file" << RESET_COLOR << std::endl;
+    exit_code = std::system("rm out.o");
+    if (exit_code == 1)
+        exit(1);
 
     return 0;
 }

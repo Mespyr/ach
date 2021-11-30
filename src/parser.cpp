@@ -20,7 +20,7 @@ std::vector<Op> parse_tokens(std::vector<Token> tokens)
 
         else
         {
-            std::cerr << "[" << tok.file_location << "] ERROR: line " << tok.line_num << ", column " << tok.col_num << ": Unknown keyword '" << tok.value << "'" << std::endl;
+            std::cerr << ERROR_COLOR << "[" << tok.location << "] line " << tok.line_number << ", column " << tok.col_number << ": Unknown keyword '" << tok.value << "'" << RESET_COLOR << std::endl;
             exit(1);
         }
     }

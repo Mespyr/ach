@@ -9,7 +9,7 @@ File::File(std::string filename, MODE mode)
 
     if (!file)
     {
-        std::cerr << "[error] can't open file '" << filename << "'" << std::endl;
+        std::cerr << ERROR_COLOR << "[error] can't open file '" << filename << "'" << RESET_COLOR << std::endl;
         exit(1);
     }
 }

@@ -12,7 +12,9 @@ enum OpType
 class Op
 {
 public:
-    Op(OpType type);
+    Op(OpType type) :
+        type(type) {}
+
     OpType type;
     int push_val;
 };

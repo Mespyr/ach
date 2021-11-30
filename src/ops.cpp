@@ -1,10 +1,5 @@
 #include "../include/ops.h"
 
-Op::Op(OpType type)
-{
-    this->type = type;
-}
-
 Op push(int push_val)
 {
     Op op(OP_PUSH);
