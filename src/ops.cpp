@@ -21,3 +21,8 @@ Op minus()
 {
     return Op(OP_MINUS);
 }
+
+Op mul()
+{
+    return Op(OP_MUL);
+}

@@ -5,8 +5,9 @@ enum OpType
 {
     OP_PUSH,
     OP_PRINT,
-    OP_PLUS,
+    OP_PLUS, 
     OP_MINUS,
+    OP_MUL
 };
     
 class Op
@@ -23,5 +24,6 @@ Op push(int push_val);
 Op plus();
 Op minus();
 Op print();
+Op mul();
 
 #endif

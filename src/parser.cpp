@@ -6,15 +6,20 @@ std::vector<Op> parse_tokens(std::vector<Token> tokens)
 
     for (Token tok : tokens)
     {
+
+        // arithmetic
         if (tok.value == "+") 
             program.push_back(plus());
-
         else if (tok.value == "-") 
             program.push_back(minus());
+        else if (tok.value == "*")
+            program.push_back(mul());
 
+        // print
         else if (tok.value == ".")
             program.push_back(print());
 
+        // push number
         else if (is_number(tok.value)) 
             program.push_back(push(atoi(tok.value.c_str())));
 

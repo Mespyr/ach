@@ -70,6 +70,15 @@ void compile_to_asm(std::vector<Op> program, std::string output_filename)
             outfile.writeln("\tpush rbx");
         }
 
+        else if (op.type == OP_MUL)
+        {
+            outfile.writeln("\t; multiply");
+            outfile.writeln("\tpop rax");
+            outfile.writeln("\tpop rbx");
+            outfile.writeln("\tmul rbx");
+            outfile.writeln("\tpush rax");
+        }
+
         else if (op.type == OP_PRINT)
         {
             outfile.writeln("\t; print");
