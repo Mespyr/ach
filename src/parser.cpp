@@ -9,19 +9,26 @@ std::vector<Op> parse_tokens(std::vector<Token> tokens)
 
         // arithmetic
         if (tok.value == "+") 
-            program.push_back(plus());
+            program.push_back(Op(OP_PLUS));
         else if (tok.value == "-") 
-            program.push_back(minus());
+            program.push_back(Op(OP_MINUS));
         else if (tok.value == "*")
-            program.push_back(mul());
+            program.push_back(Op(OP_MUL));
+        else if (tok.value == "/")
+            program.push_back(Op(OP_DIV));
 
         // print
         else if (tok.value == ".")
-            program.push_back(print());
+            program.push_back(Op(OP_PRINT));
+
+        // pop number
+        else if (tok.value == ",")
+            program.push_back(Op(OP_POP));
 
         // push number
         else if (is_number(tok.value)) 
-            program.push_back(push(atoi(tok.value.c_str())));
+            program.push_back(Op(OP_PUSH, atoi(tok.value.c_str())));
+
 
         else
         {

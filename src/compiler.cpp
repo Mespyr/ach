@@ -52,6 +52,12 @@ void compile_to_asm(std::vector<Op> program, std::string output_filename)
             outfile.writeln("\tpush " + std::to_string(op.push_val));
         }
 
+        else if (op.type == OP_POP)
+        {
+            outfile.writeln("\t; pop");
+            outfile.writeln("\t pop rax");
+        }
+
         else if (op.type == OP_PLUS)
         {
             outfile.writeln("\t; plus");
@@ -77,6 +83,17 @@ void compile_to_asm(std::vector<Op> program, std::string output_filename)
             outfile.writeln("\tpop rbx");
             outfile.writeln("\tmul rbx");
             outfile.writeln("\tpush rax");
+        }
+
+        else if (op.type == OP_DIV)
+        {
+            outfile.writeln("\t; division");
+            outfile.writeln("\txor rdx, rdx");
+            outfile.writeln("\tpop rbx");
+            outfile.writeln("\tpop rax");
+            outfile.writeln("\tdiv rbx");
+            outfile.writeln("\tpush rax");
+            outfile.writeln("\tpush rdx");
         }
 
         else if (op.type == OP_PRINT)
