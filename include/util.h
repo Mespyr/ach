@@ -3,8 +3,8 @@
 
 #include <string>
 
-#define ERROR_COLOR "\e[0;31m"
-#define INFO_COLOR  "\e[0;32m"
+#define ERROR_COLOR "\e[1;31m"
+#define INFO_COLOR  "\e[1;32m"
 #define RESET_COLOR "\e[0m"
 
 bool is_number(std::string n);

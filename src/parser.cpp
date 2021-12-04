@@ -6,7 +6,6 @@ std::vector<Op> parse_tokens(std::vector<Token> tokens)
 
     for (Token tok : tokens)
     {
-
         // arithmetic
         if (tok.value == "+") 
             program.push_back(Op(OP_PLUS));
@@ -28,7 +27,6 @@ std::vector<Op> parse_tokens(std::vector<Token> tokens)
         // push number
         else if (is_number(tok.value)) 
             program.push_back(Op(OP_PUSH, atoi(tok.value.c_str())));
-
 
         else
         {
