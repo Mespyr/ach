@@ -31,5 +31,6 @@ std::string File::read()
     std::string line;
     while (file)
         contents.push_back(file.get());
+
     return contents;
 }

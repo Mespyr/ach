@@ -4,6 +4,7 @@
 #include "ops.h"
 #include "util.h"
 #include "token.h"
+#include "error.h"
 #include <vector>
 #include <string>
 #include <iostream>

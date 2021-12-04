@@ -5,13 +5,18 @@
 
 class Token
 {
-public:
-    Token(std::string value, std::string location, int line_number, int col_number) :
-        value(value), location(location), line_number(line_number), col_number(col_number) {}
+public: 
+    Token(std::string value, std::string file_location, std::string line, int line_number, int column_number_start, int column_number_end) :
+        value(value), 
+        file_location(file_location), 
+        line(line),
+        line_number(line_number), 
+        column_number_start(column_number_start),
+        column_number_end(column_number_end)
+    {}
 
-    std::string value;
-    std::string location;
-    int line_number, col_number;
+    std::string value, file_location, line;
+    int line_number, column_number_start, column_number_end;
 };
 
 #endif

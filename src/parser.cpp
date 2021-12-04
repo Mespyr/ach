@@ -9,10 +9,13 @@ std::vector<Op> parse_tokens(std::vector<Token> tokens)
         // arithmetic
         if (tok.value == "+") 
             program.push_back(Op(OP_PLUS));
+
         else if (tok.value == "-") 
             program.push_back(Op(OP_MINUS));
+
         else if (tok.value == "*")
             program.push_back(Op(OP_MUL));
+
         else if (tok.value == "/")
             program.push_back(Op(OP_DIV));
 
@@ -30,7 +33,7 @@ std::vector<Op> parse_tokens(std::vector<Token> tokens)
 
         else
         {
-            std::cerr << ERROR_COLOR << "[" << tok.location << "] line " << tok.line_number << ", column " << tok.col_number << ": Unknown keyword '" << tok.value << "'" << RESET_COLOR << std::endl;
+            print_token_error(tok, "Unknown keyword '" + tok.value + "'");
             exit(1);
         }
     }
