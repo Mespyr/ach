@@ -1,4 +1,5 @@
 #include "../include/compiler.h"
+#include <cstdlib>
 
 void compile_to_asm(std::vector<Op> program, std::string output_filename)
 {
@@ -44,8 +45,11 @@ void compile_to_asm(std::vector<Op> program, std::string output_filename)
 
     outfile.writeln("_start:");
 
+
+    int ip = 0;
     for (Op op : program) 
     {
+        // builtin functions/operations
         if (op.type == OP_PUSH)
         {
             outfile.writeln("\t; push");
@@ -58,6 +62,25 @@ void compile_to_asm(std::vector<Op> program, std::string output_filename)
             outfile.writeln("\t pop rax");
         }
 
+        else if (op.type == OP_PRINT)
+        {
+            outfile.writeln("\t; print");
+            outfile.writeln("\tpop rdi");
+            outfile.writeln("\tcall print");
+        }
+
+        else if (op.type == OP_IF_START)
+        {
+            outfile.writeln("\t; if");
+            outfile.writeln("\tpop rax");
+            outfile.writeln("\ttest rax, rax");
+            outfile.writeln("\tjz addr_" + std::to_string(op.reference_ip));
+        }
+
+        else if (op.type == OP_IF_END)
+            outfile.writeln("addr_" + std::to_string(ip) + ":");
+
+        // arithmetics
         else if (op.type == OP_PLUS)
         {
             outfile.writeln("\t; plus");
@@ -96,12 +119,19 @@ void compile_to_asm(std::vector<Op> program, std::string output_filename)
             outfile.writeln("\tpush rdx");
         }
 
-        else if (op.type == OP_PRINT)
+        // comparisons
+        else if (op.type == OP_EQUAL)
         {
-            outfile.writeln("\t; print");
-            outfile.writeln("\tpop rdi");
-            outfile.writeln("\tcall print");
+            outfile.writeln("\t; equal");
+            outfile.writeln("\tmov rcx, 0");
+            outfile.writeln("\tmov rdx, 1");
+            outfile.writeln("\tpop rax");
+            outfile.writeln("\tpop rbx");
+            outfile.writeln("\tcmp rax, rbx");
+            outfile.writeln("\tcmove rcx, rdx");
+            outfile.writeln("\tpush rcx");
         }
+        ip++;
     }
     
     // exit syscall at end of file

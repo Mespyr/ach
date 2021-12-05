@@ -10,5 +10,6 @@
 #include <iostream>
 
 std::vector<Op> parse_tokens(std::vector<Token> tokens);
+std::vector<Op> link_ops(std::vector<Op> ops);
 
 #endif
