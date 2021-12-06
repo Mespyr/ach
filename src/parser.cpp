@@ -10,6 +10,31 @@ std::vector<Op> link_ops(std::vector<Op> ops)
         if (current_op.type == OP_IF)
             ip_stack.push_back(ip);
 
+        else if (current_op.type == OP_WHILE)
+            ip_stack.push_back(ip);
+
+        else if (current_op.type == OP_DO)
+        {
+            if (ip_stack.size() == 0)
+            {
+                print_token_error(current_op.token, "Unexpected 'do' keyword");
+                exit(1);
+            }
+            int linker_ip = ip_stack.back();
+            ip_stack.pop_back();
+
+            if (ops.at(linker_ip).type != OP_WHILE)
+            {
+                print_token_error(current_op.token, "Unexpected 'do' keyword");
+                exit(1);
+            }
+
+            current_op.reference_ip = linker_ip;
+
+            ops.at(ip) = current_op;
+            ip_stack.push_back(ip);
+        }
+
         else if (current_op.type == OP_ELSE)
         {
             if (ip_stack.size() == 0)
@@ -46,14 +71,31 @@ std::vector<Op> link_ops(std::vector<Op> ops)
             ip_stack.pop_back();
 
             Op linker_op = ops.at(linker_ip);
-            if (linker_op.type != OP_IF && linker_op.type != OP_ELSE)
+            if (linker_op.type == OP_IF || linker_op.type == OP_ELSE)
+            {
+                current_op.reference_ip = -1;
+                ops.at(ip) = current_op;
+
+                linker_op.reference_ip = ip;
+                ops.at(linker_ip) = linker_op;
+
+            }
+
+            else if (linker_op.type == OP_DO)
+            {
+                current_op.reference_ip = linker_op.reference_ip;
+                ops.at(ip) = current_op;
+
+                linker_op.reference_ip = ip;
+                ops.at(linker_ip) = linker_op;
+            }
+
+            else
             {
                 print_token_error(current_op.token, "Unexpected 'end' keyword");
                 exit(1);
             }
 
-            linker_op.reference_ip = ip;
-            ops.at(linker_ip) = linker_op;
         }
     }
 
@@ -98,6 +140,12 @@ std::vector<Op> parse_tokens(std::vector<Token> tokens)
 
         else if (tok.value == "dup")
             program.push_back(Op(OP_DUP, tok));
+
+        else if (tok.value == "while")
+            program.push_back(Op(OP_WHILE, tok));
+
+        else if (tok.value == "do")
+            program.push_back(Op(OP_DO, tok));
 
         else if (tok.value == "if")
             program.push_back(Op(OP_IF, tok));

@@ -10,6 +10,8 @@ enum OpType
     OP_PRINT,
     OP_DUP,
 
+    OP_WHILE,
+    OP_DO,
     OP_IF,
     OP_ELSE,
     OP_END,

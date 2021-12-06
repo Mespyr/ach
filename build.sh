@@ -1,5 +1,6 @@
 #!/bin/sh
-set -xe
+set -x
+./clean.sh
 
 SOURCES=""
 EXEC="ilu"
