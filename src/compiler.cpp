@@ -77,6 +77,26 @@ void compile_to_asm(std::vector<Op> program, std::string output_filename)
             outfile.writeln("\tpush rax");
         }
 
+        else if (op.type == OP_SWP)
+        {
+            outfile.writeln("\t; OP_SWP");
+            outfile.writeln("\tpop rax");
+            outfile.writeln("\tpop rbx");
+            outfile.writeln("\tpush rax");
+            outfile.writeln("\tpush rbx");
+        }
+
+        else if (op.type == OP_FLP)
+        {
+            outfile.writeln("\t; OP_FLP");
+            outfile.writeln("\tpop rax");
+            outfile.writeln("\tpop rbx");
+            outfile.writeln("\tpop rcx");
+            outfile.writeln("\tpush rax");
+            outfile.writeln("\tpush rbx");
+            outfile.writeln("\tpush rcx");
+        }
+
         else if (op.type == OP_WHILE)
         {
             outfile.writeln("\t; OP_WHILE");
@@ -108,7 +128,7 @@ void compile_to_asm(std::vector<Op> program, std::string output_filename)
 
         else if (op.type == OP_END)
         {
-            outfile.writeln("; OP_END");
+            outfile.writeln("\t; OP_END");
             if (op.reference_ip != -1)
                 outfile.writeln("\tjmp addr_" + std::to_string(op.reference_ip));
             outfile.writeln("addr_" + std::to_string(ip) + ":");

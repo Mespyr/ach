@@ -32,3 +32,5 @@
 *.app
 
 ilu
+out
+out.asm

@@ -141,6 +141,12 @@ std::vector<Op> parse_tokens(std::vector<Token> tokens)
         else if (tok.value == "dup")
             program.push_back(Op(OP_DUP, tok));
 
+        else if (tok.value == "swp")
+            program.push_back(Op(OP_SWP, tok));
+
+        else if (tok.value == "flp")
+            program.push_back(Op(OP_FLP, tok));
+
         else if (tok.value == "while")
             program.push_back(Op(OP_WHILE, tok));
 

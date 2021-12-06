@@ -1,7 +1,7 @@
 10 while dup 0 > do
     0 while dup 10 < do
-        dup . 
+        dup .
         1 +
-    end
-    , 1 -
+    end , 
+    1 -
 end

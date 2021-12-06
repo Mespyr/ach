@@ -9,6 +9,8 @@ enum OpType
     OP_POP,
     OP_PRINT,
     OP_DUP,
+    OP_SWP,
+    OP_FLP,
 
     OP_WHILE,
     OP_DO,
