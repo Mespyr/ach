@@ -15,6 +15,8 @@ public:
         column_number_end(column_number_end)
     {}
 
+    Token() {}
+
     std::string value, file_location, line;
     int line_number, column_number_start, column_number_end;
 };

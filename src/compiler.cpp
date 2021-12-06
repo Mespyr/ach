@@ -69,7 +69,7 @@ void compile_to_asm(std::vector<Op> program, std::string output_filename)
             outfile.writeln("\tcall print");
         }
 
-        else if (op.type == OP_IF_START)
+        else if (op.type == OP_IF)
         {
             outfile.writeln("\t; if");
             outfile.writeln("\tpop rax");
@@ -77,7 +77,14 @@ void compile_to_asm(std::vector<Op> program, std::string output_filename)
             outfile.writeln("\tjz addr_" + std::to_string(op.reference_ip));
         }
 
-        else if (op.type == OP_IF_END)
+        else if (op.type == OP_ELSE)
+        {
+            outfile.writeln("\t; else");
+            outfile.writeln("\tjmp addr_" + std::to_string(op.reference_ip));
+            outfile.writeln("addr_" + std::to_string(ip) + ":");
+        }
+
+        else if (op.type == OP_END)
             outfile.writeln("addr_" + std::to_string(ip) + ":");
 
         // arithmetics

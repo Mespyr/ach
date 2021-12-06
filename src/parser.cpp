@@ -7,20 +7,52 @@ std::vector<Op> link_ops(std::vector<Op> ops)
     {
         Op current_op = ops.at(ip);
 
-        if (current_op.type == OP_IF_START)
+        if (current_op.type == OP_IF)
             ip_stack.push_back(ip);
 
-        else if (current_op.type == OP_IF_END)
+        else if (current_op.type == OP_ELSE)
         {
+            if (ip_stack.size() == 0)
+            {
+                print_token_error(current_op.token, "Unexpected 'else' keyword");
+                exit(1);
+            }
+
             int linker_ip = ip_stack.back();
             ip_stack.pop_back();
 
             Op linker_op = ops.at(linker_ip);
-            if (linker_op.type != OP_IF_START)
+            if (linker_op.type != OP_IF)
+            {
+                print_token_error(current_op.token, "Unexpected 'else' keyword");
                 exit(1);
+            }
 
             linker_op.reference_ip = ip;
 
+            ops.at(linker_ip) = linker_op;
+            ip_stack.push_back(ip);
+        }
+
+        else if (current_op.type == OP_END)
+        {
+            if (ip_stack.size() == 0)
+            {
+                print_token_error(current_op.token, "Unexpected 'end' keyword");
+                exit(1);
+            }
+
+            int linker_ip = ip_stack.back();
+            ip_stack.pop_back();
+
+            Op linker_op = ops.at(linker_ip);
+            if (linker_op.type != OP_IF || linker_op.type != OP_ELSE)
+            {
+                print_token_error(current_op.token, "Unexpected 'end' keyword");
+                exit(1);
+            }
+
+            linker_op.reference_ip = ip;
             ops.at(linker_ip) = linker_op;
         }
     }
@@ -36,37 +68,40 @@ std::vector<Op> parse_tokens(std::vector<Token> tokens)
     {
         // arithmetic
         if (tok.value == "+") 
-            program.push_back(Op(OP_PLUS));
+            program.push_back(Op(OP_PLUS, tok));
 
         else if (tok.value == "-") 
-            program.push_back(Op(OP_MINUS));
+            program.push_back(Op(OP_MINUS, tok));
 
         else if (tok.value == "*")
-            program.push_back(Op(OP_MUL));
+            program.push_back(Op(OP_MUL, tok));
 
         else if (tok.value == "/")
-            program.push_back(Op(OP_DIV));
+            program.push_back(Op(OP_DIV, tok));
 
         // comparisons
         else if (tok.value == "=")
-            program.push_back(Op(OP_EQUAL));
+            program.push_back(Op(OP_EQUAL, tok));
 
         // keywords
         else if (tok.value == ".")
-            program.push_back(Op(OP_PRINT));
+            program.push_back(Op(OP_PRINT, tok));
 
         else if (tok.value == ",")
-            program.push_back(Op(OP_POP));
+            program.push_back(Op(OP_POP, tok));
 
-        else if (tok.value == "[")
-            program.push_back(Op(OP_IF_START));
+        else if (tok.value == "if")
+            program.push_back(Op(OP_IF, tok));
 
-        else if (tok.value == "]")
-            program.push_back(Op(OP_IF_END));
+        else if (tok.value == "end")
+            program.push_back(Op(OP_END, tok));
+
+        else if (tok.value == "else")
+            program.push_back(Op(OP_ELSE, tok));
 
         // push
         else if (is_number(tok.value)) 
-            program.push_back(Op(OP_PUSH, atoi(tok.value.c_str())));
+            program.push_back(Op(OP_PUSH, atoi(tok.value.c_str()), tok));
 
         else
         {
