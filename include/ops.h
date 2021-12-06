@@ -19,7 +19,9 @@ enum OpType
     OP_MUL,
     OP_DIV,
 
-    OP_EQUAL
+    OP_EQUAL,
+    OP_GREATER,
+    OP_LESS
 };
     
 class Op

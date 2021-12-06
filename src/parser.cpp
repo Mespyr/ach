@@ -46,7 +46,7 @@ std::vector<Op> link_ops(std::vector<Op> ops)
             ip_stack.pop_back();
 
             Op linker_op = ops.at(linker_ip);
-            if (linker_op.type != OP_IF || linker_op.type != OP_ELSE)
+            if (linker_op.type != OP_IF && linker_op.type != OP_ELSE)
             {
                 print_token_error(current_op.token, "Unexpected 'end' keyword");
                 exit(1);
@@ -82,6 +82,12 @@ std::vector<Op> parse_tokens(std::vector<Token> tokens)
         // comparisons
         else if (tok.value == "=")
             program.push_back(Op(OP_EQUAL, tok));
+
+        else if (tok.value == ">")
+            program.push_back(Op(OP_GREATER, tok));
+
+        else if (tok.value == "<")
+            program.push_back(Op(OP_LESS, tok));
 
         // keywords
         else if (tok.value == ".")

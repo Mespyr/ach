@@ -59,7 +59,7 @@ void compile_to_asm(std::vector<Op> program, std::string output_filename)
         else if (op.type == OP_POP)
         {
             outfile.writeln("\t; pop");
-            outfile.writeln("\t pop rax");
+            outfile.writeln("\tpop rax");
         }
 
         else if (op.type == OP_PRINT)
@@ -146,6 +146,31 @@ void compile_to_asm(std::vector<Op> program, std::string output_filename)
             outfile.writeln("\tcmove rcx, rdx");
             outfile.writeln("\tpush rcx");
         }
+
+        else if (op.type == OP_GREATER)
+        {
+            outfile.writeln("\t; greater");
+            outfile.writeln("\tmov rcx, 0");
+            outfile.writeln("\tmov rdx, 1");
+            outfile.writeln("\tpop rbx");
+            outfile.writeln("\tpop rax");
+            outfile.writeln("\tcmp rax, rbx");
+            outfile.writeln("\tcmovg rcx, rdx");
+            outfile.writeln("\tpush rcx");
+        }
+
+        else if (op.type == OP_LESS)
+        {
+            outfile.writeln("\t; less");
+            outfile.writeln("\tmov rcx, 0");
+            outfile.writeln("\tmov rdx, 1");
+            outfile.writeln("\tpop rbx");
+            outfile.writeln("\tpop rax");
+            outfile.writeln("\tcmp rax, rbx");
+            outfile.writeln("\tcmovl rcx, rdx");
+            outfile.writeln("\tpush rcx");
+        }
+
         ip++;
     }
     
