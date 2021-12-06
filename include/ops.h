@@ -8,6 +8,8 @@ enum OpType
     OP_PUSH,
     OP_POP,
     OP_PRINT,
+    OP_DUP,
+
     OP_IF,
     OP_ELSE,
     OP_END,

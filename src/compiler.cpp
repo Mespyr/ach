@@ -69,6 +69,14 @@ void compile_to_asm(std::vector<Op> program, std::string output_filename)
             outfile.writeln("\tcall print");
         }
 
+        else if (op.type == OP_DUP)
+        {
+            outfile.writeln("\t; dup");
+            outfile.writeln("\tpop rax");
+            outfile.writeln("\tpush rax");
+            outfile.writeln("\tpush rax");
+        }
+
         else if (op.type == OP_IF)
         {
             outfile.writeln("\t; if");

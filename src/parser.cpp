@@ -90,6 +90,9 @@ std::vector<Op> parse_tokens(std::vector<Token> tokens)
         else if (tok.value == ",")
             program.push_back(Op(OP_POP, tok));
 
+        else if (tok.value == "dup")
+            program.push_back(Op(OP_DUP, tok));
+
         else if (tok.value == "if")
             program.push_back(Op(OP_IF, tok));
 
