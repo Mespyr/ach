@@ -37,8 +37,6 @@ public:
     Op(OpType type, int push_val, Token token) :
         type(type), push_val(push_val), token(token) {}
 
-    void add_reference_to(int ip);
-
     OpType type;
     Token token;
     int push_val;
