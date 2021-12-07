@@ -49,7 +49,7 @@ void compile_to_asm(std::vector<Op> program, std::string output_filename)
     int ip = 0;
     for (Op op : program) 
     {
-        // builtin functions/operations
+        // ops
         if (op.type == OP_PUSH)
         {
             outfile.writeln("\t; OP_PUSH");
@@ -69,72 +69,6 @@ void compile_to_asm(std::vector<Op> program, std::string output_filename)
             outfile.writeln("\tcall print");
         }
 
-        else if (op.type == OP_DUP)
-        {
-            outfile.writeln("\t; OP_DUP");
-            outfile.writeln("\tpop rax");
-            outfile.writeln("\tpush rax");
-            outfile.writeln("\tpush rax");
-        }
-
-        else if (op.type == OP_SWP)
-        {
-            outfile.writeln("\t; OP_SWP");
-            outfile.writeln("\tpop rax");
-            outfile.writeln("\tpop rbx");
-            outfile.writeln("\tpush rax");
-            outfile.writeln("\tpush rbx");
-        }
-
-        else if (op.type == OP_FLP)
-        {
-            outfile.writeln("\t; OP_FLP");
-            outfile.writeln("\tpop rax");
-            outfile.writeln("\tpop rbx");
-            outfile.writeln("\tpop rcx");
-            outfile.writeln("\tpush rax");
-            outfile.writeln("\tpush rbx");
-            outfile.writeln("\tpush rcx");
-        }
-
-        else if (op.type == OP_WHILE)
-        {
-            outfile.writeln("\t; OP_WHILE");
-            outfile.writeln("addr_" + std::to_string(ip) + ":");
-        }
-
-        else if (op.type == OP_DO)
-        {
-            outfile.writeln("\t; OP_DO");
-            outfile.writeln("\tpop rax");
-            outfile.writeln("\ttest rax, rax");
-            outfile.writeln("\tjz addr_" + std::to_string(op.reference_ip));
-        }
-
-        else if (op.type == OP_IF)
-        {
-            outfile.writeln("\t; OP_IF");
-            outfile.writeln("\tpop rax");
-            outfile.writeln("\ttest rax, rax");
-            outfile.writeln("\tjz addr_" + std::to_string(op.reference_ip));
-        }
-
-        else if (op.type == OP_ELSE)
-        {
-            outfile.writeln("\t; OP_ELSE");
-            outfile.writeln("\tjmp addr_" + std::to_string(op.reference_ip));
-            outfile.writeln("addr_" + std::to_string(ip) + ":");
-        }
-
-        else if (op.type == OP_END)
-        {
-            outfile.writeln("\t; OP_END");
-            if (op.reference_ip != -1)
-                outfile.writeln("\tjmp addr_" + std::to_string(op.reference_ip));
-            outfile.writeln("addr_" + std::to_string(ip) + ":");
-        }
-
-        // arithmetics
         else if (op.type == OP_PLUS)
         {
             outfile.writeln("\t; OP_PLUS");
@@ -173,7 +107,6 @@ void compile_to_asm(std::vector<Op> program, std::string output_filename)
             outfile.writeln("\tpush rdx");
         }
 
-        // comparisons
         else if (op.type == OP_EQUAL)
         {
             outfile.writeln("\t; OP_EQUAL");
@@ -209,6 +142,84 @@ void compile_to_asm(std::vector<Op> program, std::string output_filename)
             outfile.writeln("\tcmovl rcx, rdx");
             outfile.writeln("\tpush rcx");
         }
+
+        else if (op.type == OP_DUP)
+        {
+            outfile.writeln("\t; OP_DUP");
+            outfile.writeln("\tpop rax");
+            outfile.writeln("\tpush rax");
+            outfile.writeln("\tpush rax");
+        }
+
+        else if (op.type == OP_SWP)
+        {
+            outfile.writeln("\t; OP_SWP");
+            outfile.writeln("\tpop rax");
+            outfile.writeln("\tpop rbx");
+            outfile.writeln("\tpush rax");
+            outfile.writeln("\tpush rbx");
+        }
+
+        else if (op.type == OP_ROT)
+        {
+            outfile.writeln("\t; OP_ROT");
+            outfile.writeln("\tpop rax");
+            outfile.writeln("\tpop rbx");
+            outfile.writeln("\tpop rcx");
+            outfile.writeln("\tpush rbx");
+            outfile.writeln("\tpush rax");
+            outfile.writeln("\tpush rcx");
+        }
+
+        else if (op.type == OP_OVER)
+        {
+            outfile.writeln("\t; OP_OVER");
+            outfile.writeln("\tpop rax");
+            outfile.writeln("\tpop rbx");
+            outfile.writeln("\tpush rbx");
+            outfile.writeln("\tpush rax");
+            outfile.writeln("\tpush rbx");
+
+        }
+
+        // keywords
+        else if (op.type == OP_WHILE)
+        {
+            outfile.writeln("\t; OP_WHILE");
+            outfile.writeln("addr_" + std::to_string(ip) + ":");
+        }
+
+        else if (op.type == OP_DO)
+        {
+            outfile.writeln("\t; OP_DO");
+            outfile.writeln("\tpop rax");
+            outfile.writeln("\ttest rax, rax");
+            outfile.writeln("\tjz addr_" + std::to_string(op.reference_ip));
+        }
+
+        else if (op.type == OP_IF)
+        {
+            outfile.writeln("\t; OP_IF");
+            outfile.writeln("\tpop rax");
+            outfile.writeln("\ttest rax, rax");
+            outfile.writeln("\tjz addr_" + std::to_string(op.reference_ip));
+        }
+
+        else if (op.type == OP_ELSE)
+        {
+            outfile.writeln("\t; OP_ELSE");
+            outfile.writeln("\tjmp addr_" + std::to_string(op.reference_ip));
+            outfile.writeln("addr_" + std::to_string(ip) + ":");
+        }
+
+        else if (op.type == OP_END)
+        {
+            outfile.writeln("\t; OP_END");
+            if (op.reference_ip != -1)
+                outfile.writeln("\tjmp addr_" + std::to_string(op.reference_ip));
+            outfile.writeln("addr_" + std::to_string(ip) + ":");
+        }
+
 
         ip++;
     }

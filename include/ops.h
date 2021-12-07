@@ -6,26 +6,28 @@
 enum OpType 
 {
     OP_PUSH,
-    OP_POP,
+    
+    // ops
+    OP_PLUS, 
+    OP_MINUS,
+    OP_MUL,
+    OP_DIV,
+    OP_EQUAL,
+    OP_GREATER,
+    OP_LESS,
     OP_PRINT,
-    OP_DUP,
-    OP_SWP,
-    OP_FLP,
+    OP_POP, 
+    OP_DUP,  // [a] -> [a, a]
+    OP_SWP,  // [a, b] -> [b, a]
+    OP_ROT,  // [a, b, c] -> [b, c, a]
+    OP_OVER, // [a, b] -> [a, b a]
 
+    // keywords
     OP_WHILE,
     OP_DO,
     OP_IF,
     OP_ELSE,
     OP_END,
-
-    OP_PLUS, 
-    OP_MINUS,
-    OP_MUL,
-    OP_DIV,
-
-    OP_EQUAL,
-    OP_GREATER,
-    OP_LESS
 };
     
 class Op

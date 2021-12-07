@@ -108,7 +108,7 @@ std::vector<Op> parse_tokens(std::vector<Token> tokens)
 
     for (Token tok : tokens)
     {
-        // arithmetic
+        // ops
         if (tok.value == "+") 
             program.push_back(Op(OP_PLUS, tok));
 
@@ -121,7 +121,6 @@ std::vector<Op> parse_tokens(std::vector<Token> tokens)
         else if (tok.value == "/")
             program.push_back(Op(OP_DIV, tok));
 
-        // comparisons
         else if (tok.value == "=")
             program.push_back(Op(OP_EQUAL, tok));
 
@@ -131,7 +130,6 @@ std::vector<Op> parse_tokens(std::vector<Token> tokens)
         else if (tok.value == "<")
             program.push_back(Op(OP_LESS, tok));
 
-        // keywords
         else if (tok.value == ".")
             program.push_back(Op(OP_PRINT, tok));
 
@@ -144,9 +142,13 @@ std::vector<Op> parse_tokens(std::vector<Token> tokens)
         else if (tok.value == "swp")
             program.push_back(Op(OP_SWP, tok));
 
-        else if (tok.value == "flp")
-            program.push_back(Op(OP_FLP, tok));
+        else if (tok.value == "rot")
+            program.push_back(Op(OP_ROT, tok));
 
+        else if (tok.value == "over")
+            program.push_back(Op(OP_OVER, tok));
+
+        // keywords
         else if (tok.value == "while")
             program.push_back(Op(OP_WHILE, tok));
 
