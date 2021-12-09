@@ -22,6 +22,8 @@ enum OpType
     OP_ROT,  // [a, b, c] -> [b, c, a]
     OP_OVER, // [a, b] -> [a, b a]
     OP_MEM,
+    OP_LOAD,
+    OP_STORE,
 
     // keywords
     OP_WHILE,

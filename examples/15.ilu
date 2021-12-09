@@ -1,1 +1,7 @@
-mem dump
+mem 65 store
+mem 1 + 66 store
+mem 2 + 67 store
+
+mem dup load 1 + store
+mem 1 + dup load 1 + store
+mem 2 + dup load 1 + store

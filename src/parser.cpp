@@ -151,6 +151,12 @@ std::vector<Op> parse_tokens(std::vector<Token> tokens)
         else if (tok.value == "mem")
             program.push_back(Op(OP_MEM, tok));
 
+        else if (tok.value == "load")
+            program.push_back(Op(OP_LOAD, tok));
+        
+        else if (tok.value == "store")
+            program.push_back(Op(OP_STORE, tok));
+
         // keywords
         else if (tok.value == "while")
             program.push_back(Op(OP_WHILE, tok));

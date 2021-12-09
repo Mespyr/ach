@@ -187,6 +187,23 @@ void compile_to_asm(std::vector<Op> program, std::string output_filename)
             outfile.writeln("\tpush mem");
         }
 
+        else if (op.type == OP_LOAD)
+        {
+            outfile.writeln("\t; OP_LOAD");
+            outfile.writeln("\tpop rax");
+            outfile.writeln("\txor rbx, rbx");
+            outfile.writeln("\tmov bl, [rax]");
+            outfile.writeln("\tpush rbx");
+        }
+
+        else if (op.type == OP_STORE)
+        {
+            outfile.writeln("\t; OP_STORE");
+            outfile.writeln("\tpop rbx");
+            outfile.writeln("\tpop rax");
+            outfile.writeln("\tmov [rax], bl");
+        }
+
         // keywords
         else if (op.type == OP_WHILE)
         {
@@ -224,7 +241,6 @@ void compile_to_asm(std::vector<Op> program, std::string output_filename)
                 outfile.writeln("\tjmp addr_" + std::to_string(op.reference_ip));
             outfile.writeln("addr_" + std::to_string(ip) + ":");
         }
-
 
         ip++;
     }
