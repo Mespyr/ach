@@ -9,7 +9,7 @@ void compile_to_asm(std::vector<Op> program, std::string output_filename)
     outfile.writeln("section .text");
     outfile.writeln("global _start");
  
-    outfile.writeln("print:");
+    outfile.writeln("dump:");
     outfile.writeln("\tmov r9, -3689348814741910323");
     outfile.writeln("\tsub rsp, 40");
     outfile.writeln("\tmov BYTE [rsp+31], 10");
@@ -62,11 +62,11 @@ void compile_to_asm(std::vector<Op> program, std::string output_filename)
             outfile.writeln("\tpop rax");
         }
 
-        else if (op.type == OP_PRINT)
+        else if (op.type == OP_DUMP)
         {
-            outfile.writeln("\t; OP_PRINT");
+            outfile.writeln("\t; OP_DUMP");
             outfile.writeln("\tpop rdi");
-            outfile.writeln("\tcall print");
+            outfile.writeln("\tcall dump");
         }
 
         else if (op.type == OP_PLUS)

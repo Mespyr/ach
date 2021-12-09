@@ -15,7 +15,7 @@ enum OpType
     OP_EQUAL,
     OP_GREATER,
     OP_LESS,
-    OP_PRINT,
+    OP_DUMP,
     OP_POP, 
     OP_DUP,  // [a] -> [a, a]
     OP_SWP,  // [a, b] -> [b, a]

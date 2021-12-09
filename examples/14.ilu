@@ -1,7 +1,7 @@
-1 2 . . 
-1 2 swp . .
+1 2 dump dump
+1 2 swp dump dump
 
-1 2 3 . . .
-1 2 3 rot . . .
+1 2 3 dump dump dump
+1 2 3 rot dump dump dump
 
-1 2 over . . .
+1 2 over dump dump dump

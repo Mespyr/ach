@@ -130,8 +130,8 @@ std::vector<Op> parse_tokens(std::vector<Token> tokens)
         else if (tok.value == "<")
             program.push_back(Op(OP_LESS, tok));
 
-        else if (tok.value == ".")
-            program.push_back(Op(OP_PRINT, tok));
+        else if (tok.value == "dump")
+            program.push_back(Op(OP_DUMP, tok));
 
         else if (tok.value == ",")
             program.push_back(Op(OP_POP, tok));

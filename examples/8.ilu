@@ -1,11 +1,11 @@
 12 34 + 46 = if
-    69 .
+    69 dump
 else
-    420 .
+    420 dump
 end
 
 12 34 + 47 = if
-    69 .
+    69 dump
 else
-    420 .
+    420 dump
 end

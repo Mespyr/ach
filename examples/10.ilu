@@ -1,5 +1,5 @@
-10 dup . .
+10 dup dump dump
 34 35 +
-dup .
-dup .
-dup .
+dup dump
+dup dump
+dup dump
