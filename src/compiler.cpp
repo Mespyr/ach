@@ -179,7 +179,12 @@ void compile_to_asm(std::vector<Op> program, std::string output_filename)
             outfile.writeln("\tpush rbx");
             outfile.writeln("\tpush rax");
             outfile.writeln("\tpush rbx");
+        }
 
+        else if (op.type == OP_MEM)
+        {
+            outfile.writeln("\t; OP_MEM");
+            outfile.writeln("\tpush mem");
         }
 
         // keywords
@@ -229,4 +234,8 @@ void compile_to_asm(std::vector<Op> program, std::string output_filename)
     outfile.writeln("\tmov rax, 60");
     outfile.writeln("\tmov rdi, 0");
     outfile.writeln("\tsyscall");
+    
+    // bss section
+    outfile.writeln("section .bss");
+    outfile.writeln("mem: resb 640000");
 }

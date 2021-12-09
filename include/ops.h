@@ -21,6 +21,7 @@ enum OpType
     OP_SWP,  // [a, b] -> [b, a]
     OP_ROT,  // [a, b, c] -> [b, c, a]
     OP_OVER, // [a, b] -> [a, b a]
+    OP_MEM,
 
     // keywords
     OP_WHILE,
