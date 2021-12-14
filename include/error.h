@@ -2,10 +2,12 @@
 #define ILU_ERROR_H
 
 #include "token.h"
+#include "ops.h"
 #include "util.h"
 #include <iostream>
 #include <string>
 
 void print_token_error(Token token, std::string message);
+void print_op_error(Op op, std::string message);
 
 #endif

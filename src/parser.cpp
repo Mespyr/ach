@@ -17,7 +17,7 @@ std::vector<Op> link_ops(std::vector<Op> ops)
         {
             if (ip_stack.size() == 0)
             {
-                print_token_error(current_op.token, "Unexpected 'do' keyword");
+                print_op_error(current_op, "Unexpected 'do' keyword");
                 exit(1);
             }
             int linker_ip = ip_stack.back();
@@ -25,7 +25,7 @@ std::vector<Op> link_ops(std::vector<Op> ops)
 
             if (ops.at(linker_ip).type != OP_WHILE)
             {
-                print_token_error(current_op.token, "Unexpected 'do' keyword");
+                print_op_error(current_op, "Unexpected 'do' keyword");
                 exit(1);
             }
 
@@ -39,7 +39,7 @@ std::vector<Op> link_ops(std::vector<Op> ops)
         {
             if (ip_stack.size() == 0)
             {
-                print_token_error(current_op.token, "Unexpected 'else' keyword");
+                print_op_error(current_op, "Unexpected 'else' keyword");
                 exit(1);
             }
 
@@ -49,7 +49,7 @@ std::vector<Op> link_ops(std::vector<Op> ops)
             Op linker_op = ops.at(linker_ip);
             if (linker_op.type != OP_IF)
             {
-                print_token_error(current_op.token, "Unexpected 'else' keyword");
+                print_op_error(current_op, "Unexpected 'else' keyword");
                 exit(1);
             }
 
@@ -63,7 +63,7 @@ std::vector<Op> link_ops(std::vector<Op> ops)
         {
             if (ip_stack.size() == 0)
             {
-                print_token_error(current_op.token, "Unexpected 'end' keyword");
+                print_op_error(current_op, "Unexpected 'end' keyword");
                 exit(1);
             }
 
@@ -92,10 +92,9 @@ std::vector<Op> link_ops(std::vector<Op> ops)
 
             else
             {
-                print_token_error(current_op.token, "Unexpected 'end' keyword");
+                print_op_error(current_op, "Unexpected 'end' keyword");
                 exit(1);
             }
-
         }
     }
 

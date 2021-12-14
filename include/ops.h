@@ -2,6 +2,7 @@
 #define ILU_OPS_H
 
 #include "token.h"
+#include <string>
 
 enum OpType 
 {
@@ -37,15 +38,27 @@ class Op
 {
 public:
     Op(OpType type, Token token) :
-        type(type), token(token) {}
+        type(type),
+        file_location(token.file_location), 
+        line(token.line),
+        line_number(token.line_number), 
+        column_number_start(token.column_number_start),
+        column_number_end(token.column_number_end)
+    {}
 
     Op(OpType type, int push_val, Token token) :
-        type(type), push_val(push_val), token(token) {}
+        type(type), 
+        file_location(token.file_location), 
+        line(token.line),
+        line_number(token.line_number), 
+        column_number_start(token.column_number_start),
+        column_number_end(token.column_number_end),
+        push_val(push_val) 
+    {}
 
     OpType type;
-    Token token;
-    int push_val;
-    int reference_ip;
+    int push_val, reference_ip, line_number, column_number_start, column_number_end;
+    std::string file_location, line;
 };
 
 #endif
