@@ -1,6 +1,6 @@
 0 1 mem 2 syscall3
 
-mem load 48 = if
+mem read 48 = if
     mem 121 write
     mem 1 + 101 write
     mem 2 + 115 write

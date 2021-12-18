@@ -11,7 +11,7 @@ void print_token_error(Token token, std::string message)
     for (int i = 0; i < token.column_number_end - token.column_number_start; i++)
         std::cout << "^";
 
-    std::cout << "\n";
+    std::cout << RESET_COLOR << "\n";
 }
 
 void print_op_error(Op op, std::string message)
@@ -25,5 +25,5 @@ void print_op_error(Op op, std::string message)
     for (int i = 0; i < op.column_number_end - op.column_number_start; i++)
         std::cout << "^";
 
-    std::cout << "\n";
+    std::cout << RESET_COLOR << "\n";
 }
