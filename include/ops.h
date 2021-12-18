@@ -25,6 +25,15 @@ enum OpType
     OP_MEM,
     OP_LOAD,
     OP_STORE,
+    // sycall types for number of args to pop from stack
+    // ex: syscall3: rax (syscall number), rdi, rsi, rdx
+    // ex: syscall5: rax (syscall number), rdi, rsi, rdx, r10, r8, r9
+    OP_SYSCALL1,
+    OP_SYSCALL2,
+    OP_SYSCALL3,
+    OP_SYSCALL4,
+    OP_SYSCALL5,
+    OP_SYSCALL6,
 
     // keywords
     OP_WHILE,

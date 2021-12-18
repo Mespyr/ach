@@ -1,7 +1,12 @@
 mem 65 store
 mem 1 + 66 store
 mem 2 + 67 store
+mem 3 + 10 store
+
+1 1 mem 4 syscall3
 
 mem dup load 1 + store
 mem 1 + dup load 1 + store
 mem 2 + dup load 1 + store
+
+1 1 mem 4 syscall3

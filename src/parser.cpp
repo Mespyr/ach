@@ -156,6 +156,24 @@ std::vector<Op> parse_tokens(std::vector<Token> tokens)
         else if (tok.value == "store")
             program.push_back(Op(OP_STORE, tok));
 
+        else if (tok.value == "syscall1")
+            program.push_back(Op(OP_SYSCALL1, tok));
+
+        else if (tok.value == "syscall2")
+            program.push_back(Op(OP_SYSCALL2, tok));
+
+        else if (tok.value == "syscall3")
+            program.push_back(Op(OP_SYSCALL3, tok));
+
+        else if (tok.value == "syscall4")
+            program.push_back(Op(OP_SYSCALL4, tok));
+
+        else if (tok.value == "syscall5")
+            program.push_back(Op(OP_SYSCALL5, tok));
+
+        else if (tok.value == "syscall6")
+            program.push_back(Op(OP_SYSCALL6, tok));
+
         // keywords
         else if (tok.value == "while")
             program.push_back(Op(OP_WHILE, tok));
