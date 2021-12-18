@@ -2,7 +2,7 @@
 
 int get_next_token_start(int column_number, std::string line)
 {
-    while (column_number < line.length() && std::isspace(line.at(column_number)))
+    while (column_number < line.length() && std::isspace(line.at(column_number)) && line.at(column_number) != '#')
         column_number++;
 
     return column_number;
@@ -10,7 +10,7 @@ int get_next_token_start(int column_number, std::string line)
 
 int get_token_end(int column_number, std::string line)
 {
-    while (column_number < line.length() && !std::isspace(line.at(column_number)))
+    while (column_number < line.length() && !std::isspace(line.at(column_number)) && line.at(column_number) != '#')
         column_number++;
 
     return column_number;
@@ -24,6 +24,10 @@ std::vector<Token> get_tokens_from_line(std::string line, std::string filename, 
 
     while (column_number < line.length())
     {
+        // check for comments
+        if (line.at(column_number) == '#')
+            return tokens;
+
         // get position of end of token
         col_end = get_token_end(column_number, line); 
 
