@@ -150,11 +150,11 @@ std::vector<Op> parse_tokens(std::vector<Token> tokens)
         else if (tok.value == "mem")
             program.push_back(Op(OP_MEM, tok));
 
-        else if (tok.value == "load")
-            program.push_back(Op(OP_LOAD, tok));
+        else if (tok.value == "read")
+            program.push_back(Op(OP_READ, tok));
         
-        else if (tok.value == "store")
-            program.push_back(Op(OP_STORE, tok));
+        else if (tok.value == "write")
+            program.push_back(Op(OP_WRITE, tok));
 
         else if (tok.value == "syscall1")
             program.push_back(Op(OP_SYSCALL1, tok));

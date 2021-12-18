@@ -1,14 +1,14 @@
 0 1 mem 2 syscall3
 
 mem load 48 = if
-    mem 121 store
-    mem 1 + 101 store
-    mem 2 + 115 store
-    mem 3 + 10 store
+    mem 121 write
+    mem 1 + 101 write
+    mem 2 + 115 write
+    mem 3 + 10 write
     1 1 mem 4 syscall3
 else
-    mem 110 store
-    mem 1 + 111 store
-    mem 2 + 10 store
+    mem 110 write
+    mem 1 + 111 write
+    mem 2 + 10 write
     1 1 mem 3 syscall3
 end

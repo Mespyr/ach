@@ -23,11 +23,11 @@ enum OpType
     OP_ROT,  // [a, b, c] -> [b, c, a]
     OP_OVER, // [a, b] -> [a, b a]
     OP_MEM,
-    OP_LOAD,
-    OP_STORE,
+    OP_READ,
+    OP_WRITE,
     // sycall types for number of args to pop from stack
     // ex: syscall3: rax (syscall number), rdi, rsi, rdx
-    // ex: syscall5: rax (syscall number), rdi, rsi, rdx, r10, r8, r9
+    // ex: syscall5: rax (syscall number), rdi, rsi, rdx, r10, r8
     OP_SYSCALL1,
     OP_SYSCALL2,
     OP_SYSCALL3,

@@ -187,18 +187,18 @@ void compile_to_asm(std::vector<Op> program, std::string output_filename)
             outfile.writeln("\tpush mem");
         }
 
-        else if (op.type == OP_LOAD)
+        else if (op.type == OP_READ)
         {
-            outfile.writeln("\t; OP_LOAD");
+            outfile.writeln("\t; OP_READ");
             outfile.writeln("\tpop rax");
             outfile.writeln("\txor rbx, rbx");
             outfile.writeln("\tmov bl, [rax]");
             outfile.writeln("\tpush rbx");
         }
 
-        else if (op.type == OP_STORE)
+        else if (op.type == OP_WRITE)
         {
-            outfile.writeln("\t; OP_STORE");
+            outfile.writeln("\t; OP_WRITE");
             outfile.writeln("\tpop rbx");
             outfile.writeln("\tpop rax");
             outfile.writeln("\tmov [rax], bl");
