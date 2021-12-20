@@ -31,6 +31,5 @@
 *.out
 *.app
 
-ilu
 out
 out.asm
