@@ -1,0 +1,23 @@
+0 # init index to start writing into memory
+
+# write chars and increment index
+    dup mem + 72  write # H
+1 + dup mem + 101 write # e
+1 + dup mem + 108 write # l
+1 + dup mem + 108 write # l
+1 + dup mem + 111 write # o
+1 + dup mem + 32  write # <Space>
+1 + dup mem + 87  write # W
+1 + dup mem + 111 write # o
+1 + dup mem + 114 write # r
+1 + dup mem + 108 write # l
+1 + dup mem + 100 write # d
+1 + dup mem + 33  write # !
+1 + dup mem + 10  write # <NL>
+
+# write syscall
+1   swp  # syscall number
+1   swp  # file descriptor
+mem swp  # buffer
+1 +      # buffer size
+syscall3
