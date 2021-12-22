@@ -9,7 +9,7 @@
     # write to memory
     rot swp write
     # perform write syscall
-    1 1 mem 1 syscall3
+    1 mem 1 1 syscall3
     # increment counter
     1 +
 end

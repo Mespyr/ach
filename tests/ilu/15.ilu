@@ -3,7 +3,7 @@ mem 1 + 66 write
 mem 2 + 67 write
 mem 3 + 10 write
 
-1 1 mem 4 syscall3
+1 mem 4 1 syscall3
 
 mem dup read 1 + write
 mem 1 + dup read 1 + write 

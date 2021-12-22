@@ -83,8 +83,8 @@ void compile_to_asm(std::vector<Op> program, std::string output_filename)
             outfile.writeln("\t; OP_PLUS");
             outfile.writeln("\tpop rax");
             outfile.writeln("\tpop rbx");
-            outfile.writeln("\tadd rax, rbx");
-            outfile.writeln("\tpush rax");
+            outfile.writeln("\tadd rbx, rax");
+            outfile.writeln("\tpush rbx");
         }
 
         else if (op.type == OP_MINUS)
@@ -276,63 +276,63 @@ void compile_to_asm(std::vector<Op> program, std::string output_filename)
         else if (op.type == OP_SYSCALL1)
         {
             outfile.writeln("\t; OP_SYSCALL1");
-            outfile.writeln("\tpop rdi");
             outfile.writeln("\tpop rax");
+            outfile.writeln("\tpop rdi");
             outfile.writeln("\tsyscall");
         }
 
         else if (op.type == OP_SYSCALL2)
         {
             outfile.writeln("\t; OP_SYSCALL2");
+            outfile.writeln("\tpop rax");
             outfile.writeln("\tpop rsi");
             outfile.writeln("\tpop rdi");
-            outfile.writeln("\tpop rax");
             outfile.writeln("\tsyscall");
         }
 
         else if (op.type == OP_SYSCALL3)
         {
             outfile.writeln("\t; OP_SYSCALL3");
+            outfile.writeln("\tpop rax");
             outfile.writeln("\tpop rdx");
             outfile.writeln("\tpop rsi");
             outfile.writeln("\tpop rdi");
-            outfile.writeln("\tpop rax");
             outfile.writeln("\tsyscall");
         }
-
+   
         else if (op.type == OP_SYSCALL4)
         {
             outfile.writeln("\t; OP_SYSCALL4");
+            outfile.writeln("\tpop rax");
             outfile.writeln("\tpop r10");
             outfile.writeln("\tpop rdx");
             outfile.writeln("\tpop rsi");
             outfile.writeln("\tpop rdi");
-            outfile.writeln("\tpop rax");
             outfile.writeln("\tsyscall");
         }
 
         else if (op.type == OP_SYSCALL5)
         {
             outfile.writeln("\t; OP_SYSCALL5");
+            outfile.writeln("\tpop rax");
             outfile.writeln("\tpop r8");
             outfile.writeln("\tpop r10");
             outfile.writeln("\tpop rdx");
             outfile.writeln("\tpop rsi");
             outfile.writeln("\tpop rdi");
-            outfile.writeln("\tpop rax");
             outfile.writeln("\tsyscall");
         }
 
         else if (op.type == OP_SYSCALL6)
         {
             outfile.writeln("\t; OP_SYSCALL6");
+            outfile.writeln("\tpop rax");
             outfile.writeln("\tpop r9");
             outfile.writeln("\tpop r8");
             outfile.writeln("\tpop r10");
             outfile.writeln("\tpop rdx");
             outfile.writeln("\tpop rsi");
             outfile.writeln("\tpop rdi");
-            outfile.writeln("\tpop rax");
             outfile.writeln("\tsyscall");
         }
 
