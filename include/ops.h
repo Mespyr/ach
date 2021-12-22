@@ -7,25 +7,32 @@
 enum OpType 
 {
     OP_PUSH,
-    
-    // ops
-    OP_PLUS, 
+    OP_DUMP,
+    // arithmetics
+    OP_PLUS,
     OP_MINUS,
     OP_MUL,
     OP_DIV,
+    // comparisons
     OP_EQUAL,
     OP_GREATER,
     OP_LESS,
-    OP_DUMP,
+    // stack manipulation
     OP_POP, 
     OP_DUP,  // [a] -> [a, a]
     OP_SWP,  // [a, b] -> [b, a]
     OP_ROT,  // [a, b, c] -> [b, c, a]
     OP_OVER, // [a, b] -> [a, b a]
+    // memory management
     OP_MEM,
     OP_READ,
     OP_WRITE,
-    // sycall types for number of args to pop from stack
+    // bitwise
+    OP_SHIFT_RIGHT,
+    OP_SHIFT_LEFT,
+    OP_ORB,
+    OP_ANDB,
+    // syscall ops for number of args to pop from stack
     // ex: syscall3: rax (syscall number), rdi, rsi, rdx
     // ex: syscall5: rax (syscall number), rdi, rsi, rdx, r10, r8
     OP_SYSCALL1,
@@ -34,7 +41,6 @@ enum OpType
     OP_SYSCALL4,
     OP_SYSCALL5,
     OP_SYSCALL6,
-
     // keywords
     OP_WHILE,
     OP_DO,

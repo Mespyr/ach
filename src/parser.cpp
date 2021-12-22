@@ -156,6 +156,18 @@ std::vector<Op> parse_tokens(std::vector<Token> tokens)
         else if (tok.value == "write")
             program.push_back(Op(OP_WRITE, tok));
 
+        else if (tok.value == "<<")
+            program.push_back(Op(OP_SHIFT_LEFT, tok));
+
+        else if (tok.value == ">>")
+            program.push_back(Op(OP_SHIFT_RIGHT, tok));
+
+        else if (tok.value == "orb")
+            program.push_back(Op(OP_ORB, tok));
+
+        else if (tok.value == "andb")
+            program.push_back(Op(OP_ANDB, tok));
+
         else if (tok.value == "syscall1")
             program.push_back(Op(OP_SYSCALL1, tok));
 

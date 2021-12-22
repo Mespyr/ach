@@ -204,6 +204,42 @@ void compile_to_asm(std::vector<Op> program, std::string output_filename)
             outfile.writeln("\tmov [rax], bl");
         }
 
+        else if (op.type == OP_SHIFT_LEFT)
+        {
+            outfile.writeln("\t; OP_SHIFT_LEFT");
+            outfile.writeln("\tpop rcx");
+            outfile.writeln("\tpop rbx");
+            outfile.writeln("\tshl rbx, cl");
+            outfile.writeln("\tpush rbx");
+        }
+
+        else if (op.type == OP_SHIFT_RIGHT)
+        {
+            outfile.writeln("\t; OP_SHIFT_RIGHT");
+            outfile.writeln("\tpop rcx");
+            outfile.writeln("\tpop rbx");
+            outfile.writeln("\tshr rbx, cl");
+            outfile.writeln("\tpush rbx");
+        }
+
+        else if (op.type == OP_ORB)
+        {
+            outfile.writeln("\t; OP_ORB");
+            outfile.writeln("\tpop rax");
+            outfile.writeln("\tpop rbx");
+            outfile.writeln("\tor rbx, rax");
+            outfile.writeln("\tpush rbx");
+        }
+
+        else if (op.type == OP_ANDB)
+        {
+            outfile.writeln("\t; OP_ANDB");
+            outfile.writeln("\tpop rax");
+            outfile.writeln("\tpop rbx");
+            outfile.writeln("\tand rbx, rax");
+            outfile.writeln("\tpush rbx");
+        }
+
         else if (op.type == OP_SYSCALL1)
         {
             outfile.writeln("\t; OP_SYSCALL1");
