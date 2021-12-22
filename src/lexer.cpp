@@ -16,6 +16,25 @@ int get_token_end(int column_number, std::string line)
     return column_number;
 }
 
+int get_string_end(int column_number, std::string line)
+{
+    // start column_number after first quote
+    column_number++;
+    
+    bool escape_next_char = false;
+
+    while (column_number < line.length() && line.at(column_number) != '"')
+    {
+        if (line.at(column_number) == '\\')
+        {
+            if (column_number++ < line.length()) column_number++;
+        }
+        else column_number++;
+    }
+
+    return column_number;
+}
+
 std::vector<Token> get_tokens_from_line(std::string line, std::string filename, int line_number)
 {
     std::vector<Token> tokens;
@@ -28,8 +47,21 @@ std::vector<Token> get_tokens_from_line(std::string line, std::string filename, 
         if (line.at(column_number) == '#')
             return tokens;
 
-        // get position of end of token
-        col_end = get_token_end(column_number, line); 
+        if (line.at(column_number) == '"')
+        {
+            // get end position of string
+            col_end = get_string_end(column_number, line);
+
+            // check if col_end is before '"' or is end of line
+            if (++col_end == line.length())
+            {
+                print_lexing_error(filename, line_number, column_number, col_end, line, "unexpected EOL while tokenizing string");
+                exit(1);
+            }
+        }
+        else
+            // get end position of token
+            col_end = get_token_end(column_number, line); 
 
         tokens.push_back(Token(
             line.substr(column_number, col_end - column_number),  // token value

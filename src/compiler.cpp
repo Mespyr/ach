@@ -1,10 +1,9 @@
 #include "../include/compiler.h"
-#include <cstdlib>
 
 void compile_to_asm(std::vector<Op> program, std::string output_filename)
 {
     File outfile(output_filename, MODE_WRITE);
-    
+
     // write boilerplate into file
     outfile.writeln("section .text");
     outfile.writeln("global _start");
@@ -42,18 +41,28 @@ void compile_to_asm(std::vector<Op> program, std::string output_filename)
     outfile.writeln("\tsyscall");
     outfile.writeln("\tadd rsp, 40");
     outfile.writeln("\tret");
-
     outfile.writeln("_start:");
 
-
     int ip = 0;
-    for (Op op : program) 
+    std::vector<std::string> strings;
+
+    for (Op op : program)
     {
         // ops
-        if (op.type == OP_PUSH)
+        if (op.type == OP_PUSH_INT)
         {
-            outfile.writeln("\t; OP_PUSH");
-            outfile.writeln("\tpush " + std::to_string(op.push_val));
+            outfile.writeln("\t; OP_PUSH_INT");
+            outfile.writeln("\tpush " + std::to_string(op.push_int));
+        }
+
+        else if (op.type == OP_PUSH_STR)
+        {
+            std::string pstr = add_escapes_to_string(op.push_str.substr(1, op.push_str.length() - 2));
+            strings.push_back(pstr);
+            outfile.writeln("\t; OP_PUSH_STR");
+            outfile.writeln("\tmov rax, " + std::to_string(pstr.length()));
+            outfile.writeln("\tpush str_" + std::to_string(strings.size()));
+            outfile.writeln("\tpush rax");
         }
 
         else if (op.type == OP_POP)
@@ -373,7 +382,17 @@ void compile_to_asm(std::vector<Op> program, std::string output_filename)
     outfile.writeln("\tmov rax, 60");
     outfile.writeln("\tmov rdi, 0");
     outfile.writeln("\tsyscall");
-    
+
+    // data section
+    outfile.writeln("section .data");
+    for (int i = 0; i < strings.size(); i++)
+    {
+        std::stringstream ss;
+        for (char c : strings.at(i))
+            ss << "0x" << std::hex << (int)c << ",";
+        outfile.writeln("str_" + std::to_string(i+1) + ": db " + ss.str());
+    }
+
     // bss section
     outfile.writeln("section .bss");
     outfile.writeln("mem: resb 640000");

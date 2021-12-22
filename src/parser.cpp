@@ -209,8 +209,11 @@ std::vector<Op> parse_tokens(std::vector<Token> tokens)
             program.push_back(Op(OP_ELSE, tok));
 
         // push
-        else if (is_number(tok.value)) 
-            program.push_back(Op(OP_PUSH, atoi(tok.value.c_str()), tok));
+        else if (is_number(tok.value))
+            program.push_back(Op(OP_PUSH_INT, atoi(tok.value.c_str()), tok));
+
+        else if (is_string(tok.value))
+            program.push_back(Op(OP_PUSH_STR, tok.value, tok));
 
         else
         {

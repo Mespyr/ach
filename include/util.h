@@ -8,5 +8,7 @@
 #define RESET_COLOR "\e[0m"
 
 bool is_number(std::string n);
+bool is_string(std::string str);
+std::string add_escapes_to_string(std::string str);
 
 #endif

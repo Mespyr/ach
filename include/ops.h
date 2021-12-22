@@ -6,7 +6,8 @@
 
 enum OpType 
 {
-    OP_PUSH,
+    OP_PUSH_INT,
+    OP_PUSH_STR,
     OP_DUMP,
     // arithmetics
     OP_PLUS,
@@ -70,12 +71,22 @@ public:
         line_number(token.line_number), 
         column_number_start(token.column_number_start),
         column_number_end(token.column_number_end),
-        push_val(push_val) 
+        push_int(push_val) 
+    {}
+
+    Op(OpType type, std::string push_val, Token token) :
+        type(type), 
+        file_location(token.file_location), 
+        line(token.line),
+        line_number(token.line_number), 
+        column_number_start(token.column_number_start),
+        column_number_end(token.column_number_end),
+        push_str(push_val) 
     {}
 
     OpType type;
-    int push_val, reference_ip, line_number, column_number_start, column_number_end;
-    std::string file_location, line;
+    int push_int, reference_ip, line_number, column_number_start, column_number_end;
+    std::string file_location, line, push_str;
 };
 
 #endif
