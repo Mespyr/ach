@@ -1,0 +1,36 @@
+# compare 3 numbers to 12
+# expected output:
+#   1
+#   2
+#   3
+#   4
+
+# 11 >= 12
+11 12 >= if
+    0 dump
+end
+
+# 12 >= 12
+12 12 >= if
+    1 dump
+end
+
+# 13 >= 12
+13 12 >= if
+    2 dump
+end
+
+# 11 <= 12
+11 12 <= if
+    3 dump
+end
+
+# 12 <= 12
+12 12 <= if
+    4 dump
+end
+
+# 13 <= 12
+13 12 <= if
+    5 dump
+end

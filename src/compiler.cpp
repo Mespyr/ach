@@ -143,6 +143,30 @@ void compile_to_asm(std::vector<Op> program, std::string output_filename)
             outfile.writeln("\tpush rcx");
         }
 
+        else if (op.type == OP_GREATER_EQ)
+        {
+            outfile.writeln("\t; OP_GREATER_EQ");
+            outfile.writeln("\tmov rcx, 0");
+            outfile.writeln("\tmov rdx, 1");
+            outfile.writeln("\tpop rbx");
+            outfile.writeln("\tpop rax");
+            outfile.writeln("\tcmp rax, rbx");
+            outfile.writeln("\tcmovge rcx, rdx");
+            outfile.writeln("\tpush rcx");
+        }
+
+        else if (op.type == OP_LESS_EQ)
+        {
+            outfile.writeln("\t; OP_LESS_EQ");
+            outfile.writeln("\tmov rcx, 0");
+            outfile.writeln("\tmov rdx, 1");
+            outfile.writeln("\tpop rbx");
+            outfile.writeln("\tpop rax");
+            outfile.writeln("\tcmp rax, rbx");
+            outfile.writeln("\tcmovle rcx, rdx");
+            outfile.writeln("\tpush rcx");
+        }
+
         else if (op.type == OP_DUP)
         {
             outfile.writeln("\t; OP_DUP");
