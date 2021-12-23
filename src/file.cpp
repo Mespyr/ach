@@ -2,10 +2,8 @@
 
 File::File(std::string filename, MODE mode)
 {
-    if (mode == MODE_WRITE) 
-        file.open(filename, std::ios::out);
-    else 
-        file.open(filename, std::ios::in);
+    if (mode == MODE_WRITE) file.open(filename, std::ios::out);
+    else file.open(filename, std::ios::in);
 
     if (!file)
     {
@@ -29,8 +27,7 @@ std::string File::read()
 {
     std::string contents;
     std::string line;
-    while (file)
-        contents.push_back(file.get());
+    while (file) contents.push_back(file.get());
 
     return contents;
 }

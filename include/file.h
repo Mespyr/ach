@@ -17,6 +17,7 @@ class File
 public:
     File(std::string filename, MODE mode);
     ~File();
+
     void writeln(std::string buf);
     std::string read();
 private:

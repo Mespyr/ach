@@ -6,8 +6,7 @@
 
 enum OpType 
 {
-    OP_PUSH_INT,
-    OP_PUSH_STR,
+    // debugging
     OP_DUMP,
     // arithmetics
     OP_PLUS,
@@ -26,7 +25,7 @@ enum OpType
     OP_SWP,  // [a, b] -> [b, a]
     OP_ROT,  // [a, b, c] -> [b, c, a]
     OP_OVER, // [a, b] -> [a, b a]
-    // memory management
+    // memory
     OP_MEM,
     OP_READ,
     OP_WRITE,
@@ -50,6 +49,9 @@ enum OpType
     OP_IF,
     OP_ELSE,
     OP_END,
+    // push values
+    OP_PUSH_INT,
+    OP_PUSH_STR,
 };
     
 class Op

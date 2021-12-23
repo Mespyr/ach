@@ -48,36 +48,15 @@ void compile_to_asm(std::vector<Op> program, std::string output_filename)
 
     for (Op op : program)
     {
-        // ops
-        if (op.type == OP_PUSH_INT)
-        {
-            outfile.writeln("\t; OP_PUSH_INT");
-            outfile.writeln("\tpush " + std::to_string(op.push_int));
-        }
-
-        else if (op.type == OP_PUSH_STR)
-        {
-            std::string pstr = add_escapes_to_string(op.push_str.substr(1, op.push_str.length() - 2));
-            strings.push_back(pstr);
-            outfile.writeln("\t; OP_PUSH_STR");
-            outfile.writeln("\tmov rax, " + std::to_string(pstr.length()));
-            outfile.writeln("\tpush str_" + std::to_string(strings.size()));
-            outfile.writeln("\tpush rax");
-        }
-
-        else if (op.type == OP_POP)
-        {
-            outfile.writeln("\t; OP_POP");
-            outfile.writeln("\tpop rax");
-        }
-
-        else if (op.type == OP_DUMP)
+        // debugging
+        if (op.type == OP_DUMP)
         {
             outfile.writeln("\t; OP_DUMP");
             outfile.writeln("\tpop rdi");
             outfile.writeln("\tcall dump");
         }
-
+        
+        // arithmetics
         else if (op.type == OP_PLUS)
         {
             outfile.writeln("\t; OP_PLUS");
@@ -85,8 +64,7 @@ void compile_to_asm(std::vector<Op> program, std::string output_filename)
             outfile.writeln("\tpop rbx");
             outfile.writeln("\tadd rbx, rax");
             outfile.writeln("\tpush rbx");
-        }
-
+        } 
         else if (op.type == OP_MINUS)
         {
             outfile.writeln("\t; OP_MINUS");
@@ -95,7 +73,6 @@ void compile_to_asm(std::vector<Op> program, std::string output_filename)
             outfile.writeln("\tsub rbx, rax");
             outfile.writeln("\tpush rbx");
         }
-
         else if (op.type == OP_MUL)
         {
             outfile.writeln("\t; OP_MUL");
@@ -104,7 +81,6 @@ void compile_to_asm(std::vector<Op> program, std::string output_filename)
             outfile.writeln("\tmul rbx");
             outfile.writeln("\tpush rax");
         }
-
         else if (op.type == OP_DIV)
         {
             outfile.writeln("\t; OP_DIV");
@@ -115,7 +91,8 @@ void compile_to_asm(std::vector<Op> program, std::string output_filename)
             outfile.writeln("\tpush rax");
             outfile.writeln("\tpush rdx");
         }
-
+        
+        // comparisons
         else if (op.type == OP_EQUAL)
         {
             outfile.writeln("\t; OP_EQUAL");
@@ -127,7 +104,6 @@ void compile_to_asm(std::vector<Op> program, std::string output_filename)
             outfile.writeln("\tcmove rcx, rdx");
             outfile.writeln("\tpush rcx");
         }
-
         else if (op.type == OP_GREATER)
         {
             outfile.writeln("\t; OP_GREATER");
@@ -139,7 +115,6 @@ void compile_to_asm(std::vector<Op> program, std::string output_filename)
             outfile.writeln("\tcmovg rcx, rdx");
             outfile.writeln("\tpush rcx");
         }
-
         else if (op.type == OP_LESS)
         {
             outfile.writeln("\t; OP_LESS");
@@ -151,7 +126,6 @@ void compile_to_asm(std::vector<Op> program, std::string output_filename)
             outfile.writeln("\tcmovl rcx, rdx");
             outfile.writeln("\tpush rcx");
         }
-
         else if (op.type == OP_GREATER_EQ)
         {
             outfile.writeln("\t; OP_GREATER_EQ");
@@ -163,7 +137,6 @@ void compile_to_asm(std::vector<Op> program, std::string output_filename)
             outfile.writeln("\tcmovge rcx, rdx");
             outfile.writeln("\tpush rcx");
         }
-
         else if (op.type == OP_LESS_EQ)
         {
             outfile.writeln("\t; OP_LESS_EQ");
@@ -175,7 +148,13 @@ void compile_to_asm(std::vector<Op> program, std::string output_filename)
             outfile.writeln("\tcmovle rcx, rdx");
             outfile.writeln("\tpush rcx");
         }
-
+        
+        // stack manipulation
+        else if (op.type == OP_POP)
+        {
+            outfile.writeln("\t; OP_POP");
+            outfile.writeln("\tpop rax");
+        }
         else if (op.type == OP_DUP)
         {
             outfile.writeln("\t; OP_DUP");
@@ -183,7 +162,6 @@ void compile_to_asm(std::vector<Op> program, std::string output_filename)
             outfile.writeln("\tpush rax");
             outfile.writeln("\tpush rax");
         }
-
         else if (op.type == OP_SWP)
         {
             outfile.writeln("\t; OP_SWP");
@@ -192,7 +170,6 @@ void compile_to_asm(std::vector<Op> program, std::string output_filename)
             outfile.writeln("\tpush rax");
             outfile.writeln("\tpush rbx");
         }
-
         else if (op.type == OP_ROT)
         {
             outfile.writeln("\t; OP_ROT");
@@ -203,7 +180,6 @@ void compile_to_asm(std::vector<Op> program, std::string output_filename)
             outfile.writeln("\tpush rax");
             outfile.writeln("\tpush rcx");
         }
-
         else if (op.type == OP_OVER)
         {
             outfile.writeln("\t; OP_OVER");
@@ -213,13 +189,13 @@ void compile_to_asm(std::vector<Op> program, std::string output_filename)
             outfile.writeln("\tpush rax");
             outfile.writeln("\tpush rbx");
         }
-
+        
+        // memory
         else if (op.type == OP_MEM)
         {
             outfile.writeln("\t; OP_MEM");
             outfile.writeln("\tpush mem");
         }
-
         else if (op.type == OP_READ)
         {
             outfile.writeln("\t; OP_READ");
@@ -228,7 +204,6 @@ void compile_to_asm(std::vector<Op> program, std::string output_filename)
             outfile.writeln("\tmov bl, [rax]");
             outfile.writeln("\tpush rbx");
         }
-
         else if (op.type == OP_WRITE)
         {
             outfile.writeln("\t; OP_WRITE");
@@ -236,7 +211,8 @@ void compile_to_asm(std::vector<Op> program, std::string output_filename)
             outfile.writeln("\tpop rax");
             outfile.writeln("\tmov [rax], bl");
         }
-
+        
+        // bitwise
         else if (op.type == OP_SHIFT_LEFT)
         {
             outfile.writeln("\t; OP_SHIFT_LEFT");
@@ -245,7 +221,6 @@ void compile_to_asm(std::vector<Op> program, std::string output_filename)
             outfile.writeln("\tshl rbx, cl");
             outfile.writeln("\tpush rbx");
         }
-
         else if (op.type == OP_SHIFT_RIGHT)
         {
             outfile.writeln("\t; OP_SHIFT_RIGHT");
@@ -254,7 +229,6 @@ void compile_to_asm(std::vector<Op> program, std::string output_filename)
             outfile.writeln("\tshr rbx, cl");
             outfile.writeln("\tpush rbx");
         }
-
         else if (op.type == OP_ORB)
         {
             outfile.writeln("\t; OP_ORB");
@@ -263,7 +237,6 @@ void compile_to_asm(std::vector<Op> program, std::string output_filename)
             outfile.writeln("\tor rbx, rax");
             outfile.writeln("\tpush rbx");
         }
-
         else if (op.type == OP_ANDB)
         {
             outfile.writeln("\t; OP_ANDB");
@@ -272,7 +245,8 @@ void compile_to_asm(std::vector<Op> program, std::string output_filename)
             outfile.writeln("\tand rbx, rax");
             outfile.writeln("\tpush rbx");
         }
-
+        
+        // syscalls
         else if (op.type == OP_SYSCALL1)
         {
             outfile.writeln("\t; OP_SYSCALL1");
@@ -280,7 +254,6 @@ void compile_to_asm(std::vector<Op> program, std::string output_filename)
             outfile.writeln("\tpop rdi");
             outfile.writeln("\tsyscall");
         }
-
         else if (op.type == OP_SYSCALL2)
         {
             outfile.writeln("\t; OP_SYSCALL2");
@@ -289,7 +262,6 @@ void compile_to_asm(std::vector<Op> program, std::string output_filename)
             outfile.writeln("\tpop rdi");
             outfile.writeln("\tsyscall");
         }
-
         else if (op.type == OP_SYSCALL3)
         {
             outfile.writeln("\t; OP_SYSCALL3");
@@ -299,7 +271,6 @@ void compile_to_asm(std::vector<Op> program, std::string output_filename)
             outfile.writeln("\tpop rdi");
             outfile.writeln("\tsyscall");
         }
-   
         else if (op.type == OP_SYSCALL4)
         {
             outfile.writeln("\t; OP_SYSCALL4");
@@ -310,7 +281,6 @@ void compile_to_asm(std::vector<Op> program, std::string output_filename)
             outfile.writeln("\tpop rdi");
             outfile.writeln("\tsyscall");
         }
-
         else if (op.type == OP_SYSCALL5)
         {
             outfile.writeln("\t; OP_SYSCALL5");
@@ -322,7 +292,6 @@ void compile_to_asm(std::vector<Op> program, std::string output_filename)
             outfile.writeln("\tpop rdi");
             outfile.writeln("\tsyscall");
         }
-
         else if (op.type == OP_SYSCALL6)
         {
             outfile.writeln("\t; OP_SYSCALL6");
@@ -342,7 +311,6 @@ void compile_to_asm(std::vector<Op> program, std::string output_filename)
             outfile.writeln("\t; OP_WHILE");
             outfile.writeln("addr_" + std::to_string(ip) + ":");
         }
-
         else if (op.type == OP_DO)
         {
             outfile.writeln("\t; OP_DO");
@@ -350,7 +318,6 @@ void compile_to_asm(std::vector<Op> program, std::string output_filename)
             outfile.writeln("\ttest rax, rax");
             outfile.writeln("\tjz addr_" + std::to_string(op.reference_ip));
         }
-
         else if (op.type == OP_IF)
         {
             outfile.writeln("\t; OP_IF");
@@ -358,20 +325,34 @@ void compile_to_asm(std::vector<Op> program, std::string output_filename)
             outfile.writeln("\ttest rax, rax");
             outfile.writeln("\tjz addr_" + std::to_string(op.reference_ip));
         }
-
         else if (op.type == OP_ELSE)
         {
             outfile.writeln("\t; OP_ELSE");
             outfile.writeln("\tjmp addr_" + std::to_string(op.reference_ip));
             outfile.writeln("addr_" + std::to_string(ip) + ":");
         }
-
         else if (op.type == OP_END)
         {
             outfile.writeln("\t; OP_END");
             if (op.reference_ip != -1)
                 outfile.writeln("\tjmp addr_" + std::to_string(op.reference_ip));
             outfile.writeln("addr_" + std::to_string(ip) + ":");
+        }
+
+        // push value
+        else if (op.type == OP_PUSH_INT)
+        {
+            outfile.writeln("\t; OP_PUSH_INT");
+            outfile.writeln("\tpush " + std::to_string(op.push_int));
+        }
+        else if (op.type == OP_PUSH_STR)
+        {
+            std::string pstr = add_escapes_to_string(op.push_str.substr(1, op.push_str.length() - 2));
+            strings.push_back(pstr);
+            outfile.writeln("\t; OP_PUSH_STR");
+            outfile.writeln("\tmov rax, " + std::to_string(pstr.length()));
+            outfile.writeln("\tpush str_" + std::to_string(strings.size()));
+            outfile.writeln("\tpush rax");
         }
 
         ip++;

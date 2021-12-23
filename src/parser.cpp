@@ -107,111 +107,91 @@ std::vector<Op> parse_tokens(std::vector<Token> tokens)
 
     for (Token tok : tokens)
     {
-        // ops
-        if (tok.value == "+") 
+        // debugging
+        if (tok.value == "dump")
+            program.push_back(Op(OP_DUMP, tok));
+        
+        // arithmetics
+        else if (tok.value == "+") 
             program.push_back(Op(OP_PLUS, tok));
-
         else if (tok.value == "-") 
             program.push_back(Op(OP_MINUS, tok));
-
         else if (tok.value == "*")
             program.push_back(Op(OP_MUL, tok));
-
         else if (tok.value == "/")
             program.push_back(Op(OP_DIV, tok));
 
+        // comparisons
         else if (tok.value == "=")
             program.push_back(Op(OP_EQUAL, tok));
-
         else if (tok.value == ">")
             program.push_back(Op(OP_GREATER, tok));
-
         else if (tok.value == "<")
             program.push_back(Op(OP_LESS, tok));
-
         else if (tok.value == ">=")
             program.push_back(Op(OP_GREATER_EQ, tok));
-
         else if (tok.value == "<=")
             program.push_back(Op(OP_LESS_EQ, tok));
-
-        else if (tok.value == "dump")
-            program.push_back(Op(OP_DUMP, tok));
-
+        
+        // stack manipulation
         else if (tok.value == "pop")
             program.push_back(Op(OP_POP, tok));
-
         else if (tok.value == "dup")
             program.push_back(Op(OP_DUP, tok));
-
         else if (tok.value == "swp")
             program.push_back(Op(OP_SWP, tok));
-
         else if (tok.value == "rot")
             program.push_back(Op(OP_ROT, tok));
-
         else if (tok.value == "over")
             program.push_back(Op(OP_OVER, tok));
-
+        
+        // memory
         else if (tok.value == "mem")
             program.push_back(Op(OP_MEM, tok));
-
         else if (tok.value == "read")
             program.push_back(Op(OP_READ, tok));
-        
         else if (tok.value == "write")
             program.push_back(Op(OP_WRITE, tok));
-
+        
+        // bitwise
         else if (tok.value == "<<")
             program.push_back(Op(OP_SHIFT_LEFT, tok));
-
         else if (tok.value == ">>")
             program.push_back(Op(OP_SHIFT_RIGHT, tok));
-
         else if (tok.value == "orb")
             program.push_back(Op(OP_ORB, tok));
-
         else if (tok.value == "andb")
             program.push_back(Op(OP_ANDB, tok));
-
+        
+        // syscalls
         else if (tok.value == "syscall1")
             program.push_back(Op(OP_SYSCALL1, tok));
-
         else if (tok.value == "syscall2")
             program.push_back(Op(OP_SYSCALL2, tok));
-
         else if (tok.value == "syscall3")
             program.push_back(Op(OP_SYSCALL3, tok));
-
         else if (tok.value == "syscall4")
             program.push_back(Op(OP_SYSCALL4, tok));
-
         else if (tok.value == "syscall5")
             program.push_back(Op(OP_SYSCALL5, tok));
-
         else if (tok.value == "syscall6")
             program.push_back(Op(OP_SYSCALL6, tok));
 
         // keywords
         else if (tok.value == "while")
             program.push_back(Op(OP_WHILE, tok));
-
         else if (tok.value == "do")
             program.push_back(Op(OP_DO, tok));
-
         else if (tok.value == "if")
             program.push_back(Op(OP_IF, tok));
-
-        else if (tok.value == "end")
-            program.push_back(Op(OP_END, tok));
-
         else if (tok.value == "else")
             program.push_back(Op(OP_ELSE, tok));
+        else if (tok.value == "end")
+            program.push_back(Op(OP_END, tok));
 
         // push
         else if (is_number(tok.value))
             program.push_back(Op(OP_PUSH_INT, atoi(tok.value.c_str()), tok));
-
         else if (is_string(tok.value))
             program.push_back(Op(OP_PUSH_STR, tok.value, tok));
 

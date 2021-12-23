@@ -30,21 +30,15 @@ int main(int argc, char* argv[])
 
     // nasm
     std::cout << INFO_COLOR << "[info] generating object file." << RESET_COLOR << std::endl;
-    int exit_code = std::system("nasm -felf64 out.asm");
-    if (exit_code == 1)
-        exit(1);
+    exit_on_error(std::system("nasm -felf64 out.asm"));
 
     // link
     std::cout << INFO_COLOR << "[info] linking object file." << RESET_COLOR << std::endl;
-    exit_code = std::system("ld -o out out.o");
-    if (exit_code == 1)
-        exit(1);
+    exit_on_error(std::system("ld -o out out.o"));
     
     // cleanup
     std::cout << INFO_COLOR << "[info] cleaning up object file" << RESET_COLOR << std::endl;
-    exit_code = std::system("rm out.o");
-    if (exit_code == 1)
-        exit(1);
+    exit_on_error(std::system("rm out.o"));
 
     return 0;
 }
