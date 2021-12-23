@@ -1,0 +1,17 @@
+# basic macro/function(s)
+def WRITE_SYSCALL_NUMBER 1 end
+def FD 1 end
+
+def puts
+    FD rot rot
+    WRITE_SYSCALL_NUMBER syscall3
+end
+
+def main
+    "Hello World!\n" puts
+    12 13 < if
+        "12 < 13\n" puts
+    else
+        "12 >= 13\n" puts
+    end
+end

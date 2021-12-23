@@ -6,7 +6,7 @@ std::vector<Op> link_ops(std::vector<Op> ops)
     for (int ip = 0; ip < ops.size(); ip++)
     {
         Op current_op = ops.at(ip);
-
+        
         if (current_op.type == OP_IF)
             ip_stack.push_back(ip);
 
@@ -101,12 +101,13 @@ std::vector<Op> link_ops(std::vector<Op> ops)
     return ops;
 }
 
-std::vector<Op> parse_tokens(std::vector<Token> tokens)
+std::vector<Op> convert_tokens_to_ops(std::vector<Token> tokens, std::map<std::string, std::vector<Token>> basic_program)
 {
     std::vector<Op> program;
 
-    for (Token tok : tokens)
+    for (int i = 0; i < tokens.size(); i++)
     {
+        Token tok = tokens.at(i);
         // debugging
         if (tok.value == "dump")
             program.push_back(Op(OP_DUMP, tok));
@@ -188,6 +189,16 @@ std::vector<Op> parse_tokens(std::vector<Token> tokens)
             program.push_back(Op(OP_ELSE, tok));
         else if (tok.value == "end")
             program.push_back(Op(OP_END, tok));
+        else if (basic_program.count(tok.value))
+        {
+            std::vector<Token> macrofn = basic_program.at(tok.value);
+            // erase macro/function call
+            tokens.erase(tokens.begin() + i);
+
+            tokens.insert(tokens.begin() + i, macrofn.begin(), macrofn.end());
+            // dec idx so we can reread token at index
+            i--;
+        }
 
         // push
         else if (is_number(tok.value))
@@ -203,4 +214,71 @@ std::vector<Op> parse_tokens(std::vector<Token> tokens)
     }
 
     return link_ops(program);
+}
+
+std::map<std::string, std::vector<Op>> parse_tokens(std::vector<Token> tokens)
+{
+    std::map<std::string, std::vector<Token>> basic_program;
+    std::vector<Token> function_tokens;
+    std::string func_name;
+    int i = 0;
+    int recursion_level = 0;
+
+    while (i < tokens.size())
+    {
+        Token tok = tokens.at(i);
+
+        if (tok.value == "def")
+        {
+            i++;
+            if (recursion_level > 0 || i >= tokens.size() - 1) 
+            {
+                print_token_error(tok, "Unexpected 'def' keyword found while parsing");
+                exit(1);
+            }
+            else
+            {
+                Token func_name_token = tokens.at(i);
+                func_name = func_name_token.value;
+                if (!is_string(func_name) && !is_number(func_name))
+                    recursion_level++;
+                else
+                {
+                    print_token_error(func_name_token, "Expected word for function name");
+                    exit(1);
+                }
+            }
+        }
+        else if (tok.value == "end")
+        {
+            recursion_level--;
+            if (recursion_level == 0)
+            {
+                basic_program.insert({func_name, function_tokens});
+                function_tokens.clear();
+                func_name.clear();
+            }
+            else function_tokens.push_back(tok);
+        }
+        else if (recursion_level > 0)
+        {
+            function_tokens.push_back(tok);
+            if (tok.value == "if") recursion_level++;
+            else if (tok.value == "while") recursion_level++;
+        }
+        else
+        {
+            print_token_error(tok, "Unknown keyword '" + tok.value + "' found while parsing");
+            exit(1);
+        }
+
+        i++;
+    }
+    
+    std::map<std::string, std::vector<Op>> expanded_program;
+
+    for(auto it = basic_program.begin(); it != basic_program.end(); ++it)
+        expanded_program.insert({it->first, convert_tokens_to_ops(it->second, basic_program)});
+
+    return expanded_program;
 }

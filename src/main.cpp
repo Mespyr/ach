@@ -6,6 +6,7 @@
 #include <cstdlib>
 #include <vector>
 #include <iostream>
+#include <map>
 
 void usage(char* exec_name)
 {
@@ -22,7 +23,7 @@ int main(int argc, char* argv[])
     }
 
     std::vector<Token> tokens = load_tokens_from_file(argv[1]);
-    std::vector<Op> program = parse_tokens(tokens);
+    std::map<std::string, std::vector<Op>> program = parse_tokens(tokens);
 
     // compile
     std::cout << INFO_COLOR << "[info] generating asm from '" << argv[1] << "'." << RESET_COLOR << std::endl;

@@ -73,7 +73,7 @@ public:
         line_number(token.line_number), 
         column_number_start(token.column_number_start),
         column_number_end(token.column_number_end),
-        push_int(push_val) 
+        push_int(push_val)
     {}
 
     Op(OpType type, std::string push_val, Token token) :
@@ -83,7 +83,7 @@ public:
         line_number(token.line_number), 
         column_number_start(token.column_number_start),
         column_number_end(token.column_number_end),
-        push_str(push_val) 
+        push_str(push_val)
     {}
 
     OpType type;

@@ -1,1 +1,8 @@
-1 "Hello World!\n" 1 syscall3
+def puts
+    1 rot rot
+    1 syscall3
+end
+
+def main
+    "Hello World!\n" puts
+end

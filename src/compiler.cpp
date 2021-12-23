@@ -1,6 +1,6 @@
 #include "../include/compiler.h"
 
-void compile_to_asm(std::vector<Op> program, std::string output_filename)
+void compile_to_asm(std::map<std::string, std::vector<Op>> program, std::string output_filename)
 {
     File outfile(output_filename, MODE_WRITE);
 
@@ -43,11 +43,13 @@ void compile_to_asm(std::vector<Op> program, std::string output_filename)
     outfile.writeln("\tret");
     outfile.writeln("_start:");
 
-    int ip = 0;
     std::vector<std::string> strings;
+    std::vector<Op> mainfn = program.at("main");
 
-    for (Op op : program)
+    for (int ip = 0; ip < mainfn.size(); ip++)
     {
+        Op op = mainfn.at(ip);
+
         // debugging
         if (op.type == OP_DUMP)
         {
@@ -354,8 +356,6 @@ void compile_to_asm(std::vector<Op> program, std::string output_filename)
             outfile.writeln("\tpush str_" + std::to_string(strings.size()));
             outfile.writeln("\tpush rax");
         }
-
-        ip++;
     }
     
     // exit syscall at end of file
