@@ -25,6 +25,9 @@ std::string add_escapes_to_string(std::string str)
     std::string ret;
     int i = 0;
 
+    // can't get 2 chars from 1 or 0 char string
+    if (str.length() < 2) return str;
+
     while (i < str.length() - 1)
     {
         buf = str.substr(i, 2);
