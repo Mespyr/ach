@@ -31,18 +31,12 @@ int find_string_end_col(int column_number, std::string line)
     {
         // check if escape char was found and skip next char from parsing if not at EOL
         if (line.at(column_number) == '\\')
-            if (column_number + 1 < line.length()) 
-                column_number++;
-
+            column_number++;
         column_number++;
     }
-   
-    // if we reached EOL before finding '"'
-    if (column_number == line.length())
-        return column_number;
-
+    
     // return position where '"' was found
-    return column_number++;
+    return column_number;
 }
 
 std::vector<Token> tokenize_line(std::string line, std::string filename, int line_number)
@@ -71,6 +65,9 @@ std::vector<Token> tokenize_line(std::string line, std::string filename, int lin
                 print_lexing_error(filename, line_number, column_number, col_end, line, "unexpected EOL while tokenizing string");
                 exit(1);
             }
+            
+            // inc col_end so it points to after '"'
+            col_end++;
         }
         else col_end = find_token_end_col(column_number, line); 
 
@@ -84,7 +81,7 @@ std::vector<Token> tokenize_line(std::string line, std::string filename, int lin
         ));
 
         // get start position of next token
-        column_number = find_next_token_start_col(col_end, line);
+        column_number = find_next_token_start_col(col_end+1, line);
     }
 
     return tokens;

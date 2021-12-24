@@ -1,5 +1,4 @@
 #!/bin/sh
-set -x
 ./clean.sh
 
 SOURCES=""
@@ -10,4 +9,5 @@ do
     SOURCES="$SOURCES $f"
 done
 
-g++ $SOURCES -o $EXEC
+set -xe
+g++ $SOURCES -o $EXEC $@
