@@ -1,0 +1,55 @@
+# rule110
+# borrowed from https://gitlab.com/tsoding/porth/-/blob/master/examples/rule110.porth
+
+def BOARD_SIZE 150 end
+
+def rule110
+    mem BOARD_SIZE 2 - + 1 writeb
+
+    0 while dup BOARD_SIZE 2 - < do
+        0 while dup BOARD_SIZE < do
+            # check if mem[idx] is 0 or 1
+            dup mem + readb if
+                # write '*' if mem[idx] == 1
+                dup mem + BOARD_SIZE + 42 writeb
+            else
+                # write ' '  if mem[idx] == 0
+                dup mem + BOARD_SIZE + 32 writeb
+            end
+
+            1 +
+        end
+       
+        # write newline at end of mem
+        mem + BOARD_SIZE + 10 writeb
+
+        # print line
+        1 mem BOARD_SIZE + BOARD_SIZE 1 +
+        1 syscall3
+        
+        # pattern
+        mem readb 1 <<
+        mem 1 + readb
+        orb
+
+        1 while dup BOARD_SIZE 1 - < do
+            # new pattern
+            swp 1 << 7 andb over
+            mem + 1 + readb orb
+
+            over over 110 swp >> 1 andb
+            swp mem + swp writeb
+            swp
+
+            1 +
+        end
+        
+        pop pop
+
+        1 +
+    end
+end
+
+def main
+    rule110
+end
