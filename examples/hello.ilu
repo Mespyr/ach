@@ -1,7 +1,4 @@
-def puts
-    1 rot rot
-    1 syscall3
-end
+@include "std/io.ilu"
 
 def main
     "Hello World!\n" puts

@@ -5,6 +5,7 @@
 #include "util.h"
 #include "token.h"
 #include "error.h"
+#include "lexer.h"
 #include <vector>
 #include <string>
 #include <iostream>

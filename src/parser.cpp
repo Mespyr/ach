@@ -255,13 +255,39 @@ std::map<std::string, std::vector<Op>> parse_tokens(std::vector<Token> tokens)
                 func_name = func_name_token.value;
                 // check if function name can be used in code
                 if (!is_string(func_name) && !is_number(func_name))
+                {
+                    if (program.count(func_name))
+                    {
+                        print_token_error(func_name_token, "Multiple definitions for '" + func_name + "' found");
+                        exit(1);
+                    }
                     recursion_level++;
+                }
                 else
                 {
                     print_token_error(func_name_token, "Expected word for function name");
                     exit(1);
                 }
             }
+        }
+
+        else if (tok.value == "@include")
+        {
+            if (i++ == tokens.size())
+            {
+                print_token_error(tok, "Unexpected '@include' keyword found while parsing");
+                exit(1);
+            }
+
+            Token include_file_token = tokens.at(i);
+            if (!is_string(include_file_token.value))
+            {
+                print_token_error(include_file_token, "Was expecting token of type string after @include statement");
+                exit(1);
+            }
+            
+            std::vector<Token> include_file_tokens = tokenize_file(include_file_token.value.substr(1,include_file_token.value.length() - 2));
+            tokens.insert(tokens.end(), include_file_tokens.begin(), include_file_tokens.end());
         }
 
         else if (tok.value == "end")

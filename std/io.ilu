@@ -1,0 +1,4 @@
+def puts
+    1 rot rot
+    1 syscall3
+end
