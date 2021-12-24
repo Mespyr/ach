@@ -2,7 +2,8 @@
 
 File::File(std::string filename, MODE mode)
 {
-    if (mode == MODE_WRITE) file.open(filename, std::ios::out);
+    if (mode == MODE_WRITE) 
+        file.open(filename, std::ios::out);
     else file.open(filename, std::ios::in);
 
     if (!file)

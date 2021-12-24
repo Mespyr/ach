@@ -22,7 +22,7 @@ std::vector<Op> link_ops(std::vector<Op> ops)
                 print_op_error(current_op, "Unexpected 'do' keyword");
                 exit(1);
             }
-
+            
             int linker_ip = ip_stack.back();
             ip_stack.pop_back();
 
@@ -31,9 +31,12 @@ std::vector<Op> link_ops(std::vector<Op> ops)
                 print_op_error(current_op, "Unexpected 'do' keyword");
                 exit(1);
             }
-
+            
+            // set ip of 'do' keyword to ip of 'while' on stack
             current_op.reference_ip = linker_ip;
             ops.at(ip) = current_op;
+
+            // push 'do' ip onto stack
             ip_stack.push_back(ip);
         }
 
@@ -47,6 +50,8 @@ std::vector<Op> link_ops(std::vector<Op> ops)
 
             int linker_ip = ip_stack.back();
             ip_stack.pop_back();
+
+            // get 'if' op from ops
             Op linker_op = ops.at(linker_ip);
 
             if (linker_op.type != OP_IF)
@@ -54,10 +59,12 @@ std::vector<Op> link_ops(std::vector<Op> ops)
                 print_op_error(current_op, "Unexpected 'else' keyword");
                 exit(1);
             }
-
+            
+            // link 'if' op to 'else'
             linker_op.reference_ip = ip;
-
             ops.at(linker_ip) = linker_op;
+
+            // push 'else' ip onto stack
             ip_stack.push_back(ip);
         }
 
@@ -71,21 +78,27 @@ std::vector<Op> link_ops(std::vector<Op> ops)
 
             int linker_ip = ip_stack.back();
             ip_stack.pop_back();
+
+            // get op at ip on top of stack
             Op linker_op = ops.at(linker_ip);
 
             if (linker_op.type == OP_IF || linker_op.type == OP_ELSE)
             {
+                // unlink 'end' op (it doesn't need to jump anywhere on if statements
                 current_op.reference_ip = -1;
                 ops.at(ip) = current_op;
-
+                
+                // link linker op to 'end' op ip
                 linker_op.reference_ip = ip;
                 ops.at(linker_ip) = linker_op;
             }
             else if (linker_op.type == OP_DO)
             {
+                // link 'end' op to 'do' op's ip ('while')
                 current_op.reference_ip = linker_op.reference_ip;
                 ops.at(ip) = current_op;
 
+                // link 'do' op to 'end' op's ip
                 linker_op.reference_ip = ip;
                 ops.at(linker_ip) = linker_op;
             }
@@ -230,6 +243,7 @@ std::map<std::string, std::vector<Op>> parse_tokens(std::vector<Token> tokens)
         if (tok.value == "def")
         {
             i++;
+            // if inside function/macro already
             if (recursion_level > 0 || i >= tokens.size() - 1) 
             {
                 print_token_error(tok, "Unexpected 'def' keyword found while parsing");
@@ -239,6 +253,7 @@ std::map<std::string, std::vector<Op>> parse_tokens(std::vector<Token> tokens)
             {
                 Token func_name_token = tokens.at(i);
                 func_name = func_name_token.value;
+                // check if function name can be used in code
                 if (!is_string(func_name) && !is_number(func_name))
                     recursion_level++;
                 else
@@ -248,9 +263,12 @@ std::map<std::string, std::vector<Op>> parse_tokens(std::vector<Token> tokens)
                 }
             }
         }
+
         else if (tok.value == "end")
         {
             recursion_level--;
+
+            // if outside function block
             if (recursion_level == 0)
             {
                 program.insert({func_name, function_tokens});
@@ -259,9 +277,13 @@ std::map<std::string, std::vector<Op>> parse_tokens(std::vector<Token> tokens)
             }
             else function_tokens.push_back(tok);
         }
+
+        // if inside function block
         else if (recursion_level > 0)
         {
             function_tokens.push_back(tok);
+
+            // if code block found, inc recursion_level
             if (tok.value == "if") recursion_level++;
             else if (tok.value == "while") recursion_level++;
         }
@@ -275,6 +297,7 @@ std::map<std::string, std::vector<Op>> parse_tokens(std::vector<Token> tokens)
     }
     
     std::map<std::string, std::vector<Op>> linked_program;
+
     // loop through all functions/macros in program and convert their tokens into Ops which are linked to each other
     for(auto it = program.begin(); it != program.end(); ++it)
         linked_program.insert({it->first, convert_tokens_to_ops(it->second, program)});

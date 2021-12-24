@@ -369,8 +369,10 @@ void compile_to_asm(std::map<std::string, std::vector<Op>> program, std::string 
     for (int i = 0; i < strings.size(); i++)
     {
         std::stringstream ss;
+
         for (char c : strings.at(i))
             ss << "0x" << std::hex << (int)c << ",";
+
         outfile.writeln("str_" + std::to_string(i+1) + ": db " + ss.str());
     }
 

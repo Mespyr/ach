@@ -2,22 +2,16 @@
 
 int find_next_token_start_col(int column_number, std::string line)
 {
-    while (
-        column_number < line.length() && 
-        std::isspace(line.at(column_number)) && 
-        line.at(column_number) != '#'
-    ) column_number++;
+    while (column_number < line.length() && std::isspace(line.at(column_number)) && line.at(column_number) != '#')
+        column_number++;
 
     return column_number;
 }
 
 int find_token_end_col(int column_number, std::string line)
 {
-    while (
-        column_number < line.length() && 
-        !std::isspace(line.at(column_number)) && 
-        line.at(column_number) != '#'
-    ) column_number++;
+    while (column_number < line.length() && !std::isspace(line.at(column_number)) && line.at(column_number) != '#')
+        column_number++;
 
     return column_number;
 }
@@ -62,7 +56,10 @@ std::vector<Token> tokenize_line(std::string line, std::string filename, int lin
             // check if col_end is at end of line
             if (col_end == line.length())
             {
-                print_lexing_error(filename, line_number, column_number, col_end, line, "unexpected EOL while tokenizing string");
+                print_lexing_error(
+                    filename, line_number, column_number, col_end, line, 
+                    "unexpected EOL while tokenizing string"
+                );
                 exit(1);
             }
             
@@ -72,12 +69,8 @@ std::vector<Token> tokenize_line(std::string line, std::string filename, int lin
         else col_end = find_token_end_col(column_number, line); 
 
         tokens.push_back(Token(
-            line.substr(column_number, col_end - column_number),  // token value
-            filename,                                             // file location
-            line,                                                 // line value
-            line_number,                                          // line number
-            column_number,                                        // column number start value
-            col_end                                               // column number end value
+            line.substr(column_number, col_end - column_number),  
+            filename, line, line_number, column_number, col_end
         ));
 
         // get start position of next token
@@ -114,9 +107,8 @@ std::vector<Token> tokenize_file(std::string filename)
         std::vector<Token> line_toks = tokenize_line(line, filename, line_number);
 
         // add all tokens from line to main token vector
-        tokens.insert(tokens.end(),
-            line_toks.begin(),
-            line_toks.end());
+        tokens.insert(tokens.end(), line_toks.begin(), line_toks.end());
+
         // clear line_toks
         line_toks.clear();
     }
