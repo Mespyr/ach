@@ -1,3 +1,5 @@
-23 3 *
-20 21 *
-* dump
+def main
+    23 3 *
+    20 21 *
+    * dump
+end

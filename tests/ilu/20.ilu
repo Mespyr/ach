@@ -1,6 +1,8 @@
 # strings and escape sequences
-1 "Hello World!\n" 1 syscall3
-1 "\"femboys are cool\" - someone\n" 1 syscall3
-1 "testing having stuff\\n\n" 1 syscall3
-1 "another test \\n\\" 1 syscall3
-1 "last string to print\n" 1 syscall3
+def main
+    1 "Hello World!\n" 1 syscall3
+    1 "\"femboys are cool\" - someone\n" 1 syscall3
+    1 "testing having stuff\\n\n" 1 syscall3
+    1 "another test \\n\\" 1 syscall3
+    1 "last string to print\n" 1 syscall3
+end

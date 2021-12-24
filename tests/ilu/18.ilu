@@ -1,11 +1,10 @@
-# shift left
-1 3 << dump
-
-# shift right
-32 3 >> dump
-
-# bit or
-1 2 orb dump
-
-# bit and
-1 2 andb dump
+def main
+    # shift left
+    1 3 << dump
+    # shift right
+    32 3 >> dump
+    # bit or
+    1 2 orb dump
+    # bit and
+    1 2 andb dump
+end

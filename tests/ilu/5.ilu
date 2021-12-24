@@ -1,3 +1,5 @@
-12 34 = dump
-35 34 + 
-23 46 + = dump
+def main
+    12 34 = dump
+    35 34 + 
+    23 46 + = dump
+end

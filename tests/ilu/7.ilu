@@ -1,8 +1,9 @@
-99
-34 35 + 69 = if
-    67 32 + = if
-        1 dump
-    end 
-    2 dump
+def main
+    34 35 + 69 = if
+        67 32 + 99 = if
+            1 dump
+        end 
+        2 dump
+    end
+    3 dump
 end
-3 dump

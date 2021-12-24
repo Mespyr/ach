@@ -1,15 +1,17 @@
 # comments
 
-# print 0-9 using syscalls
-0 while dup 10 < do
-    # push mem onto stack
-    mem
-    # get ascii value to print out
-    swp dup 48 +
-    # write to memory
-    rot swp write
-    # perform write syscall
-    1 mem 1 1 syscall3
-    # increment counter
-    1 +
+def main
+    # print 0-9 using syscalls
+    0 while dup 10 < do
+        # push mem onto stack
+        mem
+        # get ascii value to print out
+        swp dup 48 +
+        # write to memory
+        rot swp write
+        # perform write syscall
+        1 mem 1 1 syscall3
+        # increment counter
+        1 +
+    end
 end

@@ -1,7 +1,9 @@
-34 35 + 67 = if
-    67 dump
-end
+def main
+    34 35 + 67 = if
+        67 dump
+    end
 
-200 220 + 420 = if
-    420 dump
+    200 220 + 420 = if
+        420 dump
+    end
 end

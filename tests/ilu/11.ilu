@@ -1,11 +1,13 @@
-34 35 + 220 200 - > if
-    1 dump
-else
-    0 dump
-end
+def main
+    34 35 + 220 200 - > if
+        1 dump
+    else
+        0 dump
+    end
 
-3 7 * 400 50 / pop < if
-    1 dump
-else
-    0 dump
+    3 7 * 400 50 / pop < if
+        1 dump
+    else
+        0 dump
+    end
 end

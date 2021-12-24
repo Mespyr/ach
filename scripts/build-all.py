@@ -7,7 +7,7 @@ def main(argv):
             print(f"Compiling {f}:")
             if os.system(f"./ilu {argv[1]}{f}") != 0: exit(1)
             print(f"Running {f}:")
-            if os.system(f"./out") != 0: exit(1)
+            if os.system(f"time ./out") != 0: exit(1)
     os.system("./clean.sh")
 
 if __name__ == "__main__":

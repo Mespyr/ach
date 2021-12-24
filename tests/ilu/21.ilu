@@ -1,2 +1,5 @@
-# single char strings
-1 "a" 1 syscall3
+# single char and no-char strings
+def main
+    1 "a" 1 syscall3
+    1 "" 1 syscall3 # pointless
+end

@@ -1,5 +1,7 @@
-10 dup dump dump
-34 35 +
-dup dump
-dup dump
-dup dump
+def main
+    10 dup dump dump
+    34 35 +
+    dup dump
+    dup dump
+    dup dump
+end
