@@ -1,6 +1,8 @@
 # rule110
 # borrowed from https://gitlab.com/tsoding/porth/-/blob/master/examples/rule110.porth
 
+@include "std/io.ilu"
+
 def BOARD_SIZE 100 end
 
 def rule110
@@ -23,15 +25,13 @@ def rule110
 
             1 +
         end
-       
-        # write newline at end of mem
-        mem + BOARD_SIZE + 10 writeb
 
+        pop
+        
         # print line
-        1                 # unsigned int fd 
-        mem BOARD_SIZE +  # const char *buf 
-        BOARD_SIZE 1 +    # size_t count
-        1 syscall3        # write syscall
+        mem BOARD_SIZE +  # mem[BOARD_SIZE -->]
+        BOARD_SIZE        # size of line
+        println
         
         # pattern
         mem readb 1 <<

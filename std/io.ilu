@@ -2,3 +2,10 @@ def puts
     1 rot rot
     1 syscall3
 end
+
+def println
+    over over +  # copy string and string size
+    10 writeb    # write newline to end of string
+    1 +          # increase size by one
+    puts
+end
