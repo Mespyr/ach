@@ -27,8 +27,12 @@ int get_string_end(int column_number, std::string line)
         }
         else column_number++;
     }
+    
+    if (column_number == line.length())
+        return column_number;
 
-    return column_number;
+    // get position '"' was found
+    return column_number++;
 }
 
 std::vector<Token> get_tokens_from_line(std::string line, std::string filename, int line_number)
@@ -40,15 +44,16 @@ std::vector<Token> get_tokens_from_line(std::string line, std::string filename, 
     while (column_number < line.length())
     {
         // check for comments
-        if (line.at(column_number) == '#') return tokens;
+        if (line.at(column_number) == '#') 
+            return tokens;
 
         if (line.at(column_number) == '"')
         {
             // get end position of string
             col_end = get_string_end(column_number, line);
 
-            // check if col_end is before '"' or is end of line
-            if (++col_end == line.length())
+            // check if col_end is at '"' or is at end of line
+            if (col_end == line.length())
             {
                 print_lexing_error(filename, line_number, column_number, col_end, line, "unexpected EOL while tokenizing string");
                 exit(1);
