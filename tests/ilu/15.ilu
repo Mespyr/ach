@@ -1,14 +1,14 @@
 def main
-    mem 65 write
-    mem 1 + 66 write
-    mem 2 + 67 write
-    mem 3 + 10 write
+    mem 65 writeb
+    mem 1 + 66 writeb
+    mem 2 + 67 writeb
+    mem 3 + 10 writeb
 
     1 mem 4 1 syscall3
 
-    mem dup read 1 + write
-    mem 1 + dup read 1 + write 
-    mem 2 + dup read 1 + write
+    mem dup readb 1 + writeb
+    mem 1 + dup readb 1 + writeb
+    mem 2 + dup readb 1 + writeb
 
     1 1 mem 4 syscall3
 end

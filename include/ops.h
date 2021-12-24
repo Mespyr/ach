@@ -28,8 +28,8 @@ enum OpType
     OP_OVER, // [a, b] -> [a, b a]
     // memory
     OP_MEM,
-    OP_READ,
-    OP_WRITE,
+    OP_READB,
+    OP_WRITEB,
     // bitwise
     OP_SHIFT_RIGHT,
     OP_SHIFT_LEFT,

@@ -161,10 +161,10 @@ std::vector<Op> convert_tokens_to_ops(std::vector<Token> tokens, std::map<std::s
         // memory
         else if (tok.value == "mem")
             program.push_back(Op(OP_MEM, tok));
-        else if (tok.value == "read")
-            program.push_back(Op(OP_READ, tok));
-        else if (tok.value == "write")
-            program.push_back(Op(OP_WRITE, tok));
+        else if (tok.value == "readb")
+            program.push_back(Op(OP_READB, tok));
+        else if (tok.value == "writeb")
+            program.push_back(Op(OP_WRITEB, tok));
         
         // bitwise
         else if (tok.value == "<<")

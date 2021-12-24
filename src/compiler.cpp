@@ -198,17 +198,17 @@ void compile_to_asm(std::map<std::string, std::vector<Op>> program, std::string 
             outfile.writeln("\t; OP_MEM");
             outfile.writeln("\tpush mem");
         }
-        else if (op.type == OP_READ)
+        else if (op.type == OP_READB)
         {
-            outfile.writeln("\t; OP_READ");
+            outfile.writeln("\t; OP_READB");
             outfile.writeln("\tpop rax");
             outfile.writeln("\txor rbx, rbx");
             outfile.writeln("\tmov bl, [rax]");
             outfile.writeln("\tpush rbx");
         }
-        else if (op.type == OP_WRITE)
+        else if (op.type == OP_WRITEB)
         {
-            outfile.writeln("\t; OP_WRITE");
+            outfile.writeln("\t; OP_WRITEB");
             outfile.writeln("\tpop rbx");
             outfile.writeln("\tpop rax");
             outfile.writeln("\tmov [rax], bl");

@@ -1,16 +1,16 @@
 def main
     1 mem 2 0 syscall3
 
-    mem read 48 = if
-        mem 121 write
-        mem 1 + 101 write
-        mem 2 + 115 write
-        mem 3 + 10 write
+    mem readb 48 = if
+        mem 121 writeb
+        mem 1 + 101 writeb
+        mem 2 + 115 writeb
+        mem 3 + 10 writeb
         1 mem 4 1 syscall3
     else
-        mem 110 write
-        mem 1 + 111 write
-        mem 2 + 10 write
+        mem 110 writeb
+        mem 1 + 111 writeb
+        mem 2 + 10 writeb
         1 mem 3 1 syscall3
     end
 end

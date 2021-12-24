@@ -18,7 +18,7 @@ int main(int argc, char* argv[])
     if (argc == 1)
     {
         usage(argv[0]);
-        std::cerr << ERROR_COLOR << "ERROR: no file provided for compilation." << RESET_COLOR << std::endl;
+        std::cerr << ERROR_COLOR << "[error] no file provided for compilation." << RESET_COLOR << std::endl;
         exit(1);
     }
 

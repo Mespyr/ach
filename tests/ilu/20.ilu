@@ -1,4 +1,12 @@
 # strings and escape sequences
+
+# expected output
+# Hello World!
+# "femboys are cool" - someone
+# testing having stuff
+#
+# another test\n\last string to print
+
 def main
     1 "Hello World!\n" 1 syscall3
     1 "\"femboys are cool\" - someone\n" 1 syscall3
