@@ -22,7 +22,7 @@ int main(int argc, char* argv[])
         exit(1);
     }
 
-    std::vector<Token> tokens = load_tokens_from_file(argv[1]);
+    std::vector<Token> tokens = tokenize_file(argv[1]);
     std::map<std::string, std::vector<Op>> program = parse_tokens(tokens);
 
     // compile

@@ -2,7 +2,9 @@
 
 std::vector<Op> link_ops(std::vector<Op> ops)
 {
+    // track location of newest block parsed
     std::vector<int> ip_stack;
+
     for (int ip = 0; ip < ops.size(); ip++)
     {
         Op current_op = ops.at(ip);
@@ -20,6 +22,7 @@ std::vector<Op> link_ops(std::vector<Op> ops)
                 print_op_error(current_op, "Unexpected 'do' keyword");
                 exit(1);
             }
+
             int linker_ip = ip_stack.back();
             ip_stack.pop_back();
 
@@ -30,7 +33,6 @@ std::vector<Op> link_ops(std::vector<Op> ops)
             }
 
             current_op.reference_ip = linker_ip;
-
             ops.at(ip) = current_op;
             ip_stack.push_back(ip);
         }
@@ -45,8 +47,8 @@ std::vector<Op> link_ops(std::vector<Op> ops)
 
             int linker_ip = ip_stack.back();
             ip_stack.pop_back();
-
             Op linker_op = ops.at(linker_ip);
+
             if (linker_op.type != OP_IF)
             {
                 print_op_error(current_op, "Unexpected 'else' keyword");
@@ -69,8 +71,8 @@ std::vector<Op> link_ops(std::vector<Op> ops)
 
             int linker_ip = ip_stack.back();
             ip_stack.pop_back();
-
             Op linker_op = ops.at(linker_ip);
+
             if (linker_op.type == OP_IF || linker_op.type == OP_ELSE)
             {
                 current_op.reference_ip = -1;
@@ -78,9 +80,7 @@ std::vector<Op> link_ops(std::vector<Op> ops)
 
                 linker_op.reference_ip = ip;
                 ops.at(linker_ip) = linker_op;
-
             }
-
             else if (linker_op.type == OP_DO)
             {
                 current_op.reference_ip = linker_op.reference_ip;
@@ -89,7 +89,6 @@ std::vector<Op> link_ops(std::vector<Op> ops)
                 linker_op.reference_ip = ip;
                 ops.at(linker_ip) = linker_op;
             }
-
             else
             {
                 print_op_error(current_op, "Unexpected 'end' keyword");
@@ -218,7 +217,7 @@ std::vector<Op> convert_tokens_to_ops(std::vector<Token> tokens, std::map<std::s
 
 std::map<std::string, std::vector<Op>> parse_tokens(std::vector<Token> tokens)
 {
-    std::map<std::string, std::vector<Token>> basic_program;
+    std::map<std::string, std::vector<Token>> program;
     std::vector<Token> function_tokens;
     std::string func_name;
     int i = 0;
@@ -254,7 +253,7 @@ std::map<std::string, std::vector<Op>> parse_tokens(std::vector<Token> tokens)
             recursion_level--;
             if (recursion_level == 0)
             {
-                basic_program.insert({func_name, function_tokens});
+                program.insert({func_name, function_tokens});
                 function_tokens.clear();
                 func_name.clear();
             }
@@ -275,10 +274,10 @@ std::map<std::string, std::vector<Op>> parse_tokens(std::vector<Token> tokens)
         i++;
     }
     
-    std::map<std::string, std::vector<Op>> expanded_program;
+    std::map<std::string, std::vector<Op>> linked_program;
+    // loop through all functions/macros in program and convert their tokens into Ops which are linked to each other
+    for(auto it = program.begin(); it != program.end(); ++it)
+        linked_program.insert({it->first, convert_tokens_to_ops(it->second, program)});
 
-    for(auto it = basic_program.begin(); it != basic_program.end(); ++it)
-        expanded_program.insert({it->first, convert_tokens_to_ops(it->second, basic_program)});
-
-    return expanded_program;
+    return linked_program;
 }

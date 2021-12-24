@@ -7,10 +7,10 @@
 #include <vector>
 #include <string>
 
-int get_next_token_start(int column_number, std::string line);
-int get_token_end(int column_number, std::string line);
-int get_string_end(int column_number, std::string line);
-std::vector<Token> get_tokens_from_line(std::string line, std::string filename, int line_number);
-std::vector<Token> load_tokens_from_file(std::string filename);
+int find_next_token_start_col(int column_number, std::string line);
+int find_token_end_col(int column_number, std::string line);
+int find_string_end_col(int column_number, std::string line);
+std::vector<Token> tokenize_line(std::string line, std::string filename, int line_number);
+std::vector<Token> tokenize_file(std::string filename);
 
 #endif

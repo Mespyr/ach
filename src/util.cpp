@@ -25,7 +25,7 @@ std::string add_escapes_to_string(std::string str)
     std::string ret;
     int i = 0;
 
-    // can't get 2 chars from 1 or 0 char string
+    // can't get 2 chars if string is 1 or 0 chars
     if (str.length() < 2) return str;
 
     while (i < str.length() - 1)
@@ -44,7 +44,7 @@ std::string add_escapes_to_string(std::string str)
         else if (buf == "\\\?") ret.push_back('\?');
         else 
         {
-            // if escape sequence found, shift buffer over by one char to next section
+            // if escape sequence not found, shift buffer over by one char to next section
             ret.push_back(buf.at(0));
             i++;
             continue;
