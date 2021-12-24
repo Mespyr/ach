@@ -1,6 +1,7 @@
 #ifndef ILU_OPS_H
 #define ILU_OPS_H
 
+#include "location.h"
 #include "token.h"
 #include <string>
 
@@ -59,36 +60,25 @@ class Op
 public:
     Op(OpType type, Token token) :
         type(type),
-        file_location(token.file_location), 
-        line(token.line),
-        line_number(token.line_number), 
-        column_number_start(token.column_number_start),
-        column_number_end(token.column_number_end)
+        loc(token.loc)
     {}
 
     Op(OpType type, int push_val, Token token) :
         type(type), 
-        file_location(token.file_location), 
-        line(token.line),
-        line_number(token.line_number), 
-        column_number_start(token.column_number_start),
-        column_number_end(token.column_number_end),
+        loc(token.loc),
         push_int(push_val)
     {}
 
     Op(OpType type, std::string push_val, Token token) :
         type(type), 
-        file_location(token.file_location), 
-        line(token.line),
-        line_number(token.line_number), 
-        column_number_start(token.column_number_start),
-        column_number_end(token.column_number_end),
+        loc(token.loc),
         push_str(push_val)
     {}
 
     OpType type;
-    int push_int, reference_ip, line_number, column_number_start, column_number_end;
-    std::string file_location, line, push_str;
+    Location loc;
+    int push_int, reference_ip;
+    std::string push_str;
 };
 
 #endif
