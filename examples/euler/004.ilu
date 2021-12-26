@@ -1,0 +1,32 @@
+@include "std/math.ilu"
+
+def is_palindrome
+    dup 0 while over 0 > do
+        10 *
+        over 10 modulo +
+        swp 10 div swp
+    end
+    swp pop
+
+    over =
+end
+
+def main
+    0 100 while dup 1000 < do
+        100 while dup 1000 < do
+            over over *
+            
+            is_palindrome if
+                dup mem read64 > if
+                    mem swp write64
+                else pop end
+            else pop end
+
+            1 +
+        end pop
+        1 +
+    end pop
+
+    mem read64
+    dump
+end

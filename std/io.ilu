@@ -5,7 +5,7 @@ end
 
 def println
     over over +  # copy string and string size
-    10 writeb    # write newline to end of string
-    1 +          # increase size by one
+    10 write8    # write newline to end of string
+    1 +          # increase buffer size by one
     puts
 end

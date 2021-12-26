@@ -28,8 +28,14 @@ enum OpType
     OP_OVER, // [a, b] -> [a, b a]
     // memory
     OP_MEM,
-    OP_READB,
-    OP_WRITEB,
+    OP_READ8,
+    OP_WRITE8,
+    OP_READ16,
+    OP_WRITE16,
+    OP_READ32,
+    OP_WRITE32,
+    OP_READ64,
+    OP_WRITE64,
     // bitwise
     OP_SHIFT_RIGHT,
     OP_SHIFT_LEFT,
@@ -63,7 +69,7 @@ public:
         loc(token.loc)
     {}
 
-    Op(OpType type, int push_val, Token token) :
+    Op(OpType type, long long push_val, Token token) :
         type(type), 
         loc(token.loc),
         push_int(push_val)
@@ -77,7 +83,8 @@ public:
 
     OpType type;
     Location loc;
-    int push_int, reference_ip;
+    int reference_ip;
+    long long push_int;
     std::string push_str;
 };
 

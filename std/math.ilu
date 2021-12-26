@@ -1,0 +1,7 @@
+def modulo
+    / swp pop
+end
+
+def div
+    / pop
+end

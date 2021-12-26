@@ -161,11 +161,23 @@ std::vector<Op> convert_tokens_to_ops(std::vector<Token> tokens, std::map<std::s
         // memory
         else if (tok.value == "mem")
             program.push_back(Op(OP_MEM, tok));
-        else if (tok.value == "readb")
-            program.push_back(Op(OP_READB, tok));
-        else if (tok.value == "writeb")
-            program.push_back(Op(OP_WRITEB, tok));
-        
+        else if (tok.value == "read8")
+            program.push_back(Op(OP_READ8, tok));
+        else if (tok.value == "write8")
+            program.push_back(Op(OP_WRITE8, tok));
+        else if (tok.value == "read16")
+            program.push_back(Op(OP_READ16, tok));
+        else if (tok.value == "write16")
+            program.push_back(Op(OP_WRITE16, tok));
+        else if (tok.value == "read32")
+            program.push_back(Op(OP_READ32, tok));
+        else if (tok.value == "write32")
+            program.push_back(Op(OP_WRITE32, tok));
+        else if (tok.value == "read64")
+            program.push_back(Op(OP_READ64, tok));
+        else if (tok.value == "write64")
+            program.push_back(Op(OP_WRITE64, tok));
+       
         // bitwise
         else if (tok.value == "<<")
             program.push_back(Op(OP_SHIFT_LEFT, tok));
@@ -214,7 +226,7 @@ std::vector<Op> convert_tokens_to_ops(std::vector<Token> tokens, std::map<std::s
 
         // push
         else if (is_number(tok.value))
-            program.push_back(Op(OP_PUSH_INT, atoi(tok.value.c_str()), tok));
+            program.push_back(Op(OP_PUSH_INT, atol(tok.value.c_str()), tok));
         else if (is_string(tok.value))
             program.push_back(Op(OP_PUSH_STR, tok.value, tok));
 

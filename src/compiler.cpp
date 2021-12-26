@@ -198,22 +198,68 @@ void compile_to_asm(std::map<std::string, std::vector<Op>> program, std::string 
             outfile.writeln("\t; OP_MEM");
             outfile.writeln("\tpush mem");
         }
-        else if (op.type == OP_READB)
+        else if (op.type == OP_READ8)
         {
-            outfile.writeln("\t; OP_READB");
+            outfile.writeln("\t; OP_READ8");
             outfile.writeln("\tpop rax");
             outfile.writeln("\txor rbx, rbx");
             outfile.writeln("\tmov bl, [rax]");
             outfile.writeln("\tpush rbx");
         }
-        else if (op.type == OP_WRITEB)
+        else if (op.type == OP_WRITE8)
         {
-            outfile.writeln("\t; OP_WRITEB");
+            outfile.writeln("\t; OP_WRITE8");
             outfile.writeln("\tpop rbx");
             outfile.writeln("\tpop rax");
             outfile.writeln("\tmov [rax], bl");
         }
-        
+        else if (op.type == OP_READ16)
+        {
+            outfile.writeln("\t; OP_READ16");
+            outfile.writeln("\tpop rax");
+            outfile.writeln("\txor rbx, rbx");
+            outfile.writeln("\tmov bx, [rax]");
+            outfile.writeln("\tpush rbx");
+        }
+        else if (op.type == OP_WRITE16)
+        {
+            outfile.writeln("\t; OP_WRITE16");
+            outfile.writeln("\tpop rbx");
+            outfile.writeln("\tpop rax");
+            outfile.writeln("\tmov [rax], bx");
+        }
+        else if (op.type == OP_READ32)
+        {
+            outfile.writeln("\t; OP_READ32");
+            outfile.writeln("\tpop rax");
+            outfile.writeln("\txor rbx, rbx");
+            outfile.writeln("\tmov ebx, [rax]");
+            outfile.writeln("\tpush rbx");
+        }
+        else if (op.type == OP_WRITE32)
+        {
+            outfile.writeln("\t; OP_WRITE32");
+            outfile.writeln("\tpop rbx");
+            outfile.writeln("\tpop rax");
+            outfile.writeln("\tmov [rax], ebx");
+        }
+
+        else if (op.type == OP_READ64)
+        {
+            outfile.writeln("\t; OP_READ64");
+            outfile.writeln("\tpop rax");
+            outfile.writeln("\txor rbx, rbx");
+            outfile.writeln("\tmov rbx, [rax]");
+            outfile.writeln("\tpush rbx");
+        }
+        else if (op.type == OP_WRITE64)
+        {
+            outfile.writeln("\t; OP_WRITE64");
+            outfile.writeln("\tpop rbx");
+            outfile.writeln("\tpop rax");
+            outfile.writeln("\tmov [rax], rbx");
+        }
+
         // bitwise
         else if (op.type == OP_SHIFT_LEFT)
         {
@@ -345,7 +391,8 @@ void compile_to_asm(std::map<std::string, std::vector<Op>> program, std::string 
         else if (op.type == OP_PUSH_INT)
         {
             outfile.writeln("\t; OP_PUSH_INT");
-            outfile.writeln("\tpush " + std::to_string(op.push_int));
+            outfile.writeln("\tmov rax, " + std::to_string(op.push_int));
+            outfile.writeln("\tpush rax");
         }
         else if (op.type == OP_PUSH_STR)
         {
