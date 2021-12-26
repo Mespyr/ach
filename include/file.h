@@ -20,6 +20,7 @@ public:
 
     void writeln(std::string buf);
     std::string read();
+    bool exists();
 private:
     std::fstream file;
 };

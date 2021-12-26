@@ -1,0 +1,4 @@
+@include "tests/ilu/test_lib/main.ilu"
+
+def ovr2 over over end
+def rot2 rot rot end

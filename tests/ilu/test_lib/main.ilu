@@ -1,0 +1,7 @@
+@include "std/math.ilu"
+@include "tests/ilu/test_lib/util.ilu"
+
+def add_div
+    ovr2 +
+    rot2 div +
+end

@@ -6,12 +6,7 @@ File::File(std::string filename, MODE mode)
         file.open(filename, std::ios::out);
     else file.open(filename, std::ios::in);
 
-    if (!file)
-    {
-        std::cerr << ERROR_COLOR << "[error] can't open file '" << filename << "'" << RESET_COLOR << std::endl;
-        exit(1);
     }
-}
 
 File::~File()
 {
@@ -32,3 +27,11 @@ std::string File::read()
 
     return contents;
 }
+
+bool File::exists()
+{
+    if (!file)
+        return false;
+    return true;
+}
+

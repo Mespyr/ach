@@ -215,11 +215,11 @@ std::vector<Op> convert_tokens_to_ops(std::vector<Token> tokens, std::map<std::s
             program.push_back(Op(OP_END, tok));
         else if (basic_program.count(tok.value))
         {
-            std::vector<Token> macrofn = basic_program.at(tok.value);
-            // erase macro/function call
+            std::vector<Token> function_toks = basic_program.at(tok.value);
+            // erase function call from token stream
             tokens.erase(tokens.begin() + i);
 
-            tokens.insert(tokens.begin() + i, macrofn.begin(), macrofn.end());
+            tokens.insert(tokens.begin() + i, function_toks.begin(), function_toks.end());
             // dec idx so we can reread token at index
             i--;
         }
@@ -244,6 +244,7 @@ std::map<std::string, std::vector<Op>> parse_tokens(std::vector<Token> tokens)
 {
     std::map<std::string, std::vector<Token>> program;
     std::vector<Token> function_tokens;
+    std::vector<std::string> include_paths;
     std::string func_name;
     int i = 0;
     int recursion_level = 0;
@@ -255,7 +256,7 @@ std::map<std::string, std::vector<Op>> parse_tokens(std::vector<Token> tokens)
         if (tok.value == "def")
         {
             i++;
-            // if inside function/macro already
+            // if inside function already
             if (recursion_level > 0 || i >= tokens.size() - 1) 
             {
                 print_token_error(tok, "Unexpected 'def' keyword found while parsing");
@@ -297,9 +298,22 @@ std::map<std::string, std::vector<Op>> parse_tokens(std::vector<Token> tokens)
                 print_token_error(include_file_token, "Was expecting token of type string after @include statement");
                 exit(1);
             }
-            
-            std::vector<Token> include_file_tokens = tokenize_file(include_file_token.value.substr(1,include_file_token.value.length() - 2));
-            tokens.insert(tokens.end(), include_file_tokens.begin(), include_file_tokens.end());
+
+            std::string file_path = include_file_token.value.substr(1,include_file_token.value.length() - 2);
+            File file(file_path, MODE_READ);
+
+            if (!file.exists())
+            {
+                print_token_error(include_file_token, "No such file or directory, '" + file_path + "'");
+                exit(1);
+            }
+
+            if (std::find(include_paths.begin(), include_paths.end(), file_path) == include_paths.end())
+            {
+                std::vector<Token> include_file_tokens = tokenize_file(file_path);
+                tokens.insert(tokens.end(), include_file_tokens.begin(), include_file_tokens.end());
+                include_paths.push_back(file_path);
+            }
         }
 
         else if (tok.value == "end")
@@ -336,7 +350,7 @@ std::map<std::string, std::vector<Op>> parse_tokens(std::vector<Token> tokens)
     
     std::map<std::string, std::vector<Op>> linked_program;
 
-    // loop through all functions/macros in program and convert their tokens into Ops which are linked to each other
+    // loop through all functions in program and convert their tokens into Ops which are linked to each other
     for(auto it = program.begin(); it != program.end(); ++it)
         linked_program.insert({it->first, convert_tokens_to_ops(it->second, program)});
 

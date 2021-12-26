@@ -6,10 +6,12 @@
 #include "token.h"
 #include "error.h"
 #include "lexer.h"
+#include "file.h"
 #include <vector>
 #include <string>
 #include <iostream>
 #include <map>
+#include <algorithm>
 
 std::map<std::string, std::vector<Op>> parse_tokens(std::vector<Token> tokens);
 std::vector<Op> convert_tokens_to_ops(std::vector<Token> tokens, std::map<std::string, std::vector<Token>> basic_program);

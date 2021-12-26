@@ -7,20 +7,20 @@ def BOARD_SIZE 100 end
 
 def rule110
     mem BOARD_SIZE 2 - +  # mem[BOARD_SIZE - 2]
-    1 writeb              # mem[BOARD_SIZE - 2] = 1
+    1 write8              # mem[BOARD_SIZE - 2] = 1
 
     0 while dup BOARD_SIZE 2 - < do
         # write line into mem
         0 while dup BOARD_SIZE < do
             # check if mem[idx] is 0 or 1
-            dup mem + readb if
+            dup mem + read8 if
                 # write '*' if mem[i] == 1
                 dup mem + BOARD_SIZE +  # mem[i + BOARD_SIZE]
-                42 writeb               # mem[i + BOARD_SIZE] = 42
+                42 write8               # mem[i + BOARD_SIZE] = 42
             else
                 # write ' '  if mem[i] == 0
                 dup mem + BOARD_SIZE +  # mem[i + BOARD_SIZE]
-                32 writeb               # mem[i + BOARD_SIZE] = 32
+                32 write8               # mem[i + BOARD_SIZE] = 32
             end
 
             1 +
@@ -34,17 +34,17 @@ def rule110
         println
         
         # pattern
-        mem readb 1 <<
-        mem 1 + readb
+        mem read8 1 <<
+        mem 1 + read8
         orb
 
         1 while dup BOARD_SIZE 1 - < do
             # new pattern
             swp 1 << 7 andb over
-            mem + 1 + readb orb
+            mem + 1 + read8 orb
 
             over over 110 swp >> 1 andb
-            swp mem + swp writeb
+            swp mem + swp write8
             swp
 
             1 +
