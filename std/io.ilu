@@ -1,11 +1,11 @@
 def puts
-    1 rot rot
+    1 rot rot swp
     1 syscall3
 end
 
 def println
-    over over +  # copy string and string size
+    over over swp +  # copy string and string size
     10 write8    # write newline to end of string
-    1 +          # increase buffer size by one
-    puts
+    swp 1 +          # increase buffer size by one
+    swp puts
 end

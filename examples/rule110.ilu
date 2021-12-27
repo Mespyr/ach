@@ -29,8 +29,8 @@ def rule110
         pop
         
         # print line
-        mem BOARD_SIZE +  # mem[BOARD_SIZE -->]
         BOARD_SIZE        # size of line
+        mem BOARD_SIZE +  # mem[BOARD_SIZE -->]
         println
         
         # pattern

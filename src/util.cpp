@@ -42,6 +42,7 @@ std::string add_escapes_to_string(std::string str)
         else if (buf == "\\'")  ret.push_back('\'');
         else if (buf == "\\\"") ret.push_back('\"');
         else if (buf == "\\\?") ret.push_back('\?');
+        else if (buf == "\\0")  ret.push_back('\0');
         else 
         {
             // if escape sequence not found, shift buffer over by one char to next section

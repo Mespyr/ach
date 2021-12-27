@@ -150,6 +150,40 @@ void compile_to_asm(std::map<std::string, std::vector<Op>> program, std::string 
             outfile.writeln("\tcmovle rcx, rdx");
             outfile.writeln("\tpush rcx");
         }
+        else if (op.type == OP_NOT_EQ)
+        {
+            outfile.writeln("\t; OP_NOT_EQ");
+            outfile.writeln("\tmov rcx, 0");
+            outfile.writeln("\tmov rdx, 1");
+            outfile.writeln("\tpop rbx");
+            outfile.writeln("\tpop rax");
+            outfile.writeln("\tcmp rax, rbx");
+            outfile.writeln("\tcmovne rcx, rdx");
+            outfile.writeln("\tpush rcx");
+        }
+        else if (op.type == OP_NOT)
+        {
+            outfile.writeln("\t; OP_NOT");
+            outfile.writeln("\tpop rax");
+            outfile.writeln("\tnot rax");
+            outfile.writeln("\tpush rax");
+        }
+        else if (op.type == OP_AND)
+        {
+            outfile.writeln("\t; OP_AND");
+            outfile.writeln("\tpop rax");
+            outfile.writeln("\tpop rbx");
+            outfile.writeln("\tand rbx, rax");
+            outfile.writeln("\tpush rbx");
+        }
+        else if (op.type == OP_OR)
+        {
+            outfile.writeln("\t; OP_OR");
+            outfile.writeln("\tpop rax");
+            outfile.writeln("\tpop rbx");
+            outfile.writeln("\tor rbx, rax");
+            outfile.writeln("\tpush rbx");
+        }
         
         // stack manipulation
         else if (op.type == OP_POP)
@@ -243,7 +277,6 @@ void compile_to_asm(std::map<std::string, std::vector<Op>> program, std::string 
             outfile.writeln("\tpop rax");
             outfile.writeln("\tmov [rax], ebx");
         }
-
         else if (op.type == OP_READ64)
         {
             outfile.writeln("\t; OP_READ64");
@@ -396,12 +429,12 @@ void compile_to_asm(std::map<std::string, std::vector<Op>> program, std::string 
         }
         else if (op.type == OP_PUSH_STR)
         {
-            std::string pstr = add_escapes_to_string(op.push_str.substr(1, op.push_str.length() - 2));
+            std::string pstr = add_escapes_to_string(op.push_str.substr(1, op.push_str.length() - 1));
             strings.push_back(pstr);
             outfile.writeln("\t; OP_PUSH_STR");
             outfile.writeln("\tmov rax, " + std::to_string(pstr.length()));
-            outfile.writeln("\tpush str_" + std::to_string(strings.size()));
             outfile.writeln("\tpush rax");
+            outfile.writeln("\tpush str_" + std::to_string(strings.size()));
         }
     }
     

@@ -1,0 +1,6 @@
+def strlen
+    0 swp while dup read8 0 != do
+        1 + swp
+        1 + swp
+    end pop
+end

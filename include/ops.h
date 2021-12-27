@@ -20,6 +20,10 @@ enum OpType
     OP_LESS,
     OP_GREATER_EQ,
     OP_LESS_EQ,
+    OP_NOT_EQ,
+    OP_NOT,
+    OP_AND,
+    OP_OR,
     // stack manipulation
     OP_POP, 
     OP_DUP,  // [a] -> [a, a]

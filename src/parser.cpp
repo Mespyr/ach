@@ -145,6 +145,14 @@ std::vector<Op> convert_tokens_to_ops(std::vector<Token> tokens, std::map<std::s
             program.push_back(Op(OP_GREATER_EQ, tok));
         else if (tok.value == "<=")
             program.push_back(Op(OP_LESS_EQ, tok));
+        else if (tok.value == "!=")
+            program.push_back(Op(OP_NOT_EQ, tok));
+        else if (tok.value == "not")
+            program.push_back(Op(OP_NOT, tok));
+        else if (tok.value == "and")
+            program.push_back(Op(OP_AND, tok));
+        else if (tok.value == "or")
+            program.push_back(Op(OP_OR, tok));
         
         // stack manipulation
         else if (tok.value == "pop")

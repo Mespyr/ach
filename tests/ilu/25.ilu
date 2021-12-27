@@ -1,0 +1,11 @@
+# print argv
+@include "std/io.ilu"
+@include "std/string.ilu"
+
+def main
+    pop
+    while dup 0 > do
+        dup strlen
+        swp println
+    end
+end
