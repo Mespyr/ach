@@ -185,7 +185,13 @@ std::vector<Op> convert_tokens_to_ops(std::vector<Token> tokens, std::map<std::s
             program.push_back(Op(OP_READ64, tok));
         else if (tok.value == "write64")
             program.push_back(Op(OP_WRITE64, tok));
-       
+
+        // argv
+        else if (tok.value == "argv")
+            program.push_back(Op(OP_ARGV, tok));
+        else if (tok.value == "argc")
+            program.push_back(Op(OP_ARGC, tok));
+
         // bitwise
         else if (tok.value == "<<")
             program.push_back(Op(OP_SHIFT_LEFT, tok));

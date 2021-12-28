@@ -3,9 +3,12 @@
 @include "std/string.ilu"
 
 def main
-    pop
+    argv argc
     while dup 0 > do
-        dup strlen
-        swp println
+        over read64     # get value in argv
+        dup strlen swp  # get length of value
+        println
+        1 -             # decrement argc
+        swp 8 + swp     # point to next value in argv
     end
 end

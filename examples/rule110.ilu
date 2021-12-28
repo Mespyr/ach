@@ -29,7 +29,7 @@ def rule110
         pop
         
         # print line
-        BOARD_SIZE        # size of line
+        BOARD_SIZE        # line length
         mem BOARD_SIZE +  # mem[BOARD_SIZE -->]
         println
         

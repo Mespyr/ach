@@ -40,6 +40,9 @@ enum OpType
     OP_WRITE32,
     OP_READ64,
     OP_WRITE64,
+    // argv
+    OP_ARGV,
+    OP_ARGC,
     // bitwise
     OP_SHIFT_RIGHT,
     OP_SHIFT_LEFT,

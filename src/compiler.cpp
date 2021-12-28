@@ -42,6 +42,7 @@ void compile_to_asm(std::map<std::string, std::vector<Op>> program, std::string 
     outfile.writeln("\tadd rsp, 40");
     outfile.writeln("\tret");
     outfile.writeln("_start:");
+    outfile.writeln("\tmov [args_ptr], rsp");
 
     std::vector<std::string> strings;
     std::vector<Op> mainfn = program.at("main");
@@ -293,6 +294,22 @@ void compile_to_asm(std::map<std::string, std::vector<Op>> program, std::string 
             outfile.writeln("\tmov [rax], rbx");
         }
 
+        // argv
+        else if (op.type == OP_ARGV)
+        {
+            outfile.writeln("\t; OP_ARGV");
+            outfile.writeln("\tmov rax, [args_ptr]");
+            outfile.writeln("\tadd rax, 8");
+            outfile.writeln("\tpush rax");
+        }
+        else if (op.type == OP_ARGC)
+        {
+            outfile.writeln("\t; OP_ARGC");
+            outfile.writeln("\tmov rax, [args_ptr]");
+            outfile.writeln("\tmov rax, [rax]");
+            outfile.writeln("\tpush rax");
+        }
+
         // bitwise
         else if (op.type == OP_SHIFT_LEFT)
         {
@@ -458,5 +475,6 @@ void compile_to_asm(std::map<std::string, std::vector<Op>> program, std::string 
 
     // bss section
     outfile.writeln("section .bss");
-    outfile.writeln("mem: resb 640000");
+    outfile.writeln("args_ptr: resq 1");
+    outfile.writeln("mem:      resb 640000");
 }

@@ -4,8 +4,8 @@ def puts
 end
 
 def println
-    over over swp +  # copy string and string size
+    over over +  # point to end of string
     10 write8    # write newline to end of string
-    swp 1 +          # increase buffer size by one
+    swp 1 +      # inc string length
     swp puts
 end

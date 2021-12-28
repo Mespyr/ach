@@ -1,0 +1,7 @@
+@include "std/string.ilu"
+
+def main
+    "Hello World!" strlen
+    dump # length of string by strlen function
+    dump # length of string provided by
+end
