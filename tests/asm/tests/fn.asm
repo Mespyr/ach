@@ -1,13 +1,6 @@
 section .text
 global _start
 
-_start:
-    call func
-    
-    mov rax, 60
-    mov rdi, 0
-    syscall
-
 func:
     push 66
     mov     rax, 1    ; sys_write call number 
@@ -17,3 +10,15 @@ func:
     syscall
     add rsp, 8
     ret
+
+_start:
+    call func
+    call func
+    call func
+    call func
+    
+    mov rax, 60
+    mov rdi, 0
+    syscall
+
+

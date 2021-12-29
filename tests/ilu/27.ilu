@@ -1,0 +1,10 @@
+# recursive functions
+
+def p69
+    34 35 + dump
+    p69
+end
+
+def main
+    p69
+end

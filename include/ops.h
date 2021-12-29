@@ -63,9 +63,10 @@ enum OpType
     OP_IF,
     OP_ELSE,
     OP_END,
-    // push values
+    // other
     OP_PUSH_INT,
     OP_PUSH_STR,
+    OP_FUNCTION_CALL
 };
     
 class Op

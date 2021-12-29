@@ -227,22 +227,14 @@ std::vector<Op> convert_tokens_to_ops(std::vector<Token> tokens, std::map<std::s
             program.push_back(Op(OP_ELSE, tok));
         else if (tok.value == "end")
             program.push_back(Op(OP_END, tok));
-        else if (basic_program.count(tok.value))
-        {
-            std::vector<Token> function_toks = basic_program.at(tok.value);
-            // erase function call from token stream
-            tokens.erase(tokens.begin() + i);
-
-            tokens.insert(tokens.begin() + i, function_toks.begin(), function_toks.end());
-            // dec idx so we can reread token at index
-            i--;
-        }
-
-        // push
+        
+        // other
         else if (is_number(tok.value))
             program.push_back(Op(OP_PUSH_INT, atol(tok.value.c_str()), tok));
         else if (is_string(tok.value))
             program.push_back(Op(OP_PUSH_STR, tok.value, tok));
+        else if (basic_program.count(tok.value))
+            program.push_back(Op(OP_FUNCTION_CALL, tok.value, tok));
 
         else
         {
