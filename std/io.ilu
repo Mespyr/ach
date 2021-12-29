@@ -2,10 +2,3 @@ def puts
     1 rot rot swp
     1 syscall3
 end
-
-def println
-    over over +  # point to end of string
-    10 write8    # write newline to end of string
-    swp 1 +      # inc string length
-    swp puts
-end

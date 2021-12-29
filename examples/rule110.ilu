@@ -28,11 +28,15 @@ def rule110
 
         pop
         
+        # push \n to end of mem
+        mem BOARD_SIZE 2 * +
+        10 write8
+    
         # print line
-        BOARD_SIZE        # line length
-        mem BOARD_SIZE +  # mem[BOARD_SIZE -->]
-        println
-        
+        BOARD_SIZE 1 +
+        mem BOARD_SIZE +
+        puts
+
         # pattern
         mem read8 1 <<
         mem 1 + read8
