@@ -1,0 +1,9 @@
+@include "std/io.ilu"
+@include "std/string.ilu"
+
+def main
+    argv argc 8 * 8 - +  # point at last value in argv
+    read64
+    dup strlen           # get length of value
+    swp println
+end

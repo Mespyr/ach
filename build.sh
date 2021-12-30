@@ -10,4 +10,4 @@ do
 done
 
 set -xe
-g++ $SOURCES -o $EXEC $@
+g++ $SOURCES -o $EXEC -Wall -Wextra -pedantic $@

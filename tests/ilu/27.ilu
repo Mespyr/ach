@@ -2,7 +2,7 @@
 
 def p69
     34 35 + dump
-    p69
+    #p69
 end
 
 def main

@@ -3,9 +3,9 @@
 std::vector<Op> link_ops(std::vector<Op> ops)
 {
     // track location of newest block parsed
-    std::vector<int> ip_stack;
+    std::vector<long unsigned int> ip_stack;
 
-    for (int ip = 0; ip < ops.size(); ip++)
+    for (long unsigned int ip = 0; ip < ops.size(); ip++)
     {
         Op current_op = ops.at(ip);
         
@@ -23,7 +23,7 @@ std::vector<Op> link_ops(std::vector<Op> ops)
                 exit(1);
             }
             
-            int linker_ip = ip_stack.back();
+            long unsigned int linker_ip = ip_stack.back();
             ip_stack.pop_back();
 
             if (ops.at(linker_ip).type != OP_WHILE)
@@ -48,7 +48,7 @@ std::vector<Op> link_ops(std::vector<Op> ops)
                 exit(1);
             }
 
-            int linker_ip = ip_stack.back();
+            long unsigned int linker_ip = ip_stack.back();
             ip_stack.pop_back();
 
             // get 'if' op from ops
@@ -76,7 +76,7 @@ std::vector<Op> link_ops(std::vector<Op> ops)
                 exit(1);
             }
 
-            int linker_ip = ip_stack.back();
+            long unsigned int linker_ip = ip_stack.back();
             ip_stack.pop_back();
 
             // get op at ip on top of stack
@@ -117,7 +117,7 @@ std::vector<Op> convert_tokens_to_ops(std::vector<Token> tokens, std::map<std::s
 {
     std::vector<Op> program;
 
-    for (int i = 0; i < tokens.size(); i++)
+    for (long unsigned int i = 0; i < tokens.size(); i++)
     {
         Token tok = tokens.at(i);
         // debugging
@@ -252,7 +252,7 @@ std::map<std::string, std::vector<Op>> parse_tokens(std::vector<Token> tokens)
     std::vector<Token> function_tokens;
     std::vector<std::string> include_paths;
     std::string func_name;
-    int i = 0;
+    long unsigned int i = 0;
     int recursion_level = 0;
 
     while (i < tokens.size())

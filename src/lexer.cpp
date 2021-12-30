@@ -1,6 +1,6 @@
 #include "../include/lexer.h"
 
-int find_next_token_start_col(int column_number, std::string line)
+long unsigned int find_next_token_start_col(long unsigned int column_number, std::string line)
 {
     while (column_number < line.length() && std::isspace(line.at(column_number)) && line.at(column_number) != '#')
         column_number++;
@@ -8,7 +8,7 @@ int find_next_token_start_col(int column_number, std::string line)
     return column_number;
 }
 
-int find_token_end_col(int column_number, std::string line)
+long unsigned int find_token_end_col(long unsigned int column_number, std::string line)
 {
     while (column_number < line.length() && !std::isspace(line.at(column_number)) && line.at(column_number) != '#')
         column_number++;
@@ -16,7 +16,7 @@ int find_token_end_col(int column_number, std::string line)
     return column_number;
 }
 
-int find_string_end_col(int column_number, std::string line)
+long unsigned int find_string_end_col(long unsigned int column_number, std::string line)
 {
     // start column_number after first quote
     column_number++;
@@ -34,13 +34,13 @@ int find_string_end_col(int column_number, std::string line)
     return column_number;
 }
 
-std::vector<Token> tokenize_line(std::string line, std::string file_location, int line_number)
+std::vector<Token> tokenize_line(std::string line, std::string file_location, long unsigned int line_number)
 {
     std::vector<Token> tokens;
 
     // get starting position of first token
-    int column_number_start = find_next_token_start_col(0, line);
-    int column_number_end;
+    long unsigned int column_number_start = find_next_token_start_col(0, line);
+    long unsigned int column_number_end;
 
     while (column_number_start < line.length())
     {
@@ -95,7 +95,7 @@ std::vector<Token> tokenize_file(std::string file_location)
     }
 
     std::vector<Token> tokens;
-    int line_number = 0;
+    long unsigned int line_number = 0;
     std::string line;
 
     while (file)

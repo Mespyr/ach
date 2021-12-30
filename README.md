@@ -14,7 +14,7 @@ Hello World!
 @include "std/io.ilu"
 
 def main
-    "Hello World!\n" puts
+    "Hello World!" println
 end
 ```
 

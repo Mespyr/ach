@@ -1,4 +1,4 @@
-# print argv
+# print argv and length
 @include "std/io.ilu"
 @include "std/string.ilu"
 
@@ -7,7 +7,10 @@ def main
     while dup 0 > do
         over read64     # get value in argv
         dup strlen swp  # get length of value
-        println
+        over 
+        swp puts 
+        " " puts
+        dump
         1 -             # decrement argc
         swp 8 + swp     # point to next value in argv
     end

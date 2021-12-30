@@ -5,6 +5,7 @@ void compile_to_asm(std::map<std::string, std::vector<Op>> program, std::string 
     File outfile(output_filename, MODE_WRITE);
 
     // write boilerplate into file
+    outfile.writeln("BITS 64");
     outfile.writeln("section .text");
     outfile.writeln("global _start");
     outfile.writeln("dump:");
@@ -62,7 +63,7 @@ void compile_to_asm(std::map<std::string, std::vector<Op>> program, std::string 
             outfile.writeln("\tmov rsp, rax");
         }
 
-        for (int ip = 0; ip < function.size(); ip++)
+        for (long unsigned int ip = 0; ip < function.size(); ip++)
         {
             Op op = function.at(ip);
             
@@ -466,7 +467,7 @@ void compile_to_asm(std::map<std::string, std::vector<Op>> program, std::string 
                 outfile.writeln("\t; OP_PUSH_STR");
                 outfile.writeln("\tmov rax, " + std::to_string(pstr.length()));
                 outfile.writeln("\tpush rax");
-                outfile.writeln("\tpush str_" + std::to_string(strings.size()));
+                outfile.writeln("\tpush str_" + std::to_string(strings.size()-1));
             }
             else if (op.type == OP_FUNCTION_CALL)
             {
@@ -478,6 +479,7 @@ void compile_to_asm(std::map<std::string, std::vector<Op>> program, std::string 
                 outfile.writeln("\tmov rsp, rax");
             }
         }
+
         if (func_name == "main")
         {
             // exit syscall at end of main function
@@ -498,14 +500,14 @@ void compile_to_asm(std::map<std::string, std::vector<Op>> program, std::string 
 
     // data section
     outfile.writeln("section .data");
-    for (int i = 0; i < strings.size(); i++)
+    for (long unsigned int i = 0; i < strings.size(); i++)
     {
         std::stringstream ss;
 
         for (char c : strings.at(i))
             ss << "0x" << std::hex << (int) c << ",";
-
-        outfile.writeln("str_" + std::to_string(i+1) + ": db " + ss.str());
+        ss << "0x0";
+        outfile.writeln("str_" + std::to_string(i) + ": db " + ss.str());
     }
 
     // bss section

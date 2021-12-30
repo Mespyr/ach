@@ -14,7 +14,7 @@ public:
         file_location(file_location)
     {};
 
-    int line_number, column_number_start, column_number_end;
+    long unsigned int line_number, column_number_start, column_number_end;
     std::string line, file_location;
 };
 

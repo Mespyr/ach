@@ -23,7 +23,7 @@ std::string add_escapes_to_string(std::string str)
 {
     std::string buf;
     std::string ret;
-    int i = 0;
+    long unsigned int i = 0;
 
     // can't get 2 chars if string is 1 or 0 chars
     if (str.length() < 2) return str;

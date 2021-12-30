@@ -5,3 +5,13 @@ end
 def div
     / pop
 end
+
+def power
+    # a^b if [... a, b ]
+    1 while over 0 > do
+        rot swp over * # multipky a with itself
+        rot 1 -        # decrement b
+        swp
+    end
+    rot rot pop pop    # get rid of a and b
+end
