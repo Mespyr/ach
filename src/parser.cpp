@@ -232,7 +232,7 @@ std::vector<Op> convert_tokens_to_ops(std::vector<Token> tokens, std::map<std::s
         else if (is_number(tok.value))
             program.push_back(Op(OP_PUSH_INT, atol(tok.value.c_str()), tok));
         else if (is_string(tok.value))
-            program.push_back(Op(OP_PUSH_STR, tok.value, tok));
+            program.push_back(Op(OP_PUSH_STR, add_escapes_to_string(tok.value.substr(1, tok.value.length() - 2)), tok));
         else if (basic_program.count(tok.value))
             program.push_back(Op(OP_FUNCTION_CALL, tok.value, tok));
 
