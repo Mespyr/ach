@@ -1,4 +1,5 @@
 #include "../include/util.h"
+#include <iostream>
 
 bool is_number(std::string n)
 {
@@ -28,9 +29,10 @@ std::string add_escapes_to_string(std::string str)
     // can't get 2 chars if string is 1 or 0 chars
     if (str.length() < 2) return str;
 
-    while (i < str.length() - 1)
+    while (i < str.length())
     {
         buf = str.substr(i, 2);
+
         if (buf == "\\a")       ret.push_back('\a');
         else if (buf == "\\b")  ret.push_back('\b');
         else if (buf == "\\f")  ret.push_back('\f');

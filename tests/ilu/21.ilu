@@ -1,5 +1,5 @@
 # single char and no-char strings
 def main
     1 "a" swp 1 syscall3
-    1 ""  swp 1 syscall3 # shoud get warning from nasm
+    1 ""  swp 1 syscall3
 end

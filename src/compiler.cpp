@@ -462,7 +462,7 @@ void compile_to_asm(std::map<std::string, std::vector<Op>> program, std::string 
             }
             else if (op.type == OP_PUSH_STR)
             {
-                std::string pstr = add_escapes_to_string(op.push_str.substr(1, op.push_str.length() - 1));
+                std::string pstr = add_escapes_to_string(op.push_str.substr(1, op.push_str.length() - 2));
                 strings.push_back(pstr);
                 outfile.writeln("\t; OP_PUSH_STR");
                 outfile.writeln("\tmov rax, " + std::to_string(pstr.length()));
@@ -505,8 +505,8 @@ void compile_to_asm(std::map<std::string, std::vector<Op>> program, std::string 
         std::stringstream ss;
 
         for (char c : strings.at(i))
-            ss << "0x" << std::hex << (int) c << ",";
-        ss << "0x0";
+            ss << (int) c << ",";
+        ss << "0";
         outfile.writeln("str_" + std::to_string(i) + ": db " + ss.str());
     }
 
