@@ -2,16 +2,19 @@
 @include "std/string.ilu"
 
 def main
-    "Hello World!" strlen
-    dump # length of string by strlen function
-    dump # length of string provided by
-    
+    "Hello World!"                                        strlen
+    "Length using strlen: "                               puts dump # length of string by strlen function (doesn't include \0 as it counts up to \0)
+    "Length provided by pushing string onto stack: "      puts dump # length of string provided by pushing string onto stack (includes \0)
 
-    "-----" println
+    "--------------------------------------------------"  println
 
-    "Hello World!\0" strlen
-    dump # length of string by strlen function
-    dump # length of string provided by
+    "Hello World!\0"                                      strlen
+    "Length using strlen: "                               puts dump # length of string by strlen function (doesn't include \0 as it counts up to \0)
+    "Length provided by pushing string onto stack: "      puts dump # length of string provided by pushing string onto stack (includes \0)
 
+    "--------------------------------------------------"  println
 
+    "Hello\0 World!"                                      strlen
+    "Length using strlen: "                               puts dump # length of string by strlen function (doesn't include \0 as it counts up to \0)
+    "Length provided by pushing string onto stack: "      puts dump # length of string provided by pushing string onto stack (includes \0 and goes past \0)
 end

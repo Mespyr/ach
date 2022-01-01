@@ -1,10 +1,5 @@
-def modulo
-    / swp pop
-end
-
-def div
-    / pop
-end
+def modulo / swp pop end
+def div / pop end
 
 def power
     # a^b if [... a, b ]

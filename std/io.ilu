@@ -3,7 +3,6 @@ def puts
     1 syscall3
 end
 
-
 def println
     over over +
     10 write8
