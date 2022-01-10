@@ -50,7 +50,15 @@ void compile_to_asm(std::map<std::string, Function> program, std::string output_
     outfile.writeln("\tsyscall");
     outfile.writeln("\tadd rsp, 40");
     outfile.writeln("\tret");
-    
+     if (assembler == FASM)
+        outfile.writeln("start:");
+     else
+        outfile.writeln("_start:");
+    outfile.writeln("\tmov [args_ptr], rsp");
+    outfile.writeln("\tmov rax, ret_stack_end");
+    outfile.writeln("\tmov [ret_stack_rsp], rax");
+    outfile.writeln("\tcall function_main");
+   
     std::vector<std::string> strings;
     
     for (auto fn_key = program.begin(); fn_key != program.end(); fn_key++)
@@ -58,23 +66,9 @@ void compile_to_asm(std::map<std::string, Function> program, std::string output_
         Function function = fn_key->second;
         std::string func_name = fn_key->first;
 
-        if (func_name == "main")
-        {
-            if (assembler == FASM)
-                outfile.writeln("start:");
-            else
-                outfile.writeln("_start:");
-
-            outfile.writeln("\tmov [args_ptr], rsp");
-            outfile.writeln("\tmov rax, ret_stack_end");
-            outfile.writeln("\tmov [ret_stack_rsp], rax");
-        }
-        else
-        {
-            outfile.writeln(fn_key->first + ":");
-            outfile.writeln("\tmov [ret_stack_rsp], rsp");
-            outfile.writeln("\tmov rsp, rax");
-        }
+        outfile.writeln("function_" + fn_key->first + ":");
+        outfile.writeln("\tmov [ret_stack_rsp], rsp");
+        outfile.writeln("\tmov rsp, rax");
 
         for (long unsigned int ip = 0; ip < function.ops.size(); ip++)
         {
@@ -486,7 +480,7 @@ void compile_to_asm(std::map<std::string, Function> program, std::string output_
                 outfile.writeln("\t; OP_FUNCTION_CALL");
                 outfile.writeln("\tmov rax, rsp");
                 outfile.writeln("\tmov rsp, [ret_stack_rsp]");
-                outfile.writeln("\tcall " + op.push_str);
+                outfile.writeln("\tcall function_" + op.push_str);
                 outfile.writeln("\tmov [ret_stack_rsp], rsp");
                 outfile.writeln("\tmov rsp, rax");
             }
