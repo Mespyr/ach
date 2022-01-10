@@ -1,13 +1,22 @@
 #include "../include/compiler.h"
 
-void compile_to_asm(std::map<std::string, std::vector<Op>> program, std::string output_filename)
+void compile_to_asm(std::map<std::string, Function> program, std::string output_filename, ASSEMBLER assembler)
 {
     File outfile(output_filename, MODE_WRITE);
 
     // write boilerplate into file
-    outfile.writeln("BITS 64");
-    outfile.writeln("section .text");
-    outfile.writeln("global _start");
+    if (assembler == FASM)
+    {
+        outfile.writeln("format ELF64 executable 3");
+        outfile.writeln("segment readable executable");
+        outfile.writeln("entry start");
+    }
+    else
+    {
+        outfile.writeln("BITS 64");
+        outfile.writeln("section .text");
+        outfile.writeln("global _start");
+    }
     outfile.writeln("dump:");
     outfile.writeln("\tmov r9, -3689348814741910323");
     outfile.writeln("\tsub rsp, 40");
@@ -46,12 +55,16 @@ void compile_to_asm(std::map<std::string, std::vector<Op>> program, std::string 
     
     for (auto fn_key = program.begin(); fn_key != program.end(); fn_key++)
     {
-        std::vector<Op> function = fn_key->second;
+        Function function = fn_key->second;
         std::string func_name = fn_key->first;
 
         if (func_name == "main")
         {
-            outfile.writeln("_start:");
+            if (assembler == FASM)
+                outfile.writeln("start:");
+            else
+                outfile.writeln("_start:");
+
             outfile.writeln("\tmov [args_ptr], rsp");
             outfile.writeln("\tmov rax, ret_stack_end");
             outfile.writeln("\tmov [ret_stack_rsp], rax");
@@ -63,9 +76,9 @@ void compile_to_asm(std::map<std::string, std::vector<Op>> program, std::string 
             outfile.writeln("\tmov rsp, rax");
         }
 
-        for (long unsigned int ip = 0; ip < function.size(); ip++)
+        for (long unsigned int ip = 0; ip < function.ops.size(); ip++)
         {
-            Op op = function.at(ip);
+            Op op = function.ops.at(ip);
             
             // debugging
             if (op.type == OP_DUMP)
@@ -498,7 +511,11 @@ void compile_to_asm(std::map<std::string, std::vector<Op>> program, std::string 
     
 
     // data section
-    outfile.writeln("section .data");
+    if (assembler == FASM)
+        outfile.writeln("segment readable writable");
+    else
+        outfile.writeln("section .data");
+
     for (long unsigned int i = 0; i < strings.size(); i++)
     {
         std::stringstream ss;
@@ -510,10 +527,21 @@ void compile_to_asm(std::map<std::string, std::vector<Op>> program, std::string 
     }
 
     // bss section
-    outfile.writeln("section .bss");
-    outfile.writeln("args_ptr: resq 1");
-    outfile.writeln("ret_stack_rsp: resq 1");
-    outfile.writeln("ret_stack: resb 4096");
-    outfile.writeln("ret_stack_end:");
-    outfile.writeln("mem: resb 640000");
+    if (assembler == FASM)
+    {
+        outfile.writeln("args_ptr: rq 1");
+        outfile.writeln("ret_stack_rsp: rq 1");
+        outfile.writeln("ret_stack: rb 4096");
+        outfile.writeln("ret_stack_end:");
+        outfile.writeln("mem: rb 640000");
+    }
+    else
+    {
+        outfile.writeln("section .bss");
+        outfile.writeln("args_ptr: resq 1");
+        outfile.writeln("ret_stack_rsp: resq 1");
+        outfile.writeln("ret_stack: resb 4096");
+        outfile.writeln("ret_stack_end:");
+        outfile.writeln("mem: resb 640000");
+    }
 }

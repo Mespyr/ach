@@ -1,5 +1,5 @@
 # rule110
-# borrowed from https://gitlab.com/tsoding/porth/-/blob/master/examples/rule110.porth
+# borrowed and modified (slightly) from https://gitlab.com/tsoding/porth/-/blob/master/examples/rule110.porth
 
 @include "std/io.ilu"
 

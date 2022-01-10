@@ -1,0 +1,5 @@
+def main
+    # run program inside program
+    "./ilu" argv 0
+    59 syscall3
+end

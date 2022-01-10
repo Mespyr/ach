@@ -4,12 +4,19 @@
 #include "ops.h"
 #include "file.h"
 #include "error.h"
+#include "function.h"
 #include <vector>
 #include <string>
 #include <ios>
 #include <sstream>
 #include <map>
 
-void compile_to_asm(std::map<std::string, std::vector<Op>> program, std::string output_filename);
+enum ASSEMBLER
+{
+    NASM,
+    FASM
+};
+
+void compile_to_asm(std::map<std::string, Function> program, std::string output_filename, ASSEMBLER assembler);
 
 #endif

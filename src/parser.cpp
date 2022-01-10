@@ -246,7 +246,7 @@ std::vector<Op> convert_tokens_to_ops(std::vector<Token> tokens, std::map<std::s
     return link_ops(program);
 }
 
-std::map<std::string, std::vector<Op>> parse_tokens(std::vector<Token> tokens)
+std::map<std::string, Function> parse_tokens(std::vector<Token> tokens)
 {
     std::map<std::string, std::vector<Token>> program;
     std::vector<Token> function_tokens;
@@ -354,11 +354,13 @@ std::map<std::string, std::vector<Op>> parse_tokens(std::vector<Token> tokens)
         i++;
     }
     
-    std::map<std::string, std::vector<Op>> linked_program;
+    std::map<std::string, Function> linked_program;
 
     // loop through all functions in program and convert their tokens into Ops which are linked to each other
     for(auto it = program.begin(); it != program.end(); ++it)
-        linked_program.insert({it->first, convert_tokens_to_ops(it->second, program)});
+        linked_program.insert({it->first, Function(
+            convert_tokens_to_ops(it->second, program)
+        )});
 
     return linked_program;
 }
