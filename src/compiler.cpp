@@ -2,6 +2,14 @@
 
 void compile_to_asm(std::map<std::string, Function> program, std::string output_filename, ASSEMBLER assembler)
 {
+
+    // check for entry-point into program before writing assembly
+    if (!program.count("main"))
+    {
+        print_error_with_no_location("no entry point found in program (no 'main' function)");
+        exit(1);
+    }
+
     File outfile(output_filename, MODE_WRITE);
 
     // write boilerplate into file
@@ -50,15 +58,18 @@ void compile_to_asm(std::map<std::string, Function> program, std::string output_
     outfile.writeln("\tsyscall");
     outfile.writeln("\tadd rsp, 40");
     outfile.writeln("\tret");
-     if (assembler == FASM)
+    if (assembler == FASM)
         outfile.writeln("start:");
-     else
+    else
         outfile.writeln("_start:");
     outfile.writeln("\tmov [args_ptr], rsp");
     outfile.writeln("\tmov rax, ret_stack_end");
     outfile.writeln("\tmov [ret_stack_rsp], rax");
     outfile.writeln("\tcall function_main");
-   
+    outfile.writeln("\tmov rax, 60");
+    outfile.writeln("\tmov rdi, 0");
+    outfile.writeln("\tsyscall");
+
     std::vector<std::string> strings;
     
     for (auto fn_key = program.begin(); fn_key != program.end(); fn_key++)
@@ -485,24 +496,11 @@ void compile_to_asm(std::map<std::string, Function> program, std::string output_
                 outfile.writeln("\tmov rsp, rax");
             }
         }
-
-        if (func_name == "main")
-        {
-            // exit syscall at end of main function
-            outfile.writeln("\t; exit");
-            outfile.writeln("\tmov rax, 60");
-            outfile.writeln("\tmov rdi, 0");
-            outfile.writeln("\tsyscall");
-        }
-        else
-        {
-            outfile.writeln("\t; return");
-            outfile.writeln("\tmov rax, rsp");
-            outfile.writeln("\tmov rsp, [ret_stack_rsp]");
-            outfile.writeln("\tret");
-        }
+        outfile.writeln("\t; return");
+        outfile.writeln("\tmov rax, rsp");
+        outfile.writeln("\tmov rsp, [ret_stack_rsp]");
+        outfile.writeln("\tret");
     }
-    
 
     // data section
     if (assembler == FASM)

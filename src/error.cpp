@@ -41,3 +41,8 @@ void print_lexing_error(Location loc, std::string message)
 
     std::cerr << RESET_COLOR << std::endl;
 }
+
+void print_error_with_no_location(std::string message)
+{
+    std::cerr << ERROR_COLOR << "[error]: " << message << RESET_COLOR << std::endl;
+}

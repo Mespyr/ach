@@ -2,6 +2,7 @@
 #include "../include/util.h"
 #include "../include/compiler.h"
 #include "../include/lexer.h"
+#include "../include/error.h"
 #include "../include/parser.h"
 #include <cstdlib>
 #include <vector>
@@ -18,7 +19,7 @@ int main(int argc, char* argv[])
     if (argc == 1)
     {
         usage(argv[0]);
-        std::cerr << ERROR_COLOR << "[error] no file provided for compilation." << RESET_COLOR << std::endl;
+        print_error_with_no_location("no file program for compilation.");
         exit(1);
     }
 
