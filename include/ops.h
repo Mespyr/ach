@@ -66,7 +66,8 @@ enum OpType
     // other
     OP_PUSH_INT,
     OP_PUSH_STR,
-    OP_FUNCTION_CALL
+    OP_FUNCTION_CALL,
+    OP_NULL
 };
     
 class Op

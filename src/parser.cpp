@@ -1,4 +1,5 @@
 #include "../include/parser.h"
+#include <error.h>
 
 std::vector<Op> link_ops(std::vector<Op> ops)
 {
@@ -249,7 +250,12 @@ std::vector<Op> convert_tokens_to_ops(std::vector<Token> tokens, std::map<std::s
 std::map<std::string, Function> parse_tokens(std::vector<Token> tokens)
 {
     std::map<std::string, std::vector<Token>> program;
+
     std::vector<Token> function_tokens;
+    std::map<std::string, Op> function_op_locations;
+    std::map<std::string, std::vector<IluTypeWithOp>> function_arg_stacks;
+    std::map<std::string, std::vector<IluTypeWithOp>> function_ret_stacks;
+
     std::vector<std::string> include_paths;
     std::string func_name;
     long unsigned int i = 0;
@@ -263,9 +269,14 @@ std::map<std::string, Function> parse_tokens(std::vector<Token> tokens)
         {
             i++;
             // if inside function already
-            if (recursion_level > 0 || i >= tokens.size() - 1) 
+            if (recursion_level > 0)
             {
-                print_token_error(tok, "Unexpected 'def' keyword found while parsing");
+                print_token_error(tok, "unexpected 'def' keyword found while parsing");
+                exit(1);
+            }
+            else if (i > tokens.size() - 2)
+            {
+                print_token_error(tok, "unexpected EOF found while parsing");
                 exit(1);
             }
             else
@@ -280,6 +291,61 @@ std::map<std::string, Function> parse_tokens(std::vector<Token> tokens)
                         print_token_error(func_name_token, "Multiple definitions for '" + func_name + "' found");
                         exit(1);
                     }
+                    i++;
+
+                    // parse argv and return values
+
+                    // null op to function name
+                    Op op(OP_NULL, func_name_token);
+                    if (tokens.at(i).value != "in")
+                    {
+                        std::vector<IluTypeWithOp> arg_stack;
+                        std::vector<IluTypeWithOp> ret_stack;
+                        bool pushing_to_arg_stack = true;
+
+                        while (tokens.at(i).value != "in")
+                        {
+                            Token tok = tokens.at(i);
+
+                            if (tok.value == "int")
+                            {
+                                if (pushing_to_arg_stack)
+                                    arg_stack.push_back(IluTypeWithOp(op, DATATYPE_INT));
+                                else
+                                    ret_stack.push_back(IluTypeWithOp(op, DATATYPE_INT));
+                            }
+                            else if (tok.value == "ptr")
+                            {
+                                if (pushing_to_arg_stack)
+                                    arg_stack.push_back(IluTypeWithOp(op, DATATYPE_PTR));
+                                else
+                                    ret_stack.push_back(IluTypeWithOp(op, DATATYPE_PTR));
+                            }
+                            else if (tok.value == "->")
+                                pushing_to_arg_stack = false;
+                            else
+                            {
+                                print_token_error(tok, "unknown argument type '" + tok.value + "'");
+                                exit(1);
+                            }
+
+                            i++;
+                            if (i > tokens.size() - 1)
+                            {
+                                print_token_error(tok, "unexpected EOF found while parsing");
+                                exit(1);
+                            }
+                        }
+                        function_arg_stacks.insert({func_name, arg_stack});
+                        function_ret_stacks.insert({func_name, ret_stack});
+                    }
+                    else
+                    {
+                        function_arg_stacks.insert({func_name, {}});
+                        function_ret_stacks.insert({func_name, {}});
+                    }
+    
+                    function_op_locations.insert({func_name, op});
                     recursion_level++;
                 }
                 else
@@ -354,12 +420,21 @@ std::map<std::string, Function> parse_tokens(std::vector<Token> tokens)
         i++;
     }
     
+    if (function_tokens.size() > 0)
+    {
+        print_token_error(function_tokens.back(), "unexpected EOF found while parsing");
+        exit(1);
+    }
+
     std::map<std::string, Function> linked_program;
 
     // loop through all functions in program and convert their tokens into Ops which are linked to each other
     for(auto it = program.begin(); it != program.end(); ++it)
         linked_program.insert({it->first, Function(
-            convert_tokens_to_ops(it->second, program)
+            function_op_locations.at(it->first),
+            convert_tokens_to_ops(it->second, program),
+            function_arg_stacks.at(it->first),
+            function_ret_stacks.at(it->first)
         )});
 
     return linked_program;

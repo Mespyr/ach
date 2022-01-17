@@ -1,5 +1,5 @@
 @include "std/io.ilu"
 
-def main
+def main in
     "Hello World!" println
 end

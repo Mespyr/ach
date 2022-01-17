@@ -4,6 +4,7 @@
 #include "../include/lexer.h"
 #include "../include/error.h"
 #include "../include/parser.h"
+#include "../include/checks.h"
 #include <cstdlib>
 #include <vector>
 #include <iostream>
@@ -14,8 +15,9 @@ void usage(char* exec_name)
     std::cout << "USAGE: " << exec_name << " <FILENAME> <OPTIONS>" << std::endl;
     std::cout << "OPTIONS:" << std::endl;
     std::cout << "\t-h, --help\tshow help"                    << std::endl;
-    std::cout << "\t-f, --fasm\tuse fasm to compile programs" << std::endl;
-    std::cout << "\t-n, --nasm\tuse nasm to compile programs" << std::endl;
+    std::cout << "\t-f, --fasm\tuse fasm to compile program" << std::endl;
+    std::cout << "\t-n, --nasm\tuse nasm to compile program" << std::endl;
+    std::cout << "\t-u, --unsafe\tcompile without type checking program" << std::endl;
 }
 
 struct Options
@@ -23,6 +25,7 @@ struct Options
     ASSEMBLER assembler;
     std::string filename;
     bool help;
+    bool unsafe;
 };
 Options parse_argv(std::vector<std::string> argv)
 {
@@ -30,6 +33,7 @@ Options parse_argv(std::vector<std::string> argv)
     options.assembler = NASM;
     options.filename = "";
     options.help = false;
+    options.unsafe = false;
     for (long unsigned int i = 1; i < argv.size(); i++)
     {
         std::string arg = argv.at(i);
@@ -37,8 +41,11 @@ Options parse_argv(std::vector<std::string> argv)
             options.assembler = FASM;
         else if (arg == "-n" || arg == "--nasm")
             options.assembler = NASM;
+        else if (arg == "-u" || arg == "--unsafe")
+            options.unsafe = true;
         else if (arg == "-h" || arg == "--help")
             options.help = true;
+
         else if (options.filename == "")
             options.filename = arg;
         else
@@ -73,13 +80,15 @@ int main(int argc, char* argv[])
     // parse file
     std::vector<Token> tokens = tokenize_file(options.filename);
     std::map<std::string, Function> program = parse_tokens(tokens);
+    if (!options.unsafe)
+        type_check_program(program);
 
     // compile
-    std::cout << INFO_COLOR << "[info] generating asm from '" << options.filename << "'." << RESET_COLOR << std::endl;
+    std::cout << "[info] generating asm from '" << options.filename << "'." << std::endl;
     compile_to_asm(program, "out.asm", options.assembler);
 
     // nasm or fasm
-    std::cout << INFO_COLOR << "[info] compiling assembly." << RESET_COLOR << std::endl;
+    std::cout << "[info] compiling assembly." << std::endl;
 
     if (options.assembler == FASM)
     {
@@ -90,11 +99,11 @@ int main(int argc, char* argv[])
         exit_on_error(std::system("nasm -felf64 out.asm"));
 
         // link
-        std::cout << INFO_COLOR << "[info] linking object file." << RESET_COLOR << std::endl;
+        std::cout << "[info] linking object file." << std::endl;
         exit_on_error(std::system("ld -o out out.o"));
     
         // cleanup
-        std::cout << INFO_COLOR << "[info] cleaning up object file" << RESET_COLOR << std::endl;
+        std::cout << "[info] cleaning up object file" << std::endl;
         exit_on_error(std::system("rm out.o"));
     }
 

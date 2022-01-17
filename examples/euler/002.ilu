@@ -1,6 +1,6 @@
 @include "std/math.ilu"
 
-def main
+def main in
     0 1 2 while over 4000000 < do
         over 2 modulo
         0 = if

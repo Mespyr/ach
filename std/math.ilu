@@ -1,7 +1,12 @@
-def modulo / swp pop end
-def div / pop end
+def modulo int int -> int in 
+    / swp pop 
+end
 
-def power
+def div int int -> int in
+    / pop
+end
+
+def power int int -> int in
     # a^b if [... a, b ]
     1 while over 0 > do
         rot swp over * # multipky a with itself

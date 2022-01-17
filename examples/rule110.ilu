@@ -3,9 +3,9 @@
 
 @include "std/io.ilu"
 
-def BOARD_SIZE 100 end
+def BOARD_SIZE -> int in 100 end
 
-def rule110
+def rule110 in
     mem BOARD_SIZE 2 - +  # mem[BOARD_SIZE - 2]
     1 write8              # mem[BOARD_SIZE - 2] = 1
 
@@ -52,9 +52,9 @@ def rule110
         pop pop
 
         1 +
-    end
+    end pop
 end
 
-def main
+def main in
     rule110
 end

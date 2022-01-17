@@ -1,7 +1,7 @@
 @include "std/io.ilu"
 @include "std/math.ilu"
 
-def main
+def main in
     1 while dup 101 < do
         dup 15 modulo 0 = if
             "Fizzbuzz" println

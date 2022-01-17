@@ -90,7 +90,7 @@ std::vector<Token> tokenize_file(std::string file_location)
     // exit if file doesn't exist
     if (!file)
     {
-        std::cout << ERROR_COLOR << "[error] couldn't open file '" << file_location << "'" << RESET_COLOR << std::endl;
+        print_error_with_no_location("couldn't open file '" + file_location + "'");
         exit(1);
     }
 
