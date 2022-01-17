@@ -80,6 +80,8 @@ int main(int argc, char* argv[])
     // parse file
     std::vector<Token> tokens = tokenize_file(options.filename);
     std::map<std::string, Function> program = parse_tokens(tokens);
+    verify_program(program);
+
     if (!options.unsafe)
         type_check_program(program);
 

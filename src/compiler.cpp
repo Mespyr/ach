@@ -3,13 +3,6 @@
 void compile_to_asm(std::map<std::string, Function> program, std::string output_filename, ASSEMBLER assembler)
 {
 
-    // check for entry-point into program before writing assembly
-    if (!program.count("main"))
-    {
-        print_error_with_no_location("no entry point found in program (no 'main' function)");
-        exit(1);
-    }
-
     File outfile(output_filename, MODE_WRITE);
 
     // write boilerplate into file

@@ -24,6 +24,7 @@ public:
 };
 
 bool compare_type_stacks(std::vector<IluTypeWithOp> type_stack_1, std::vector<IluTypeWithOp> type_stack_2);
+void verify_program(std::map<std::string, Function> program);
 void type_check_program(std::map<std::string, Function> program);
 
 #endif

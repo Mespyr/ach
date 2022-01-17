@@ -17,6 +17,28 @@ bool compare_type_stacks(std::vector<IluTypeWithOp> type_stack_1, std::vector<Il
     return true;
 }
 
+void verify_program(std::map<std::string, Function> program)
+{
+    if (!program.count("main"))
+    {
+        print_error_with_no_location("no entry point found in program (no 'main' function)");
+        exit(1);
+    }
+
+    Function main_func = program.at("main");
+    if (main_func.arg_stack.size() > 0)
+    {
+        print_op_error(main_func.op, "'main' function must not pass any arguments");
+        exit(1);
+    }
+    
+    if (main_func.ret_stack.size() > 0)
+    {
+        print_op_error(main_func.op, "'main' function must not have any return values");
+        exit(1);
+    }
+}
+
 void type_check_program(std::map<std::string, Function> program)
 {
     for (auto fn_key = program.begin(); fn_key != program.end(); fn_key++)
