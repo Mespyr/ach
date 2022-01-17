@@ -13,14 +13,14 @@ Hello World!
 ```ruby
 @include "std/io.ilu"
 
-def main
+def main in
     "Hello World!" println
 end
 ```
 
 Loop through numbers from 0-100 and print them:
 ```ruby
-def main
+def main in
     0 while dup 100 < do
         dup dump
         1 +
