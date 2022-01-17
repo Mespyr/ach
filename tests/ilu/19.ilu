@@ -5,7 +5,7 @@
 #   3
 #   4
 
-def main
+def main in
     # 11 >= 12
     11 12 >= if
         0 dump

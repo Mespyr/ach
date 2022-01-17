@@ -1,4 +1,4 @@
-def main
+def main in
     12 34 + 46 = if
         69 dump
     else

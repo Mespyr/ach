@@ -1,13 +1,13 @@
 # basic macro/function(s)
-def WRITE_SYSCALL_NUMBER 1 end
-def FD 1 end
+def WRITE_SYSCALL_NUMBER -> int in 1 end
+def FD -> int in 1 end
 
-def puts
+def puts int ptr in
     FD rot rot
     WRITE_SYSCALL_NUMBER syscall3
 end
 
-def main
+def main in
     "Hello World!\n" puts
     12 13 < if
         "12 < 13\n" puts

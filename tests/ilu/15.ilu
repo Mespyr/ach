@@ -1,4 +1,4 @@
-def main
+def main in
     mem 65 write8
     mem 1 + 66 write8
     mem 2 + 67 write8

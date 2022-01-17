@@ -1,4 +1,4 @@
-def main
+def main in
     34 35 + 67 = if
         67 dump
     end

@@ -41,6 +41,8 @@ void verify_program(std::map<std::string, Function> program)
 
 void type_check_program(std::map<std::string, Function> program)
 {
+    static_assert(OP_NULL == 50, "unhandled op types in type_check_program()");
+
     for (auto fn_key = program.begin(); fn_key != program.end(); fn_key++)
     {
         std::vector<IluTypeWithOp> type_stack;
@@ -94,8 +96,7 @@ void type_check_program(std::map<std::string, Function> program)
                     print_op_note(b.op, "first value pushed here (" + human_readable_type(b.type) + ")");
                     print_op_note(a.op, "second value pushed here (" + human_readable_type(a.type) + ")");
                     exit(1);
-                }
-            }
+                } }
             else if (op.type == OP_MINUS)
             {
                 if (type_stack.size() < 2)
@@ -893,8 +894,20 @@ void type_check_program(std::map<std::string, Function> program)
                     }
                 }
             }
+    
+            // type checking
+            else if (op.type == OP_CAST_PTR)
+            {
+                type_stack.pop_back();
+                type_stack.push_back(IluTypeWithOp(op, DATATYPE_PTR));
+            }
+            else if (op.type == OP_CAST_INT)
+            {
+                type_stack.pop_back();
+                type_stack.push_back(IluTypeWithOp(op, DATATYPE_INT));
+            }
 
-            // other 
+            // other
             else if (op.type == OP_PUSH_INT)
             {
                 type_stack.push_back(IluTypeWithOp(op, DATATYPE_INT));

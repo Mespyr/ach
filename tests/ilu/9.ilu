@@ -1,4 +1,4 @@
-def main
+def main in
     12 13 + 25 = if
         34 35 +
         21 3 / pop *

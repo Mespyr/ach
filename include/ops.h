@@ -63,6 +63,9 @@ enum OpType
     OP_IF,
     OP_ELSE,
     OP_END,
+    // type checking
+    OP_CAST_PTR,
+    OP_CAST_INT,
     // other
     OP_PUSH_INT,
     OP_PUSH_STR,

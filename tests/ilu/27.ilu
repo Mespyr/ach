@@ -1,10 +1,10 @@
 # recursive functions
 
-def p69
+def p69 in
     34 35 + dump
     #p69
 end
 
-def main
+def main in
     p69
 end

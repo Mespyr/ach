@@ -1,4 +1,4 @@
-def main
+def main in
     12 34 = dump
     35 34 + 
     23 46 + = dump

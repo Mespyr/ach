@@ -1,4 +1,4 @@
-def main
+def main in
     # shift left
     1 3 << dump
     # shift right

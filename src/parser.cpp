@@ -3,6 +3,8 @@
 
 std::vector<Op> link_ops(std::vector<Op> ops)
 {
+    static_assert(OP_NULL == 50, "unhandled op types in link_ops()");
+
     // track location of newest block parsed
     std::vector<long unsigned int> ip_stack;
 
@@ -116,6 +118,8 @@ std::vector<Op> link_ops(std::vector<Op> ops)
 
 std::vector<Op> convert_tokens_to_ops(std::vector<Token> tokens, std::map<std::string, std::vector<Token>> basic_program)
 {
+    static_assert(OP_NULL == 50, "unhandled op types in convert_tokens_to_ops()");
+
     std::vector<Op> program;
 
     for (long unsigned int i = 0; i < tokens.size(); i++)
@@ -228,7 +232,13 @@ std::vector<Op> convert_tokens_to_ops(std::vector<Token> tokens, std::map<std::s
             program.push_back(Op(OP_ELSE, tok));
         else if (tok.value == "end")
             program.push_back(Op(OP_END, tok));
-        
+       
+        // type checking
+        else if (tok.value == "cast(ptr)")
+            program.push_back(Op(OP_CAST_PTR, tok));
+        else if (tok.value == "cast(int)")
+            program.push_back(Op(OP_CAST_INT, tok));
+
         // other
         else if (is_number(tok.value))
             program.push_back(Op(OP_PUSH_INT, atol(tok.value.c_str()), tok));

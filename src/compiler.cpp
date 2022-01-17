@@ -2,6 +2,7 @@
 
 void compile_to_asm(std::map<std::string, Function> program, std::string output_filename, ASSEMBLER assembler)
 {
+    static_assert(OP_NULL == 50, "unhandled op types in compile_to_asm()");
 
     File outfile(output_filename, MODE_WRITE);
 

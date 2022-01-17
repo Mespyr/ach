@@ -3,6 +3,6 @@
 @include "tests/ilu/test_lib/main.ilu"
 @include "tests/ilu/test_lib/util.ilu"
 
-def main
+def main in
     8 4 add_div dump
 end

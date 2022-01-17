@@ -1,4 +1,4 @@
-def main
+def main in
     1 mem 2 0 syscall3
 
     mem read8 48 = if

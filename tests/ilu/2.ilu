@@ -1,4 +1,4 @@
-def main
+def main in
     23 3 *
     20 21 *
     * dump

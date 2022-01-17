@@ -1,5 +1,6 @@
-def main
+def main in
     # run program inside program
-    "./ilu" argv 0
-    59 syscall3
+    # "./ilu" argv 0
+    # 59 syscall3
+    # pop # pop sizeof string
 end

@@ -2,16 +2,16 @@
 @include "std/io.ilu"
 @include "std/string.ilu"
 
-def main
+def main in
     argv argc
     while dup 0 > do
-        over read64     # get value in argv
-        dup strlen swp  # get length of value
+        over read64 cast(ptr) # get value in argv
+        dup strlen swp        # get length of value
         over 
         swp puts 
         " " puts
         dump
         1 -             # decrement argc
         swp 8 + swp     # point to next value in argv
-    end
+    end pop pop
 end

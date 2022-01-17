@@ -1,7 +1,7 @@
 @include "std/io.ilu"
 @include "std/string.ilu"
 
-def main
+def main in
     "Hello World!"                                        strlen
     "Length using strlen: "                               puts dump # length of string by strlen function (doesn't include \0 as it counts up to \0)
     "Length provided by pushing string onto stack: "      puts dump # length of string provided by pushing string onto stack (includes \0)

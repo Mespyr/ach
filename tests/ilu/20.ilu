@@ -7,7 +7,7 @@
 #
 # another test\n\last string to print
 
-def main
+def main in
     1 "Hello World!\n"                   swp 1 syscall3
     1 "\"femboys are cool\" - someone\n" swp 1 syscall3
     1 "testing having stuff\\n\n"        swp 1 syscall3
