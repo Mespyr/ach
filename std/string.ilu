@@ -1,6 +1,6 @@
 def strlen ptr -> int in
-    0 swp while dup read8 0 != do
-        1 + swp
-        1 + swp
-    end pop
+    dup while dup read8 0 != do
+        1 +
+    end swp -
 end
+

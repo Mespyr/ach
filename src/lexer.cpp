@@ -1,4 +1,5 @@
 #include "../include/lexer.h"
+#include <cstring>
 
 long unsigned int find_next_token_start_col(long unsigned int column_number, std::string line)
 {
@@ -84,13 +85,13 @@ std::vector<Token> tokenize_line(std::string line, std::string file_location, lo
 std::vector<Token> tokenize_file(std::string file_location)
 {
     // open file
-    std::fstream file;
+    std::ifstream file;
     file.open(file_location, std::ios::in);
 
     // exit if file doesn't exist
     if (!file)
     {
-        print_error_with_no_location("couldn't open file '" + file_location + "'");
+        print_error_with_no_location("couldn't open file '" + file_location + "': " + strerror(errno));
         exit(1);
     }
 

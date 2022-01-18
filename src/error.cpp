@@ -61,13 +61,16 @@ void print_op_note(Op op, std::string message)
     std::cout << "\n";
 }
 
-void print_not_enough_arguments_error(Op op, int expected, int actual, std::string name, std::string fullname, bool is_block)
+void print_not_enough_arguments_error(Op op, int expected, int actual, std::string name, std::string fullname, bool is_block, bool is_func)
 {
     if (fullname == "")
     {
         if (is_block)
             // not enough items on stack for 'name' block (expected 'expected', got 'actual')
             print_op_error(op, "not enough items on stack for '" + name + "' block (expected " + std::to_string(expected) + ", got " + std::to_string(actual) + ")");
+        else if (is_func)
+            // not enough items on stack for function 'name' (expected 'expected', got 'actual')
+            print_op_error(op, "not enough items on stack for function '" + name + "' (expected " + std::to_string(expected) + ", got " + std::to_string(actual) + ")");
         else
             // not enough items on stack for 'name' operation (expected 'expected', got 'actual')
             print_op_error(op, "not enough items on stack for '" + name + "' operation (expected " + std::to_string(expected) + ", got " + std::to_string(actual) + ")");
@@ -77,13 +80,16 @@ void print_not_enough_arguments_error(Op op, int expected, int actual, std::stri
         if (is_block)
             // not enough items on stack for 'name' (fullname) block (expected 'expected', got 'actual')
             print_op_error(op, "not enough items on stack for '" + name + "' (" + fullname + ") block (expected " + std::to_string(expected) + ", got " + std::to_string(actual) + ")");
+        else if (is_func)
+            // not enough items on stack for function 'name' (fullname) (expected 'expected', got 'actual')
+            print_op_error(op, "not enough items on stack for function '" + name + "' (" + fullname + ") (expected " + std::to_string(expected) + ", got " + std::to_string(actual) + ")");
         else
             // not enough items on stack for 'name' (fullname) operation (expected 'expected', got 'actual')
             print_op_error(op, "not enough items on stack for '" + name + "' (" + fullname + ") operation (expected " + std::to_string(expected) + ", got " + std::to_string(actual) + ")");
     }
 }
 
-void print_invalid_combination_of_types_error(Op op, std::vector<DATATYPE> types, std::string name, std::string fullname, bool is_block, bool is_func)
+void print_invalid_combination_of_types_error(Op op, std::vector<DATATYPE> types, std::string name, std::string fullname, bool is_block, bool is_func_ret, bool is_func_args)
 {
     // ex: 'int, int, ptr, int'
     std::string types_str;
@@ -96,9 +102,12 @@ void print_invalid_combination_of_types_error(Op op, std::vector<DATATYPE> types
         if (is_block)
             // invalid combination of types for 'name' condition (types_str)
             print_op_error(op, "invalid combination of types for '" + name + "' condition (" + types_str + ")");
-        else if (is_func)
-            // invalid combination of types for 'name' function return stack (types_str)
+        else if (is_func_ret)
+            // invalid combination of types for function 'name' return stack (types_str)
             print_op_error(op, "invalid combination of types for function '" + name + "' return stack (" + types_str + ")");
+        else if (is_func_args)
+            // invalid combination of types for function 'name' arguments (types_str)
+            print_op_error(op, "invalid combination of types for function '" + name + "' arguments (" + types_str + ")");
         else
             // invalid combination of types for 'name' operation (types_str)
             print_op_error(op, "invalid combination of types for '" + name + "' operation (" + types_str + ")");
@@ -108,39 +117,48 @@ void print_invalid_combination_of_types_error(Op op, std::vector<DATATYPE> types
         if (is_block)
             // invalid combination of types for 'name' (fullname) condition (types_str)
             print_op_error(op, "invalid combination of types for '" + name + "' (" + fullname + ") condition (" + types_str + ")");
-        else if (is_func)
-            // invalid combination of types for 'name' (fullname) function return stack (types_str)
+        else if (is_func_ret)
+            // invalid combination of types for function 'name' (fullname) return stack (types_str)
             print_op_error(op, "invalid combination of types for function '" + name + "' (" + fullname + ") return stack (" + types_str + ")");
+        else if (is_func_args)
+            // invalid combination of types for function 'name' (fullname) arguments (types_str)
+            print_op_error(op, "invalid combination of types for function '" + name + "' (" + fullname + ") arguments (" + types_str + ")");
         else
             // invalid combination of types for 'name' (fullname) operation (types_str)
             print_op_error(op, "invalid combination of types for '" + name + "' (" + fullname + ") operation (" + types_str + ")");
     }
 }
 
-void print_invalid_type_error(Op op, DATATYPE expected, DATATYPE actual, std::string name, std::string fullname, bool is_block, bool is_func)
+void print_invalid_type_error(Op op, DATATYPE expected, DATATYPE actual, std::string name, std::string fullname, bool is_block, bool is_func_ret, bool is_func_args)
 {
     if (fullname == "")
     {
         if (is_block)
             // invalid argument type for 'name' condition (expected 'expected', got 'actual')
-            print_op_error(op, "invalid argument type for '" + name + "' condition (expected " + human_readable_type(expected) + ", got " + human_readable_type(actual) + ")");
-        else if (is_func)
+            print_op_error(op, "invalid type for '" + name + "' condition (expected " + human_readable_type(expected) + ", got " + human_readable_type(actual) + ")");
+        else if (is_func_ret)
             // invalid return type for function 'name' (expected 'expected', got 'actual')
             print_op_error(op, "invalid return type for function '" + name + "' (expected " + human_readable_type(expected) + ", got " + human_readable_type(actual) + ")");
+        else if (is_func_args)
+            // invalid argument type for function 'name' (expected 'expected', got 'actual')
+            print_op_error(op, "invalid argument type for function '" + name + "' (expected " + human_readable_type(expected) + ", got " + human_readable_type(actual) + ")");
         else
             // invalid argument type for 'name' operation (expected 'expected', got 'actual')
-            print_op_error(op, "invalid argument type for '" + name + "' operation (expected " + human_readable_type(expected) + ", got " + human_readable_type(actual) + ")");
+            print_op_error(op, "invalid type for '" + name + "' operation (expected " + human_readable_type(expected) + ", got " + human_readable_type(actual) + ")");
     }
     else
     {
         if (is_block)
             // invalid argument type for 'name' (fullname) condition (expected 'expected', got 'actual')
-            print_op_error(op, "invalid argument type for '" + name + "' (" + fullname + ") condition (expected " + human_readable_type(expected) + ", got " + human_readable_type(actual) + ")");
-        else if (is_func)
+            print_op_error(op, "invalid type for '" + name + "' (" + fullname + ") condition (expected " + human_readable_type(expected) + ", got " + human_readable_type(actual) + ")");
+        else if (is_func_ret)
             // invalid return type for function 'name' (fullname) (expected 'expected', got 'actual')
             print_op_error(op, "invalid return type for function '" + name + "' (" + fullname + ") (expected " + human_readable_type(expected) + ", got " + human_readable_type(actual) + ")");
+        else if (is_func_args)
+            // invalid argument type for function 'name' (fullname) (expected 'expected', got 'actual')
+            print_op_error(op, "invalid argument type for function '" + name + "' (" + fullname + ") (expected " + human_readable_type(expected) + ", got " + human_readable_type(actual) + ")");
         else
             // invalid argument type for 'name' (fullname) operation (expected 'expected', got 'actual')
-            print_op_error(op, "invalid argument type for '" + name + "' (" + fullname + ") operation (expected " + human_readable_type(expected) + ", got " + human_readable_type(actual) + ")");
+            print_op_error(op, "invalid type for '" + name + "' (" + fullname + ") operation (expected " + human_readable_type(expected) + ", got " + human_readable_type(actual) + ")");
     }
 }

@@ -7,7 +7,10 @@
 enum DATATYPE
 {
     DATATYPE_INT,
-    DATATYPE_PTR
+    DATATYPE_PTR,
+
+    // count
+    DATATYPE_COUNT
 };
 
 class IluTypeWithOp

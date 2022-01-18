@@ -6,6 +6,7 @@
 #include <fstream>
 #include <vector>
 #include <string>
+#include <cstring>
 
 long unsigned int find_next_token_start_col(long unsigned int column_number, std::string line);
 long unsigned int find_token_end_col(long unsigned int column_number, std::string line);

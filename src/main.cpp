@@ -12,12 +12,12 @@
 
 void usage(char* exec_name)
 {
-    std::cout << "USAGE: " << exec_name << " <FILENAME> <OPTIONS>" << std::endl;
-    std::cout << "OPTIONS:" << std::endl;
-    std::cout << "\t-h, --help\tshow help"                    << std::endl;
-    std::cout << "\t-f, --fasm\tuse fasm to compile program" << std::endl;
-    std::cout << "\t-n, --nasm\tuse nasm to compile program" << std::endl;
-    std::cout << "\t-u, --unsafe\tcompile without type checking program" << std::endl;
+    std::cout << "USAGE: " << exec_name << " <FILENAME> <OPTIONS>"        << std::endl;
+    std::cout << "OPTIONS:"                                               << std::endl;
+    std::cout << "\t-h, --help\tshow help"                                << std::endl;
+    std::cout << "\t-f, --fasm\tuse fasm to compile program"              << std::endl;
+    std::cout << "\t-n, --nasm\tuse nasm to compile program"              << std::endl;
+    std::cout << "\t-u, --unsafe\tcompile without type checking program"  << std::endl;
 }
 
 struct Options

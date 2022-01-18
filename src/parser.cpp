@@ -3,7 +3,7 @@
 
 std::vector<Op> link_ops(std::vector<Op> ops)
 {
-    static_assert(OP_NULL == 50, "unhandled op types in link_ops()");
+    static_assert(OP_COUNT == 50, "unhandled op types in link_ops()");
 
     // track location of newest block parsed
     std::vector<long unsigned int> ip_stack;
@@ -118,7 +118,7 @@ std::vector<Op> link_ops(std::vector<Op> ops)
 
 std::vector<Op> convert_tokens_to_ops(std::vector<Token> tokens, std::map<std::string, std::vector<Token>> basic_program)
 {
-    static_assert(OP_NULL == 50, "unhandled op types in convert_tokens_to_ops()");
+    static_assert(OP_COUNT == 50, "unhandled op types in convert_tokens_to_ops()");
 
     std::vector<Op> program;
 
@@ -305,8 +305,8 @@ std::map<std::string, Function> parse_tokens(std::vector<Token> tokens)
 
                     // parse argv and return values
 
-                    // null op to function name
-                    Op op(OP_NULL, func_name_token);
+                    // op to function name | op.type doesn't matter
+                    Op op(OP_COUNT , func_name_token);
                     if (tokens.at(i).value != "in")
                     {
                         std::vector<IluTypeWithOp> arg_stack;

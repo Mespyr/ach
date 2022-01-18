@@ -14,9 +14,9 @@ def rule110 in
         0 while dup BOARD_SIZE < do
             # check if mem[idx] is 0 or 1
             dup mem + read8 if
-                # write '*' if mem[i] == 1
+                # write '.' if mem[i] == 1
                 dup mem + BOARD_SIZE +  # mem[i + BOARD_SIZE]
-                42 write8               # mem[i + BOARD_SIZE] = 42
+                46 write8               # mem[i + BOARD_SIZE] = 42
             else
                 # write ' '  if mem[i] == 0
                 dup mem + BOARD_SIZE +  # mem[i + BOARD_SIZE]

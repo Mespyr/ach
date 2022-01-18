@@ -41,7 +41,8 @@ void verify_program(std::map<std::string, Function> program)
 
 void type_check_program(std::map<std::string, Function> program)
 {
-    static_assert(OP_NULL == 50, "unhandled op types in type_check_program()");
+    static_assert(OP_COUNT == 50, "unhandled op types in type_check_program()");
+    static_assert(DATATYPE_COUNT == 2, "unhandled datatypes in type_check_program()");
 
     for (auto fn_key = program.begin(); fn_key != program.end(); fn_key++)
     {
@@ -923,7 +924,7 @@ void type_check_program(std::map<std::string, Function> program)
 
                 if (type_stack.size() < call_func.arg_stack.size())
                 {
-                    print_not_enough_arguments_error(op, call_func.arg_stack.size(), type_stack.size(), op.push_str, "function");
+                    print_not_enough_arguments_error(op, call_func.arg_stack.size(), type_stack.size(), op.push_str, "", false, true);
                     exit(1);
                 }
 
@@ -938,13 +939,18 @@ void type_check_program(std::map<std::string, Function> program)
                 bool args_match_types = compare_type_stacks(args, call_func.arg_stack);
                 if (!args_match_types)
                 {
-                    std::vector<DATATYPE> types;
-                    for (IluTypeWithOp t : args)
-                        types.push_back(t.type);
+                    if (call_func.arg_stack.size() == 1)
+                        print_invalid_type_error(op, call_func.arg_stack.at(0).type, args.at(0).type, op.push_str, "", false, false, true);
+                    else
+                    {
+                        std::vector<DATATYPE> types;
+                        for (IluTypeWithOp t : args)
+                            types.push_back(t.type);
 
-                    print_invalid_combination_of_types_error(op, types, op.push_str, "function");
-                    for (IluTypeWithOp t : args)
-                        print_op_note(t.op, "argument pushed here (" + human_readable_type(t.type) + ")");
+                        print_invalid_combination_of_types_error(op, types, op.push_str, "", false, false, true);
+                        for (IluTypeWithOp t : args)
+                            print_op_note(t.op, "argument pushed here (" + human_readable_type(t.type) + ")");
+                    }
                     exit(1);
                 }
 
