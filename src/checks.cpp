@@ -920,11 +920,13 @@ void type_check_program(std::map<std::string, Function> program)
             }
             else if (op.type == OP_FUNCTION_CALL)
             {
-                Function call_func = program.at(op.push_str);
+                assert(program.count(op.str_operand));
+
+                Function call_func = program.at(op.str_operand);
 
                 if (type_stack.size() < call_func.arg_stack.size())
                 {
-                    print_not_enough_arguments_error(op, call_func.arg_stack.size(), type_stack.size(), op.push_str, "", false, true);
+                    print_not_enough_arguments_error(op, call_func.arg_stack.size(), type_stack.size(), op.str_operand, "", false, true);
                     exit(1);
                 }
 
@@ -940,14 +942,14 @@ void type_check_program(std::map<std::string, Function> program)
                 if (!args_match_types)
                 {
                     if (call_func.arg_stack.size() == 1)
-                        print_invalid_type_error(op, call_func.arg_stack.at(0).type, args.at(0).type, op.push_str, "", false, false, true);
+                        print_invalid_type_error(op, call_func.arg_stack.at(0).type, args.at(0).type, op.str_operand, "", false, false, true);
                     else
                     {
                         std::vector<DATATYPE> types;
                         for (IluTypeWithOp t : args)
                             types.push_back(t.type);
 
-                        print_invalid_combination_of_types_error(op, types, op.push_str, "", false, false, true);
+                        print_invalid_combination_of_types_error(op, types, op.str_operand, "", false, false, true);
                         for (IluTypeWithOp t : args)
                             print_op_note(t.op, "argument pushed here (" + human_readable_type(t.type) + ")");
                     }

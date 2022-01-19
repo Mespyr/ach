@@ -83,23 +83,24 @@ public:
         loc(token.loc)
     {}
 
-    Op(OpType type, long long push_val, Token token) :
+    Op(OpType type, unsigned long int int_operand, Token token) :
         type(type), 
         loc(token.loc),
-        push_int(push_val)
+        int_operand(int_operand)
     {}
 
-    Op(OpType type, std::string push_val, Token token) :
+    Op(OpType type, std::string str_operand, Token token) :
         type(type), 
         loc(token.loc),
-        push_str(push_val)
+        str_operand(str_operand)
     {}
 
     OpType type;
     Location loc;
-    int reference_ip;
-    long long push_int;
-    std::string push_str;
+
+    unsigned long int int_operand;
+    std::string str_operand;
+    bool link_back;
 };
 
 #endif

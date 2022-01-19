@@ -10,6 +10,7 @@
 #include <string>
 #include <vector>
 #include <algorithm>
+#include <assert.h>
 
 class StackSnapshot
 {

@@ -36,7 +36,7 @@ std::vector<Op> link_ops(std::vector<Op> ops)
             }
             
             // set ip of 'do' keyword to ip of 'while' on stack
-            current_op.reference_ip = linker_ip;
+            current_op.int_operand = linker_ip;
             ops.at(ip) = current_op;
 
             // push 'do' ip onto stack
@@ -64,7 +64,7 @@ std::vector<Op> link_ops(std::vector<Op> ops)
             }
             
             // link 'if' op to 'else'
-            linker_op.reference_ip = ip;
+            linker_op.int_operand = ip;
             ops.at(linker_ip) = linker_op;
 
             // push 'else' ip onto stack
@@ -88,21 +88,22 @@ std::vector<Op> link_ops(std::vector<Op> ops)
             if (linker_op.type == OP_IF || linker_op.type == OP_ELSE)
             {
                 // unlink 'end' op (it doesn't need to jump anywhere on if statements
-                current_op.reference_ip = -1;
+                current_op.link_back = false;
                 ops.at(ip) = current_op;
                 
                 // link linker op to 'end' op ip
-                linker_op.reference_ip = ip;
+                linker_op.int_operand = ip;
                 ops.at(linker_ip) = linker_op;
             }
             else if (linker_op.type == OP_DO)
             {
                 // link 'end' op to 'do' op's ip ('while')
-                current_op.reference_ip = linker_op.reference_ip;
+                current_op.int_operand = linker_op.int_operand;
+                current_op.link_back = true;
                 ops.at(ip) = current_op;
 
                 // link 'do' op to 'end' op's ip
-                linker_op.reference_ip = ip;
+                linker_op.int_operand = ip;
                 ops.at(linker_ip) = linker_op;
             }
             else
@@ -308,8 +309,6 @@ std::map<std::string, Function> parse_tokens(std::vector<Token> tokens)
 
                     // parse argv and return values
 
-                    // op to function name | op.type doesn't matter
-                    Op op(OP_COUNT , func_name_token);
                     if (tokens.at(i).value != "in")
                     {
                         std::vector<IluTypeWithOp> arg_stack;
@@ -323,16 +322,16 @@ std::map<std::string, Function> parse_tokens(std::vector<Token> tokens)
                             if (tok.value == "int")
                             {
                                 if (pushing_to_arg_stack)
-                                    arg_stack.push_back(IluTypeWithOp(op, DATATYPE_INT));
+                                    arg_stack.push_back(IluTypeWithOp(Op(OP_COUNT, tok), DATATYPE_INT));
                                 else
-                                    ret_stack.push_back(IluTypeWithOp(op, DATATYPE_INT));
+                                    ret_stack.push_back(IluTypeWithOp(Op(OP_COUNT, tok), DATATYPE_INT));
                             }
                             else if (tok.value == "ptr")
                             {
                                 if (pushing_to_arg_stack)
-                                    arg_stack.push_back(IluTypeWithOp(op, DATATYPE_PTR));
+                                    arg_stack.push_back(IluTypeWithOp(Op(OP_COUNT, tok), DATATYPE_PTR));
                                 else
-                                    ret_stack.push_back(IluTypeWithOp(op, DATATYPE_PTR));
+                                    ret_stack.push_back(IluTypeWithOp(Op(OP_COUNT, tok), DATATYPE_PTR));
                             }
                             else if (tok.value == "->")
                                 pushing_to_arg_stack = false;
@@ -358,8 +357,9 @@ std::map<std::string, Function> parse_tokens(std::vector<Token> tokens)
                         function_ret_stacks.insert({func_name, {}});
                     }
     
-                    function_op_locations.insert({func_name, op});
+                    function_op_locations.insert({func_name, Op(OP_COUNT, func_name_token)});
                     function_addresses.insert({func_name, next_function_addr});
+
                     next_function_addr++;
                     recursion_level++;
                 }
