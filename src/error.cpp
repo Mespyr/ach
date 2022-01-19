@@ -1,11 +1,11 @@
 #include "../include/error.h"
 
-void print_error_with_no_location(std::string message)
+void print_error(std::string message)
 {
     std::cerr << "ERROR: " << message << std::endl;
 }
 
-void print_lexing_error(Location loc, std::string message)
+void print_error_at_loc(Location loc, std::string message)
 {
     std::cerr << loc.file_location << ":" << loc.line_number << ":" << loc.column_number_start << ": " << message << std::endl;
     std::cerr << loc.line << std::endl;
@@ -49,7 +49,7 @@ void print_op_error(Op op, std::string message)
 
 void print_op_note(Op op, std::string message)
 {
-    std::cerr << op.loc.file_location << ":" << op.loc.line_number << ":" << op.loc.column_number_start << ": NOTE: " << message << std::endl;
+    std::cerr << op.loc.file_location << ":" << op.loc.line_number << ":" << op.loc.column_number_start << ": note: " << message << std::endl;
     std::cerr << op.loc.line << std::endl;
 
     for (long unsigned int i = 0; i < op.loc.column_number_start; i++)

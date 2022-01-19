@@ -34,6 +34,8 @@ Options parse_argv(std::vector<std::string> argv)
     options.filename = "";
     options.help = false;
     options.unsafe = false;
+
+    static_assert(ASSEMBLER_COUNT == 2, "unhandled assemblers in parse_argv()");
     for (long unsigned int i = 1; i < argv.size(); i++)
     {
         std::string arg = argv.at(i);
@@ -50,7 +52,7 @@ Options parse_argv(std::vector<std::string> argv)
             options.filename = arg;
         else
         {
-            print_error_with_no_location("more than one file provided for compilation.");
+            print_error("more than one file provided for compilation.");
             exit(1);
         }
     }
@@ -73,7 +75,7 @@ int main(int argc, char* argv[])
     if (options.filename == "")
     {
         usage(argv[0]);
-        print_error_with_no_location("no file program for compilation.");
+        print_error("no file program for compilation.");
         exit(1);
     }
 
@@ -92,6 +94,7 @@ int main(int argc, char* argv[])
     // nasm or fasm
     std::cout << "[info] compiling assembly." << std::endl;
 
+    static_assert(ASSEMBLER_COUNT == 2, "unhandled assemblers in main()");
     if (options.assembler == FASM)
     {
         exit_on_error(std::system("fasm out.asm"));

@@ -21,7 +21,7 @@ void verify_program(std::map<std::string, Function> program)
 {
     if (!program.count("main"))
     {
-        print_error_with_no_location("no entry point found in program (no 'main' function)");
+        print_error("no entry point found in program (no 'main' function)");
         exit(1);
     }
 

@@ -3,8 +3,10 @@
 void compile_to_asm(std::map<std::string, Function> program, std::string output_filename, ASSEMBLER assembler)
 {
     static_assert(OP_COUNT == 50, "unhandled op types in compile_to_asm()");
+    static_assert(ASSEMBLER_COUNT == 2, "unhandled assemblers in compile_to_asm()");
 
     File outfile(output_filename, MODE_WRITE);
+
 
     // write boilerplate into file
     if (assembler == FASM)
@@ -471,6 +473,8 @@ void compile_to_asm(std::map<std::string, Function> program, std::string output_
             }
             else if (op.type == OP_FUNCTION_CALL)
             {
+                assert(program.count(op.push_str));
+
                 outfile.writeln("\t; OP_FUNCTION_CALL");
                 outfile.writeln("\tmov rax, rsp");
                 outfile.writeln("\tmov rsp, [ret_stack_rsp]");

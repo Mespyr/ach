@@ -10,11 +10,15 @@
 #include <ios>
 #include <sstream>
 #include <map>
+#include <assert.h>
 
 enum ASSEMBLER
 {
     NASM,
-    FASM
+    FASM,
+
+    // count | must always be last
+    ASSEMBLER_COUNT
 };
 
 void compile_to_asm(std::map<std::string, Function> program, std::string output_filename, ASSEMBLER assembler);

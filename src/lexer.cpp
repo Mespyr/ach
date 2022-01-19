@@ -58,7 +58,7 @@ std::vector<Token> tokenize_line(std::string line, std::string file_location, lo
             // check if col_end is at end of line
             if (column_number_end == line.length())
             {
-                print_lexing_error(
+                print_error_at_loc(
                     Location(line_number, column_number_start, column_number_end, line, file_location),
                     "unexpected EOL while tokenizing string"
                 );
@@ -91,7 +91,7 @@ std::vector<Token> tokenize_file(std::string file_location)
     // exit if file doesn't exist
     if (!file)
     {
-        print_error_with_no_location("couldn't open file '" + file_location + "': " + strerror(errno));
+        print_error("couldn't open file '" + file_location + "': " + strerror(errno));
         exit(1);
     }
 
