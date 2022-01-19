@@ -1,13 +1,11 @@
 @include "tests/ilu/test_lib/main.ilu"
 
 def ovr2 
-    int int -> int int int int
-in 
+    int int -> int int int int in
     over over 
 end
 
 def rot2 
-    int int int -> int int int 
-in 
+    int int int -> int int int in 
     rot rot
 end

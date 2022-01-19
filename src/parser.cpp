@@ -265,6 +265,9 @@ std::map<std::string, Function> parse_tokens(std::vector<Token> tokens)
     std::map<std::string, Op> function_op_locations;
     std::map<std::string, std::vector<IluTypeWithOp>> function_arg_stacks;
     std::map<std::string, std::vector<IluTypeWithOp>> function_ret_stacks;
+    
+    std::map<std::string, int> function_addresses;
+    int next_function_addr = 0;
 
     std::vector<std::string> include_paths;
     std::string func_name;
@@ -356,6 +359,8 @@ std::map<std::string, Function> parse_tokens(std::vector<Token> tokens)
                     }
     
                     function_op_locations.insert({func_name, op});
+                    function_addresses.insert({func_name, next_function_addr});
+                    next_function_addr++;
                     recursion_level++;
                 }
                 else
@@ -444,7 +449,8 @@ std::map<std::string, Function> parse_tokens(std::vector<Token> tokens)
             function_op_locations.at(it->first),
             convert_tokens_to_ops(it->second, program),
             function_arg_stacks.at(it->first),
-            function_ret_stacks.at(it->first)
+            function_ret_stacks.at(it->first),
+            function_addresses.at(it->first)
         )});
 
     return linked_program;

@@ -1,8 +1,15 @@
 # basic macro/function(s)
-def WRITE_SYSCALL_NUMBER -> int in 1 end
-def FD -> int in 1 end
+def WRITE_SYSCALL_NUMBER 
+    -> int in 1 
+end
 
-def puts int ptr in
+def FD 
+    -> int in 1 
+end
+
+def puts 
+int ptr in
+
     FD rot rot
     WRITE_SYSCALL_NUMBER syscall3
 end

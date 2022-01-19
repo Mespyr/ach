@@ -1,7 +1,9 @@
 # find largest palindrome made by the product of 2 3-digit numbers
 @include "std/math.ilu"
 
-def is_palindrome int -> int in
+def is_palindrome 
+    int -> int in
+
     dup 0 while over 0 > do
         10 *
         over 10 modulo +

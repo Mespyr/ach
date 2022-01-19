@@ -52,17 +52,6 @@ void compile_to_asm(std::map<std::string, Function> program, std::string output_
     outfile.writeln("\tsyscall");
     outfile.writeln("\tadd rsp, 40");
     outfile.writeln("\tret");
-    if (assembler == FASM)
-        outfile.writeln("start:");
-    else
-        outfile.writeln("_start:");
-    outfile.writeln("\tmov [args_ptr], rsp");
-    outfile.writeln("\tmov rax, ret_stack_end");
-    outfile.writeln("\tmov [ret_stack_rsp], rax");
-    outfile.writeln("\tcall function_main");
-    outfile.writeln("\tmov rax, 60");
-    outfile.writeln("\tmov rdi, 0");
-    outfile.writeln("\tsyscall");
 
     std::vector<std::string> strings;
     
@@ -71,7 +60,7 @@ void compile_to_asm(std::map<std::string, Function> program, std::string output_
         Function function = fn_key->second;
         std::string func_name = fn_key->first;
 
-        outfile.writeln("function_" + fn_key->first + ":");
+        outfile.writeln("func_addr_" + std::to_string(function.addr) + ":");
         outfile.writeln("\tmov [ret_stack_rsp], rsp");
         outfile.writeln("\tmov rsp, rax");
 
@@ -485,7 +474,7 @@ void compile_to_asm(std::map<std::string, Function> program, std::string output_
                 outfile.writeln("\t; OP_FUNCTION_CALL");
                 outfile.writeln("\tmov rax, rsp");
                 outfile.writeln("\tmov rsp, [ret_stack_rsp]");
-                outfile.writeln("\tcall function_" + op.push_str);
+                outfile.writeln("\tcall func_addr_" + std::to_string(program.at(op.push_str).addr));
                 outfile.writeln("\tmov [ret_stack_rsp], rsp");
                 outfile.writeln("\tmov rsp, rax");
             }
@@ -495,6 +484,18 @@ void compile_to_asm(std::map<std::string, Function> program, std::string output_
         outfile.writeln("\tmov rsp, [ret_stack_rsp]");
         outfile.writeln("\tret");
     }
+
+    if (assembler == FASM)
+        outfile.writeln("start:");
+    else
+        outfile.writeln("_start:");
+    outfile.writeln("\tmov [args_ptr], rsp");
+    outfile.writeln("\tmov rax, ret_stack_end");
+    outfile.writeln("\tmov [ret_stack_rsp], rax");
+    outfile.writeln("\tcall func_addr_" + std::to_string(program.at("main").addr));
+    outfile.writeln("\tmov rax, 60");
+    outfile.writeln("\tmov rdi, 0");
+    outfile.writeln("\tsyscall");
 
     // data section
     if (assembler == FASM)

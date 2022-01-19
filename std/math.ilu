@@ -1,17 +1,33 @@
-def modulo int int -> int in 
+def modulo 
+    int int -> int in
     / swp pop 
 end
 
-def div int int -> int in
+def % 
+    int int -> int in 
+    / swp pop 
+end
+
+def div 
+    int int -> int  in
     / pop
 end
 
-def power int int -> int in
-    # a^b if [... a, b ]
-    1 while over 0 > do
+def power 
+    int int -> int in
+
+    # a^b [... a, b ]
+    1 while over 0 > do 
         rot swp over * # multipky a with itself
         rot 1 -        # decrement b
         swp
     end
     rot rot pop pop    # get rid of a and b
+end
+
+def negative 
+    int -> int in
+    # subtract double the number from itself 
+    # a-(a*2)
+    dup dup + -
 end

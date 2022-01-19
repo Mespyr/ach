@@ -1,9 +1,13 @@
-def puts int ptr in
+def puts
+    int ptr in
+
     1 rot rot swp
     1 syscall3
 end
 
-def println int ptr in
+def println
+    int ptr in
+
     over over +
     10 write8
     swp 1 +
