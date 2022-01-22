@@ -4,6 +4,7 @@
 #include "location.h"
 #include "token.h"
 #include <string>
+#include <vector>
 
 enum OpType 
 {
@@ -74,7 +75,7 @@ enum OpType
     // count | must always be last
     OP_COUNT
 };
-    
+
 class Op
 {
 public:
@@ -102,5 +103,7 @@ public:
     std::string str_operand;
     bool link_back;
 };
+
+bool is_builtin_word(std::string word);
 
 #endif

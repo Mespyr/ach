@@ -9,6 +9,7 @@ def is_palindrome
         over 10 modulo +
         swp 10 div swp
     end
+
     swp pop =
 end
 

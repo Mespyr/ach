@@ -1,4 +1,7 @@
-[ ] - show in errors which function caused an error
 [*] - organise and generalize vars in Op() by making them operands (str_operand, int_operand)
-[ ] - add support for consts
+[*] - add support for consts
+    [*] - create parsing step for consts
+        [*] - check for redefinitions for functions and consts
+        [*] - create mini eval in compiler to evaluate const values at compile-time
+[ ] - add static asserts
 [ ] - add support for inline functions

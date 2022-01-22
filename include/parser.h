@@ -8,14 +8,16 @@
 #include "function.h"
 #include "lexer.h"
 #include "file.h"
+#include "program.h"
 #include <vector>
 #include <string>
 #include <iostream>
 #include <map>
 #include <algorithm>
 
-std::map<std::string, Function> parse_tokens(std::vector<Token> tokens);
-std::vector<Op> convert_tokens_to_ops(std::vector<Token> tokens, std::map<std::string, std::vector<Token>> basic_program);
+void print_error_if_illegal_word(Token tok, std::map<std::string, Const> consts, std::map<std::string, Function> functions);
 std::vector<Op> link_ops(std::vector<Op> ops);
+Op convert_token_to_op(Token tok, std::map<std::string, Function> functions, std::map<std::string, Const> consts);
+Program parse_tokens(std::vector<Token> tokens);
 
 #endif

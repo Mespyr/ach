@@ -8,6 +8,5 @@ def main in
             1 +
         end
     end
-    dump
-    pop
+    dump pop
 end

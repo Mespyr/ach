@@ -1,5 +1,4 @@
 #include "../include/checks.h"
-#include <string>
 
 bool compare_type_stacks(std::vector<IluTypeWithOp> type_stack_1, std::vector<IluTypeWithOp> type_stack_2)
 {
@@ -17,21 +16,21 @@ bool compare_type_stacks(std::vector<IluTypeWithOp> type_stack_1, std::vector<Il
     return true;
 }
 
-void verify_program(std::map<std::string, Function> program)
+void verify_program(Program program)
 {
-    if (!program.count("main"))
+    if (!program.functions.count("main"))
     {
         print_error("no entry point found in program (no 'main' function)");
         exit(1);
     }
 
-    Function main_func = program.at("main");
+    Function main_func = program.functions.at("main");
     if (main_func.arg_stack.size() > 0)
     {
         print_op_error(main_func.op, "'main' function must not pass any arguments");
         exit(1);
     }
-    
+
     if (main_func.ret_stack.size() > 0)
     {
         print_op_error(main_func.op, "'main' function must not have any return values");
@@ -39,12 +38,12 @@ void verify_program(std::map<std::string, Function> program)
     }
 }
 
-void type_check_program(std::map<std::string, Function> program)
+void type_check_program(Program program)
 {
     static_assert(OP_COUNT == 50, "unhandled op types in type_check_program()");
     static_assert(DATATYPE_COUNT == 2, "unhandled datatypes in type_check_program()");
 
-    for (auto fn_key = program.begin(); fn_key != program.end(); fn_key++)
+    for (auto fn_key = program.functions.begin(); fn_key != program.functions.end(); fn_key++)
     {
         std::vector<IluTypeWithOp> type_stack;
         std::vector<StackSnapshot> stack_snapshots;
@@ -67,7 +66,7 @@ void type_check_program(std::map<std::string, Function> program)
                 }
                 type_stack.pop_back();
             }
-    
+
             // arithmetics
             else if (op.type == OP_PLUS)
             {
@@ -81,7 +80,7 @@ void type_check_program(std::map<std::string, Function> program)
                 IluTypeWithOp b = type_stack.back(); type_stack.pop_back();
 
                 // additions goes in following combinations [b, a] -> [b + a]
-                
+
                 // int + int -> int
                 if (a.type == DATATYPE_INT && b.type == DATATYPE_INT)
                     type_stack.push_back(IluTypeWithOp(op, DATATYPE_INT));
@@ -920,9 +919,9 @@ void type_check_program(std::map<std::string, Function> program)
             }
             else if (op.type == OP_FUNCTION_CALL)
             {
-                assert(program.count(op.str_operand));
+                assert(program.functions.count(op.str_operand));
 
-                Function call_func = program.at(op.str_operand);
+                Function call_func = program.functions.at(op.str_operand);
 
                 if (type_stack.size() < call_func.arg_stack.size())
                 {
@@ -998,8 +997,8 @@ void type_check_program(std::map<std::string, Function> program)
             {
                 print_invalid_type_error(function.op, function.ret_stack.at(0).type, type_stack.at(0).type, func_name, "", false, true);
                 print_op_note(type_stack.at(0).op, "value pushed here (" + human_readable_type(type_stack.at(0).type) + ")");
-            }   
-            
+            }
+
             exit(1);
         }
     }

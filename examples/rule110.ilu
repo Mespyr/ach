@@ -3,9 +3,7 @@
 
 @include "std/io.ilu"
 
-def BOARD_SIZE 
-    -> int in 100 
-end
+const BOARD_SIZE 100 end
 
 def rule110 in
     mem BOARD_SIZE 2 - +  # mem[BOARD_SIZE - 2]

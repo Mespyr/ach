@@ -8,9 +8,8 @@
 class Function
 {
 public:
-    Function(Op op, std::vector<Op> ops, std::vector<IluTypeWithOp> arg_stack, std::vector<IluTypeWithOp> ret_stack, int addr) :
+    Function(Op op, std::vector<IluTypeWithOp> arg_stack, std::vector<IluTypeWithOp> ret_stack, int addr) :
         op(op),
-        ops(ops),
         arg_stack(arg_stack),
         ret_stack(ret_stack),
         addr(addr)
@@ -22,6 +21,5 @@ public:
     std::vector<IluTypeWithOp> ret_stack;
     int addr;
 };
-
 
 #endif

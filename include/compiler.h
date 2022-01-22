@@ -5,6 +5,7 @@
 #include "file.h"
 #include "error.h"
 #include "function.h"
+#include "program.h"
 #include <vector>
 #include <string>
 #include <ios>
@@ -21,6 +22,6 @@ enum ASSEMBLER
     ASSEMBLER_COUNT
 };
 
-void compile_to_asm(std::map<std::string, Function> program, std::string output_filename, ASSEMBLER assembler);
+void compile_to_asm(Program program, std::string output_filename, ASSEMBLER assembler);
 
 #endif

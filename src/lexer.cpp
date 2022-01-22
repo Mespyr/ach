@@ -1,5 +1,4 @@
 #include "../include/lexer.h"
-#include <cstring>
 
 long unsigned int find_next_token_start_col(long unsigned int column_number, std::string line)
 {

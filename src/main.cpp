@@ -5,6 +5,7 @@
 #include "../include/error.h"
 #include "../include/parser.h"
 #include "../include/checks.h"
+#include "../include/program.h"
 #include <cstdlib>
 #include <vector>
 #include <iostream>
@@ -81,7 +82,7 @@ int main(int argc, char* argv[])
 
     // parse file
     std::vector<Token> tokens = tokenize_file(options.filename);
-    std::map<std::string, Function> program = parse_tokens(tokens);
+    Program program = parse_tokens(tokens);
     verify_program(program);
 
     if (!options.unsafe)

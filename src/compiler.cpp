@@ -1,6 +1,6 @@
 #include "../include/compiler.h"
 
-void compile_to_asm(std::map<std::string, Function> program, std::string output_filename, ASSEMBLER assembler)
+void compile_to_asm(Program program, std::string output_filename, ASSEMBLER assembler)
 {
     static_assert(OP_COUNT == 50, "unhandled op types in compile_to_asm()");
     static_assert(ASSEMBLER_COUNT == 2, "unhandled assemblers in compile_to_asm()");
@@ -57,7 +57,7 @@ void compile_to_asm(std::map<std::string, Function> program, std::string output_
 
     std::vector<std::string> strings;
     
-    for (auto fn_key = program.begin(); fn_key != program.end(); fn_key++)
+    for (auto fn_key = program.functions.begin(); fn_key != program.functions.end(); fn_key++)
     {
         Function function = fn_key->second;
 
@@ -473,12 +473,12 @@ void compile_to_asm(std::map<std::string, Function> program, std::string output_
             }
             else if (op.type == OP_FUNCTION_CALL)
             {
-                assert(program.count(op.str_operand));
+                assert(program.functions.count(op.str_operand));
 
                 outfile.writeln("\t; OP_FUNCTION_CALL");
                 outfile.writeln("\tmov rax, rsp");
                 outfile.writeln("\tmov rsp, [ret_stack_rsp]");
-                outfile.writeln("\tcall func_addr_" + std::to_string(program.at(op.str_operand).addr));
+                outfile.writeln("\tcall func_addr_" + std::to_string(program.functions.at(op.str_operand).addr));
                 outfile.writeln("\tmov [ret_stack_rsp], rsp");
                 outfile.writeln("\tmov rsp, rax");
             }
@@ -496,7 +496,7 @@ void compile_to_asm(std::map<std::string, Function> program, std::string output_
     outfile.writeln("\tmov [args_ptr], rsp");
     outfile.writeln("\tmov rax, ret_stack_end");
     outfile.writeln("\tmov [ret_stack_rsp], rax");
-    outfile.writeln("\tcall func_addr_" + std::to_string(program.at("main").addr));
+    outfile.writeln("\tcall func_addr_" + std::to_string(program.functions.at("main").addr));
     outfile.writeln("\tmov rax, 60");
     outfile.writeln("\tmov rdi, 0");
     outfile.writeln("\tsyscall");
@@ -511,7 +511,7 @@ void compile_to_asm(std::map<std::string, Function> program, std::string output_
     {
         std::stringstream ss;
 
-        for (char c : strings.at(i))
+    for (char c : strings.at(i))
             ss << (int) c << ",";
         ss << "0";
         outfile.writeln("str_" + std::to_string(i) + ": db " + ss.str());

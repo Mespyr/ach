@@ -7,7 +7,7 @@ void print_error(std::string message)
 
 void print_error_at_loc(Location loc, std::string message)
 {
-    std::cerr << loc.file_location << ":" << loc.line_number << ":" << loc.column_number_start << ": " << message << std::endl;
+	std::cerr << loc.file_location << ":" << loc.line_number << ":" << loc.column_number_start << ": " << message << std::endl;
     std::cerr << loc.line << std::endl;
 
     for (long unsigned int i = 0; i < loc.column_number_start; i++)

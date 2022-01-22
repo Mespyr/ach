@@ -1,0 +1,18 @@
+const SIZE 10 end
+const CONST2 24 end
+
+const SIZE2 
+    CONST2 1 +
+end
+
+def func 
+    int int int -> int in
+    * *
+end
+
+def main in
+    SIZE   dump
+    CONST2 dump
+    SIZE2  dump
+    SIZE SIZE2 CONST2 func dump
+end

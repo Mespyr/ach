@@ -1,5 +1,35 @@
 #include "../include/parser.h"
-#include <error.h>
+
+void print_error_if_illegal_word(Token tok, std::map<std::string, Const> consts, std::map<std::string, Function> functions)
+{
+    if (is_builtin_word(tok.value))
+    {
+        print_token_error(tok, "built-in word used as const or function definition");
+        exit(1);
+    }
+    else if (is_number(tok.value))
+    {
+        print_token_error(tok, "numbers are not allowed to be const or function definitions");
+        exit(1);
+    }
+    else if (is_string(tok.value))
+    {
+        print_token_error(tok, "strings are not allowed to be const or function definitions");
+        exit(1);
+    }
+    else if (consts.count(tok.value))
+    {
+        print_token_error(tok, "redefinition of word '" + tok.value + "' from a const");
+        print_op_error(consts.at(tok.value).op, "original const defined here");
+        exit(1);
+    }
+    else if (functions.count(tok.value))
+    {
+        print_token_error(tok, "redefinition of word '" + tok.value + "' from a function");
+        print_op_error(functions.at(tok.value).op, "original function defined here");
+        exit(1);
+    }
+}
 
 std::vector<Op> link_ops(std::vector<Op> ops)
 {
@@ -117,161 +147,150 @@ std::vector<Op> link_ops(std::vector<Op> ops)
     return ops;
 }
 
-std::vector<Op> convert_tokens_to_ops(std::vector<Token> tokens, std::map<std::string, std::vector<Token>> basic_program)
+Op convert_token_to_op(Token tok, std::map<std::string, Function> functions, std::map<std::string, Const> consts)
 {
     static_assert(OP_COUNT == 50, "unhandled op types in convert_tokens_to_ops()");
 
-    std::vector<Op> program;
+    // debugging
+    if (tok.value == "dump")
+        return Op(OP_DUMP, tok);
 
-    for (long unsigned int i = 0; i < tokens.size(); i++)
-    {
-        Token tok = tokens.at(i);
-        // debugging
-        if (tok.value == "dump")
-            program.push_back(Op(OP_DUMP, tok));
-        
-        // arithmetics
-        else if (tok.value == "+") 
-            program.push_back(Op(OP_PLUS, tok));
-        else if (tok.value == "-") 
-            program.push_back(Op(OP_MINUS, tok));
-        else if (tok.value == "*")
-            program.push_back(Op(OP_MUL, tok));
-        else if (tok.value == "/")
-            program.push_back(Op(OP_DIV, tok));
+    // arithmetics
+    else if (tok.value == "+") 
+        return Op(OP_PLUS, tok);
+    else if (tok.value == "-") 
+        return Op(OP_MINUS, tok);
+    else if (tok.value == "*")
+        return Op(OP_MUL, tok);
+    else if (tok.value == "/")
+        return Op(OP_DIV, tok);
 
-        // comparisons
-        else if (tok.value == "=")
-            program.push_back(Op(OP_EQUAL, tok));
-        else if (tok.value == ">")
-            program.push_back(Op(OP_GREATER, tok));
-        else if (tok.value == "<")
-            program.push_back(Op(OP_LESS, tok));
-        else if (tok.value == ">=")
-            program.push_back(Op(OP_GREATER_EQ, tok));
-        else if (tok.value == "<=")
-            program.push_back(Op(OP_LESS_EQ, tok));
-        else if (tok.value == "!=")
-            program.push_back(Op(OP_NOT_EQ, tok));
-        else if (tok.value == "not")
-            program.push_back(Op(OP_NOT, tok));
-        else if (tok.value == "and")
-            program.push_back(Op(OP_AND, tok));
-        else if (tok.value == "or")
-            program.push_back(Op(OP_OR, tok));
-        
-        // stack manipulation
-        else if (tok.value == "pop")
-            program.push_back(Op(OP_POP, tok));
-        else if (tok.value == "dup")
-            program.push_back(Op(OP_DUP, tok));
-        else if (tok.value == "swp")
-            program.push_back(Op(OP_SWP, tok));
-        else if (tok.value == "rot")
-            program.push_back(Op(OP_ROT, tok));
-        else if (tok.value == "over")
-            program.push_back(Op(OP_OVER, tok));
-        
-        // memory
-        else if (tok.value == "mem")
-            program.push_back(Op(OP_MEM, tok));
-        else if (tok.value == "read8")
-            program.push_back(Op(OP_READ8, tok));
-        else if (tok.value == "write8")
-            program.push_back(Op(OP_WRITE8, tok));
-        else if (tok.value == "read16")
-            program.push_back(Op(OP_READ16, tok));
-        else if (tok.value == "write16")
-            program.push_back(Op(OP_WRITE16, tok));
-        else if (tok.value == "read32")
-            program.push_back(Op(OP_READ32, tok));
-        else if (tok.value == "write32")
-            program.push_back(Op(OP_WRITE32, tok));
-        else if (tok.value == "read64")
-            program.push_back(Op(OP_READ64, tok));
-        else if (tok.value == "write64")
-            program.push_back(Op(OP_WRITE64, tok));
+    // comparisons
+    else if (tok.value == "=")
+        return Op(OP_EQUAL, tok);
+    else if (tok.value == ">")
+        return Op(OP_GREATER, tok);
+    else if (tok.value == "<")
+        return Op(OP_LESS, tok);
+    else if (tok.value == ">=")
+        return Op(OP_GREATER_EQ, tok);
+    else if (tok.value == "<=")
+        return Op(OP_LESS_EQ, tok);
+    else if (tok.value == "!=")
+        return Op(OP_NOT_EQ, tok);
+    else if (tok.value == "not")
+        return Op(OP_NOT, tok);
+    else if (tok.value == "and")
+        return Op(OP_AND, tok);
+    else if (tok.value == "or")
+        return Op(OP_OR, tok);
 
-        // argv
-        else if (tok.value == "argv")
-            program.push_back(Op(OP_ARGV, tok));
-        else if (tok.value == "argc")
-            program.push_back(Op(OP_ARGC, tok));
+    // stack manipulation
+    else if (tok.value == "pop")
+        return Op(OP_POP, tok);
+    else if (tok.value == "dup")
+        return Op(OP_DUP, tok);
+    else if (tok.value == "swp")
+        return Op(OP_SWP, tok);
+    else if (tok.value == "rot")
+        return Op(OP_ROT, tok);
+    else if (tok.value == "over")
+        return Op(OP_OVER, tok);
 
-        // bitwise
-        else if (tok.value == "<<")
-            program.push_back(Op(OP_SHIFT_LEFT, tok));
-        else if (tok.value == ">>")
-            program.push_back(Op(OP_SHIFT_RIGHT, tok));
-        else if (tok.value == "orb")
-            program.push_back(Op(OP_ORB, tok));
-        else if (tok.value == "andb")
-            program.push_back(Op(OP_ANDB, tok));
-        
-        // syscalls
-        else if (tok.value == "syscall1")
-            program.push_back(Op(OP_SYSCALL1, tok));
-        else if (tok.value == "syscall2")
-            program.push_back(Op(OP_SYSCALL2, tok));
-        else if (tok.value == "syscall3")
-            program.push_back(Op(OP_SYSCALL3, tok));
-        else if (tok.value == "syscall4")
-            program.push_back(Op(OP_SYSCALL4, tok));
-        else if (tok.value == "syscall5")
-            program.push_back(Op(OP_SYSCALL5, tok));
-        else if (tok.value == "syscall6")
-            program.push_back(Op(OP_SYSCALL6, tok));
+    // memory
+    else if (tok.value == "mem")
+        return Op(OP_MEM, tok);
+    else if (tok.value == "read8")
+        return Op(OP_READ8, tok);
+    else if (tok.value == "write8")
+        return Op(OP_WRITE8, tok);
+    else if (tok.value == "read16")
+        return Op(OP_READ16, tok);
+    else if (tok.value == "write16")
+        return Op(OP_WRITE16, tok);
+    else if (tok.value == "read32")
+        return Op(OP_READ32, tok);
+    else if (tok.value == "write32")
+        return Op(OP_WRITE32, tok);
+    else if (tok.value == "read64")
+        return Op(OP_READ64, tok);
+    else if (tok.value == "write64")
+        return Op(OP_WRITE64, tok);
 
-        // keywords
-        else if (tok.value == "while")
-            program.push_back(Op(OP_WHILE, tok));
-        else if (tok.value == "do")
-            program.push_back(Op(OP_DO, tok));
-        else if (tok.value == "if")
-            program.push_back(Op(OP_IF, tok));
-        else if (tok.value == "else")
-            program.push_back(Op(OP_ELSE, tok));
-        else if (tok.value == "end")
-            program.push_back(Op(OP_END, tok));
-       
-        // type checking
-        else if (tok.value == "cast(ptr)")
-            program.push_back(Op(OP_CAST_PTR, tok));
-        else if (tok.value == "cast(int)")
-            program.push_back(Op(OP_CAST_INT, tok));
+    // argv
+    else if (tok.value == "argv")
+        return Op(OP_ARGV, tok);
+    else if (tok.value == "argc")
+        return Op(OP_ARGC, tok);
 
-        // other
-        else if (is_number(tok.value))
-            program.push_back(Op(OP_PUSH_INT, atol(tok.value.c_str()), tok));
-        else if (is_string(tok.value))
-            program.push_back(Op(OP_PUSH_STR, add_escapes_to_string(tok.value.substr(1, tok.value.length() - 2)), tok));
-        else if (basic_program.count(tok.value))
-            program.push_back(Op(OP_FUNCTION_CALL, tok.value, tok));
+    // bitwise
+    else if (tok.value == "<<")
+        return Op(OP_SHIFT_LEFT, tok);
+    else if (tok.value == ">>")
+        return Op(OP_SHIFT_RIGHT, tok);
+    else if (tok.value == "orb")
+        return Op(OP_ORB, tok);
+    else if (tok.value == "andb")
+        return Op(OP_ANDB, tok);
 
-        else
-        {
-            print_token_error(tok, "Unknown keyword '" + tok.value + "'");
-            exit(1);
-        }
-    }
+    // syscalls
+    else if (tok.value == "syscall1")
+        return Op(OP_SYSCALL1, tok);
+    else if (tok.value == "syscall2")
+        return Op(OP_SYSCALL2, tok);
+    else if (tok.value == "syscall3")
+        return Op(OP_SYSCALL3, tok);
+    else if (tok.value == "syscall4")
+        return Op(OP_SYSCALL4, tok);
+    else if (tok.value == "syscall5")
+        return Op(OP_SYSCALL5, tok);
+    else if (tok.value == "syscall6")
+        return Op(OP_SYSCALL6, tok);
 
-    return link_ops(program);
+    // keywords
+    else if (tok.value == "while")
+        return Op(OP_WHILE, tok);
+    else if (tok.value == "do")
+        return Op(OP_DO, tok);
+    else if (tok.value == "if")
+        return Op(OP_IF, tok);
+    else if (tok.value == "else")
+        return Op(OP_ELSE, tok);
+    else if (tok.value == "end")
+        return Op(OP_END, tok);
+
+    // type checking
+    else if (tok.value == "cast(ptr)")
+        return Op(OP_CAST_PTR, tok);
+    else if (tok.value == "cast(int)")
+        return Op(OP_CAST_INT, tok);
+
+    // other
+    else if (is_number(tok.value))
+        return Op(OP_PUSH_INT, atol(tok.value.c_str()), tok);
+    else if (is_string(tok.value))
+        return Op(OP_PUSH_STR, add_escapes_to_string(tok.value.substr(1, tok.value.length() - 2)), tok);
+    else if (consts.count(tok.value))
+        return Op(OP_PUSH_INT, consts.at(tok.value).value, tok);
+    else if (functions.count(tok.value))
+        return Op(OP_FUNCTION_CALL, tok.value, tok);
+
+    print_token_error(tok, "Unknown keyword '" + tok.value + "'");
+    exit(1);
 }
 
-std::map<std::string, Function> parse_tokens(std::vector<Token> tokens)
+Program parse_tokens(std::vector<Token> tokens)
 {
-    std::map<std::string, std::vector<Token>> program;
+    // function arguments
+    std::map<std::string, Function> functions;
+    int function_addr = 0;
 
-    std::vector<Token> function_tokens;
-    std::map<std::string, Op> function_op_locations;
-    std::map<std::string, std::vector<IluTypeWithOp>> function_arg_stacks;
-    std::map<std::string, std::vector<IluTypeWithOp>> function_ret_stacks;
-    
-    std::map<std::string, int> function_addresses;
-    int next_function_addr = 0;
+    // const arguments
+    std::map<std::string, Const> consts;
 
     std::vector<std::string> include_paths;
     std::string func_name;
+    std::vector<Op> function_ops;
     long unsigned int i = 0;
     int recursion_level = 0;
 
@@ -285,89 +304,141 @@ std::map<std::string, Function> parse_tokens(std::vector<Token> tokens)
             // if inside function already
             if (recursion_level > 0)
             {
-                print_token_error(tok, "unexpected 'def' keyword found while parsing");
+                print_token_error(tok, "unexpected 'def' keyword found while parsing. functions cannot be defined inside other functions as there is no scoping.");
                 exit(1);
             }
             else if (i > tokens.size() - 2)
             {
-                print_token_error(tok, "unexpected EOF found while parsing");
+                print_token_error(tok, "unexpected EOF found while parsing function definition");
                 exit(1);
             }
             else
             {
                 Token func_name_token = tokens.at(i);
                 func_name = func_name_token.value;
+
                 // check if function name can be used in code
-                if (!is_string(func_name) && !is_number(func_name))
+                print_error_if_illegal_word(func_name_token, consts, functions);
+
+                i++;
+
+                std::vector<IluTypeWithOp> arg_stack;
+                std::vector<IluTypeWithOp> ret_stack;
+                bool pushing_to_arg_stack = true;
+
+                while (tokens.at(i).value != "in")
                 {
-                    if (program.count(func_name))
+                    Token tok = tokens.at(i);
+
+                    if (tok.value == human_readable_type(DATATYPE_INT))
                     {
-                        print_token_error(func_name_token, "Multiple definitions for '" + func_name + "' found");
-                        exit(1);
+                        if (pushing_to_arg_stack)
+                            arg_stack.push_back(IluTypeWithOp(Op(OP_COUNT, tok), DATATYPE_INT));
+                        else
+                            ret_stack.push_back(IluTypeWithOp(Op(OP_COUNT, tok), DATATYPE_INT));
                     }
-                    i++;
-
-                    // parse argv and return values
-
-                    if (tokens.at(i).value != "in")
+                    else if (tok.value == human_readable_type(DATATYPE_PTR))
                     {
-                        std::vector<IluTypeWithOp> arg_stack;
-                        std::vector<IluTypeWithOp> ret_stack;
-                        bool pushing_to_arg_stack = true;
-
-                        while (tokens.at(i).value != "in")
-                        {
-                            Token tok = tokens.at(i);
-
-                            if (tok.value == "int")
-                            {
-                                if (pushing_to_arg_stack)
-                                    arg_stack.push_back(IluTypeWithOp(Op(OP_COUNT, tok), DATATYPE_INT));
-                                else
-                                    ret_stack.push_back(IluTypeWithOp(Op(OP_COUNT, tok), DATATYPE_INT));
-                            }
-                            else if (tok.value == "ptr")
-                            {
-                                if (pushing_to_arg_stack)
-                                    arg_stack.push_back(IluTypeWithOp(Op(OP_COUNT, tok), DATATYPE_PTR));
-                                else
-                                    ret_stack.push_back(IluTypeWithOp(Op(OP_COUNT, tok), DATATYPE_PTR));
-                            }
-                            else if (tok.value == "->")
-                                pushing_to_arg_stack = false;
-                            else
-                            {
-                                print_token_error(tok, "unknown argument type '" + tok.value + "'");
-                                exit(1);
-                            }
-
-                            i++;
-                            if (i > tokens.size() - 1)
-                            {
-                                print_token_error(tok, "unexpected EOF found while parsing");
-                                exit(1);
-                            }
-                        }
-                        function_arg_stacks.insert({func_name, arg_stack});
-                        function_ret_stacks.insert({func_name, ret_stack});
+                        if (pushing_to_arg_stack)
+                            arg_stack.push_back(IluTypeWithOp(Op(OP_COUNT, tok), DATATYPE_PTR));
+                        else
+                            ret_stack.push_back(IluTypeWithOp(Op(OP_COUNT, tok), DATATYPE_PTR));
                     }
+                    else if (tok.value == "->")
+                        pushing_to_arg_stack = false;
                     else
                     {
-                        function_arg_stacks.insert({func_name, {}});
-                        function_ret_stacks.insert({func_name, {}});
+                        print_token_error(tok, "unknown argument type '" + tok.value + "'");
+                        exit(1);
                     }
-    
-                    function_op_locations.insert({func_name, Op(OP_COUNT, func_name_token)});
-                    function_addresses.insert({func_name, next_function_addr});
 
-                    next_function_addr++;
-                    recursion_level++;
+                    i++;
+                    if (i > tokens.size() - 1)
+                    {
+                        print_token_error(tok, "unexpected EOF found while parsing");
+                        exit(1);
+                    }
                 }
-                else
+
+                functions.insert({func_name, Function(
+                    Op(OP_COUNT, func_name_token),
+                    arg_stack,
+                    ret_stack,
+                    function_addr
+                )});
+
+                function_addr++;
+                recursion_level++;
+            }
+        }
+
+        else if (tok.value == "const")
+        {
+            i++;
+
+            if (recursion_level > 0)
+            {
+                print_token_error(tok, "unexpected 'const' keyword found while parsing. consts cannot be defined inside functions as there is no scoping.");
+                exit(1);
+            }
+            else if (i > tokens.size() - 2)
+            {
+                print_token_error(tok, "unexpected EOF found while parsing const definition");
+                exit(1);
+            }
+            else
+            {
+                Token const_name_token = tokens.at(i);
+                std::string const_name = const_name_token.value;
+
+                print_error_if_illegal_word(const_name_token, consts, functions);
+                i++;
+
+                static_assert(OP_COUNT == 50, "unhandled op types in parse_tokens() in evaluating const lang subset");
+                // subset of language in const block supports:
+                // pushing integers
+                // + and *
+                std::vector<long long> stack;
+
+                while (tokens.at(i).value != "end")
                 {
-                    print_token_error(func_name_token, "Expected word for function name");
-                    exit(1);
+                    Op op = convert_token_to_op(tokens.at(i), functions, consts);
+
+                    if (op.type == OP_PUSH_INT)
+                        stack.push_back(op.int_operand);
+
+                    else if (op.type == OP_PLUS)
+                    {
+                        if (stack.size() < 2)
+                        {
+                            print_not_enough_arguments_error(op, 2, stack.size(), "+", "addition");
+                            exit(1);
+                        }
+                        long long a = stack.back(); stack.pop_back();
+                        long long b = stack.back(); stack.pop_back();
+                        stack.push_back(a + b);
+                    }
+                    else if (op.type == OP_MUL)
+                    {
+                        if (stack.size() < 2)
+                        {
+                            print_not_enough_arguments_error(op, 2, stack.size(), "*", "multiplication");
+                            exit(1);
+                        }
+                        long long a = stack.back(); stack.pop_back();
+                        long long b = stack.back(); stack.pop_back();
+                        stack.push_back(a * b);
+                    }
+
+                    i++;
+                    if (i > tokens.size() - 1)
+                    {
+                        print_token_error(tokens.at(i - 1), "unexpected EOF found while parsing");
+                        exit(1);
+                    }
                 }
+
+                consts.insert({const_name, Const(Op(OP_COUNT, const_name_token), stack.back())});
             }
         }
 
@@ -398,7 +469,7 @@ std::map<std::string, Function> parse_tokens(std::vector<Token> tokens)
             if (std::find(include_paths.begin(), include_paths.end(), file_path) == include_paths.end())
             {
                 std::vector<Token> include_file_tokens = tokenize_file(file_path);
-                tokens.insert(tokens.end(), include_file_tokens.begin(), include_file_tokens.end());
+                tokens.insert(tokens.begin() + i + 1, include_file_tokens.begin(), include_file_tokens.end());
                 include_paths.push_back(file_path);
             }
         }
@@ -410,17 +481,17 @@ std::map<std::string, Function> parse_tokens(std::vector<Token> tokens)
             // if outside function block
             if (recursion_level == 0)
             {
-                program.insert({func_name, function_tokens});
-                function_tokens.clear();
+                functions.at(func_name).ops = link_ops(function_ops);
                 func_name.clear();
+                function_ops.clear();
             }
-            else function_tokens.push_back(tok);
+            else function_ops.push_back(convert_token_to_op(tok, functions, consts));
         }
 
         // if inside function block
         else if (recursion_level > 0)
         {
-            function_tokens.push_back(tok);
+            function_ops.push_back(convert_token_to_op(tok, functions, consts));
 
             // if code block found, inc recursion_level
             if (tok.value == "if") recursion_level++;
@@ -434,24 +505,16 @@ std::map<std::string, Function> parse_tokens(std::vector<Token> tokens)
 
         i++;
     }
-    
-    if (function_tokens.size() > 0)
+
+    if (function_ops.size() > 0)
     {
-        print_token_error(function_tokens.back(), "unexpected EOF found while parsing");
+        print_op_error(function_ops.back(), "unexpected EOF found while parsing");
         exit(1);
     }
 
-    std::map<std::string, Function> linked_program;
+    Program program;
+    program.functions = functions;
+    program.consts = consts;
 
-    // loop through all functions in program and convert their tokens into Ops which are linked to each other
-    for(auto it = program.begin(); it != program.end(); ++it)
-        linked_program.insert({it->first, Function(
-            function_op_locations.at(it->first),
-            convert_tokens_to_ops(it->second, program),
-            function_arg_stacks.at(it->first),
-            function_ret_stacks.at(it->first),
-            function_addresses.at(it->first)
-        )});
-
-    return linked_program;
+    return program;
 }
