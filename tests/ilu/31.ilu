@@ -5,7 +5,7 @@ const SIZE2
     CONST2 1 +
 end
 
-def func 
+def func
     int int int -> int in
     * *
 end

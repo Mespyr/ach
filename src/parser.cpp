@@ -1,6 +1,6 @@
 #include "../include/parser.h"
 
-void print_error_if_illegal_word(Token tok, std::map<std::string, Const> consts, std::map<std::string, Function> functions)
+void print_error_if_illegal_word(Token tok, Program program)
 {
     if (is_builtin_word(tok.value))
     {
@@ -17,23 +17,29 @@ void print_error_if_illegal_word(Token tok, std::map<std::string, Const> consts,
         print_token_error(tok, "strings are not allowed to be const or function definitions");
         exit(1);
     }
-    else if (consts.count(tok.value))
+    else if (program.consts.count(tok.value))
     {
         print_token_error(tok, "redefinition of word '" + tok.value + "' from a const");
-        print_op_error(consts.at(tok.value).op, "original const defined here");
+        print_op_error(program.consts.at(tok.value).op, "original const defined here");
         exit(1);
     }
-    else if (functions.count(tok.value))
+    else if (program.functions.count(tok.value))
     {
         print_token_error(tok, "redefinition of word '" + tok.value + "' from a function");
-        print_op_error(functions.at(tok.value).op, "original function defined here");
+        print_op_error(program.functions.at(tok.value).op, "original function defined here");
+        exit(1);
+    }
+    else if (program.memories.count(tok.value))
+    {
+        print_token_error(tok, "redefinition of word '" + tok.value + "' from a memory region");
+        print_op_error(program.functions.at(tok.value).op, "original memory region defined here");
         exit(1);
     }
 }
 
 std::vector<Op> link_ops(std::vector<Op> ops)
 {
-    static_assert(OP_COUNT == 50, "unhandled op types in link_ops()");
+    static_assert(OP_COUNT == 51, "unhandled op types in link_ops()");
 
     // track location of newest block parsed
     std::vector<long unsigned int> ip_stack;
@@ -147,9 +153,9 @@ std::vector<Op> link_ops(std::vector<Op> ops)
     return ops;
 }
 
-Op convert_token_to_op(Token tok, std::map<std::string, Function> functions, std::map<std::string, Const> consts)
+Op convert_token_to_op(Token tok, Program program)
 {
-    static_assert(OP_COUNT == 50, "unhandled op types in convert_tokens_to_ops()");
+    static_assert(OP_COUNT == 51, "unhandled op types in convert_tokens_to_ops()");
 
     // debugging
     if (tok.value == "dump")
@@ -270,10 +276,12 @@ Op convert_token_to_op(Token tok, std::map<std::string, Function> functions, std
         return Op(OP_PUSH_INT, atol(tok.value.c_str()), tok);
     else if (is_string(tok.value))
         return Op(OP_PUSH_STR, add_escapes_to_string(tok.value.substr(1, tok.value.length() - 2)), tok);
-    else if (consts.count(tok.value))
-        return Op(OP_PUSH_INT, consts.at(tok.value).value, tok);
-    else if (functions.count(tok.value))
+    else if (program.consts.count(tok.value))
+        return Op(OP_PUSH_INT, program.consts.at(tok.value).value, tok);
+    else if (program.functions.count(tok.value))
         return Op(OP_FUNCTION_CALL, tok.value, tok);
+    else if (program.memories.count(tok.value))
+        return Op(OP_PUSH_GLOBAL_MEM, program.memories.at(tok.value), tok);
 
     print_token_error(tok, "Unknown keyword '" + tok.value + "'");
     exit(1);
@@ -281,18 +289,16 @@ Op convert_token_to_op(Token tok, std::map<std::string, Function> functions, std
 
 Program parse_tokens(std::vector<Token> tokens)
 {
-    // function arguments
-    std::map<std::string, Function> functions;
-    int function_addr = 0;
+    static_assert(OP_COUNT == 51, "unhandled op types in parse_tokens()");
 
-    // const arguments
-    std::map<std::string, Const> consts;
+    Program program;
 
     std::vector<std::string> include_paths;
     std::string func_name;
     std::vector<Op> function_ops;
     long unsigned int i = 0;
     int recursion_level = 0;
+    int function_addr = 0;
 
     while (i < tokens.size())
     {
@@ -318,7 +324,7 @@ Program parse_tokens(std::vector<Token> tokens)
                 func_name = func_name_token.value;
 
                 // check if function name can be used in code
-                print_error_if_illegal_word(func_name_token, consts, functions);
+                print_error_if_illegal_word(func_name_token, program);
 
                 i++;
 
@@ -360,7 +366,7 @@ Program parse_tokens(std::vector<Token> tokens)
                     }
                 }
 
-                functions.insert({func_name, Function(
+                program.functions.insert({func_name, Function(
                     Op(OP_COUNT, func_name_token),
                     arg_stack,
                     ret_stack,
@@ -391,10 +397,9 @@ Program parse_tokens(std::vector<Token> tokens)
                 Token const_name_token = tokens.at(i);
                 std::string const_name = const_name_token.value;
 
-                print_error_if_illegal_word(const_name_token, consts, functions);
+                print_error_if_illegal_word(const_name_token, program);
                 i++;
 
-                static_assert(OP_COUNT == 50, "unhandled op types in parse_tokens() in evaluating const lang subset");
                 // subset of language in const block supports:
                 // pushing integers
                 // + and *
@@ -402,7 +407,7 @@ Program parse_tokens(std::vector<Token> tokens)
 
                 while (tokens.at(i).value != "end")
                 {
-                    Op op = convert_token_to_op(tokens.at(i), functions, consts);
+                    Op op = convert_token_to_op(tokens.at(i), program);
 
                     if (op.type == OP_PUSH_INT)
                         stack.push_back(op.int_operand);
@@ -438,7 +443,103 @@ Program parse_tokens(std::vector<Token> tokens)
                     }
                 }
 
-                consts.insert({const_name, Const(Op(OP_COUNT, const_name_token), stack.back())});
+                if (stack.size() > 1)
+                {
+                    print_token_error(const_name_token, "too many values on stack for const definition (expected 1, got " + std::to_string(stack.size()));
+                    exit(1);
+                }
+                else if (stack.size() < 1)
+                {
+                    print_token_error(const_name_token, "not enough values on stack for const definition (expected 1, got 0)");
+                    exit(1);
+                }
+
+                program.consts.insert({const_name, Const(Op(OP_COUNT, const_name_token), stack.back())});
+            }
+        }
+
+        else if (tok.value == "memory")
+        {
+            i++;
+
+            if (recursion_level > 0)
+            {
+                print_token_error(tok, "unexpected 'memory' keyword found while parsing. consts cannot be defined inside functions as there is no scoping.");
+                exit(1);
+            }
+            else if (i > tokens.size() - 2)
+            {
+                print_token_error(tok, "unexpected EOF found while parsing memory allocation");
+                exit(1);
+            }
+            else
+            {
+                Token mem_name_token = tokens.at(i);
+                std::string mem_name = mem_name_token.value;
+
+                print_error_if_illegal_word(mem_name_token, program);
+                i++;
+
+                // subset of language in const block supports:
+                // pushing integers
+                // + and *
+                std::vector<long long> stack;
+
+                while (tokens.at(i).value != "end")
+                {
+                    Op op = convert_token_to_op(tokens.at(i), program);
+
+                    if (op.type == OP_PUSH_INT)
+                        stack.push_back(op.int_operand);
+
+                    else if (op.type == OP_PLUS)
+                    {
+                        if (stack.size() < 2)
+                        {
+                            print_not_enough_arguments_error(op, 2, stack.size(), "+", "addition");
+                            exit(1);
+                        }
+                        long long a = stack.back(); stack.pop_back();
+                        long long b = stack.back(); stack.pop_back();
+                        stack.push_back(a + b);
+                    }
+                    else if (op.type == OP_MUL)
+                    {
+                        if (stack.size() < 2)
+                        {
+                            print_not_enough_arguments_error(op, 2, stack.size(), "*", "multiplication");
+                            exit(1);
+                        }
+                        long long a = stack.back(); stack.pop_back();
+                        long long b = stack.back(); stack.pop_back();
+                        stack.push_back(a * b);
+                    }
+
+                    i++;
+                    if (i > tokens.size() - 1)
+                    {
+                        print_token_error(tokens.at(i - 1), "unexpected EOF found while parsing");
+                        exit(1);
+                    }
+                }
+
+                if (stack.size() > 1)
+                {
+                    print_token_error(mem_name_token, "too many values on stack for memory definition (expected 1, got " + std::to_string(stack.size()));
+                    exit(1);
+                }
+                else if (stack.size() < 1)
+                {
+                    print_token_error(mem_name_token, "not enough values on stack for memory definition (expected 1, got 0)");
+                    exit(1);
+                }
+                long long mem_size = stack.back(); stack.pop_back();
+                if (mem_size < 0)
+                {
+                    exit(1);
+                }
+                program.memories.insert({mem_name, program.memory_capacity});
+                program.memory_capacity += mem_size;
             }
         }
 
@@ -481,17 +582,17 @@ Program parse_tokens(std::vector<Token> tokens)
             // if outside function block
             if (recursion_level == 0)
             {
-                functions.at(func_name).ops = link_ops(function_ops);
+                program.functions.at(func_name).ops = link_ops(function_ops);
                 func_name.clear();
                 function_ops.clear();
             }
-            else function_ops.push_back(convert_token_to_op(tok, functions, consts));
+            else function_ops.push_back(convert_token_to_op(tok, program));
         }
 
         // if inside function block
         else if (recursion_level > 0)
         {
-            function_ops.push_back(convert_token_to_op(tok, functions, consts));
+            function_ops.push_back(convert_token_to_op(tok, program));
 
             // if code block found, inc recursion_level
             if (tok.value == "if") recursion_level++;
@@ -511,10 +612,6 @@ Program parse_tokens(std::vector<Token> tokens)
         print_op_error(function_ops.back(), "unexpected EOF found while parsing");
         exit(1);
     }
-
-    Program program;
-    program.functions = functions;
-    program.consts = consts;
 
     return program;
 }

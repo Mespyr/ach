@@ -2,7 +2,7 @@
 
 void compile_to_asm(Program program, std::string output_filename, ASSEMBLER assembler)
 {
-    static_assert(OP_COUNT == 50, "unhandled op types in compile_to_asm()");
+    static_assert(OP_COUNT == 51, "unhandled op types in compile_to_asm()");
     static_assert(ASSEMBLER_COUNT == 2, "unhandled assemblers in compile_to_asm()");
 
     File outfile(output_filename, MODE_WRITE);
@@ -482,6 +482,13 @@ void compile_to_asm(Program program, std::string output_filename, ASSEMBLER asse
                 outfile.writeln("\tmov [ret_stack_rsp], rsp");
                 outfile.writeln("\tmov rsp, rax");
             }
+            else if (op.type == OP_PUSH_GLOBAL_MEM)
+            {
+                outfile.writeln("\t; OP_PUSH_GLOBAL_MEM");
+                outfile.writeln("\tmov rax, mem");
+                outfile.writeln("\tadd rax, " + std::to_string(op.int_operand));
+                outfile.writeln("\tpush rax");
+            }
         }
         outfile.writeln("\t; return");
         outfile.writeln("\tmov rax, rsp");
@@ -524,7 +531,7 @@ void compile_to_asm(Program program, std::string output_filename, ASSEMBLER asse
         outfile.writeln("ret_stack_rsp: rq 1");
         outfile.writeln("ret_stack: rb 4096");
         outfile.writeln("ret_stack_end:");
-        outfile.writeln("mem: rb 640000");
+        outfile.writeln("mem: rb " + std::to_string(program.memory_capacity));
     }
     else
     {
@@ -533,6 +540,6 @@ void compile_to_asm(Program program, std::string output_filename, ASSEMBLER asse
         outfile.writeln("ret_stack_rsp: resq 1");
         outfile.writeln("ret_stack: resb 4096");
         outfile.writeln("ret_stack_end:");
-        outfile.writeln("mem: resb 640000");
+        outfile.writeln("mem: resb " + std::to_string(program.memory_capacity));
     }
 }

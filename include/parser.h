@@ -15,9 +15,9 @@
 #include <map>
 #include <algorithm>
 
-void print_error_if_illegal_word(Token tok, std::map<std::string, Const> consts, std::map<std::string, Function> functions);
+void print_error_if_illegal_word(Token tok, Program program);
 std::vector<Op> link_ops(std::vector<Op> ops);
-Op convert_token_to_op(Token tok, std::map<std::string, Function> functions, std::map<std::string, Const> consts);
+Op convert_token_to_op(Token tok, Program program);
 Program parse_tokens(std::vector<Token> tokens);
 
 #endif

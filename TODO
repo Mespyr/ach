@@ -3,5 +3,9 @@
     [*] - create parsing step for consts
         [*] - check for redefinitions for functions and consts
         [*] - create mini eval in compiler to evaluate const values at compile-time
+    [ ] - offset and reset keywords for consts
+[ ] - custom memory to replace 'mem' keyword
+    [*] - global memory
+    [ ] - local memory
 [ ] - add static asserts
 [ ] - add support for inline functions

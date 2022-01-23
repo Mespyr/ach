@@ -1,0 +1,7 @@
+const sizeof(int) 8 end
+memory SIZE sizeof(int) end
+
+def main in
+    SIZE 69 write64
+    SIZE read64 dump
+end

@@ -10,7 +10,7 @@ There should be an executeable called `ilu` which you can run.
 
 ### examples
 Hello World!
-```ruby
+```python
 @include "std/io.ilu"
 
 def main in
@@ -19,7 +19,7 @@ end
 ```
 
 Loop through numbers from 0-100 and print them:
-```ruby
+```python
 def main in
     0 while dup 100 < do
         dup dump
