@@ -1,0 +1,11 @@
+const sizeof(u64) 8 end
+
+const Op.type sizeof(u64) offset end
+const Op.operand sizeof(u64) offset end
+const sizeof(Op) reset end
+
+def main in
+  Op.type    dump
+  Op.operand dump
+  sizeof(Op) dump
+end

@@ -67,6 +67,9 @@ enum OpType
     // type checking
     OP_CAST_PTR,
     OP_CAST_INT,
+    // language subset keywords
+    OP_OFFSET,
+    OP_RESET,
     // other
     OP_PUSH_INT,
     OP_PUSH_STR,

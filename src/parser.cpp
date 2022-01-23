@@ -39,7 +39,7 @@ void print_error_if_illegal_word(Token tok, Program program)
 
 std::vector<Op> link_ops(std::vector<Op> ops)
 {
-    static_assert(OP_COUNT == 51, "unhandled op types in link_ops()");
+    static_assert(OP_COUNT == 53, "unhandled op types in link_ops()");
 
     // track location of newest block parsed
     std::vector<long unsigned int> ip_stack;
@@ -155,7 +155,7 @@ std::vector<Op> link_ops(std::vector<Op> ops)
 
 Op convert_token_to_op(Token tok, Program program)
 {
-    static_assert(OP_COUNT == 51, "unhandled op types in convert_tokens_to_ops()");
+    static_assert(OP_COUNT == 53, "unhandled op types in convert_tokens_to_ops()");
 
     // debugging
     if (tok.value == "dump")
@@ -253,6 +253,12 @@ Op convert_token_to_op(Token tok, Program program)
     else if (tok.value == "syscall6")
         return Op(OP_SYSCALL6, tok);
 
+    // lang subset specific keywords
+    else if (tok.value == "offset")
+        return Op(OP_OFFSET, tok);
+    else if (tok.value == "reset")
+        return Op(OP_RESET, tok);
+
     // keywords
     else if (tok.value == "while")
         return Op(OP_WHILE, tok);
@@ -289,13 +295,14 @@ Op convert_token_to_op(Token tok, Program program)
 
 Program parse_tokens(std::vector<Token> tokens)
 {
-    static_assert(OP_COUNT == 51, "unhandled op types in parse_tokens()");
+    static_assert(OP_COUNT == 53, "unhandled op types in parse_tokens()");
 
     Program program;
 
     std::vector<std::string> include_paths;
     std::string func_name;
     std::vector<Op> function_ops;
+    long unsigned int iota = 0;
     long unsigned int i = 0;
     int recursion_level = 0;
     int function_addr = 0;
@@ -434,6 +441,27 @@ Program parse_tokens(std::vector<Token> tokens)
                         long long b = stack.back(); stack.pop_back();
                         stack.push_back(a * b);
                     }
+                    else if (op.type == OP_OFFSET)
+                    {
+                        if (stack.size() < 1)
+                        {
+                            print_not_enough_arguments_error(op, 1, 0, "offset");
+                            exit(1);
+                        }
+                        long long a = stack.back(); stack.pop_back();
+                        stack.push_back(iota);
+                        iota += a;
+                    }
+                    else if (op.type == OP_RESET)
+                    {
+                        stack.push_back(iota);
+                        iota = 0;
+                    }
+                    else 
+                    {
+                        print_op_error(op, "unsuppored keyword in compile-time evaluation of const definition");
+                        exit(1);
+                    }
 
                     i++;
                     if (i > tokens.size() - 1)
@@ -514,6 +542,11 @@ Program parse_tokens(std::vector<Token> tokens)
                         long long b = stack.back(); stack.pop_back();
                         stack.push_back(a * b);
                     }
+                    else
+                    {
+                        print_op_error(op, "unsuppored keyword in compile-time evaluation of memory definition");
+                        exit(1);
+                    }
 
                     i++;
                     if (i > tokens.size() - 1)
@@ -592,11 +625,17 @@ Program parse_tokens(std::vector<Token> tokens)
         // if inside function block
         else if (recursion_level > 0)
         {
-            function_ops.push_back(convert_token_to_op(tok, program));
-
+            Op op = convert_token_to_op(tok, program);
+            if (op.type == OP_OFFSET || op.type == OP_RESET)
+            {
+                print_op_error(op, "'" + tok.value + "' keyword is static, and must be used inside const definitions");
+                exit(1);
+            }
             // if code block found, inc recursion_level
-            if (tok.value == "if") recursion_level++;
-            else if (tok.value == "while") recursion_level++;
+            if (op.type == OP_IF) recursion_level++;
+            else if (op.type == OP_WHILE) recursion_level++;
+
+            function_ops.push_back(op);
         }
         else
         {

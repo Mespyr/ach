@@ -40,7 +40,7 @@ void verify_program(Program program)
 
 void type_check_program(Program program)
 {
-    static_assert(OP_COUNT == 51, "unhandled op types in type_check_program()");
+    static_assert(OP_COUNT == 53, "unhandled op types in type_check_program()");
     static_assert(DATATYPE_COUNT == 2, "unhandled datatypes in type_check_program()");
 
     for (auto fn_key = program.functions.begin(); fn_key != program.functions.end(); fn_key++)
@@ -905,6 +905,13 @@ void type_check_program(Program program)
             {
                 type_stack.pop_back();
                 type_stack.push_back(IluTypeWithOp(op, DATATYPE_INT));
+            }
+
+            // lang subset keywords
+            else if (op.type == OP_OFFSET || op.type == OP_RESET)
+            {
+                print_error("OP_OFFSET and OP_RESET are unreachable because they should be handled in the parsing step. This is probably a bug.");
+                exit(1);
             }
 
             // other
