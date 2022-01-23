@@ -1,4 +1,5 @@
 # comments
+memory mem 640000 end
 
 def main in
     # print 0-9 using syscalls

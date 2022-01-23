@@ -7,5 +7,6 @@
 [ ] - custom memory to replace 'mem' keyword
     [*] - global memory
     [ ] - local memory
+    [*] - remove 'mem' keyword
 [ ] - add static asserts
 [ ] - add support for inline functions

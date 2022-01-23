@@ -40,7 +40,7 @@ void verify_program(Program program)
 
 void type_check_program(Program program)
 {
-    static_assert(OP_COUNT == 53, "unhandled op types in type_check_program()");
+    static_assert(OP_COUNT == 52, "unhandled op types in type_check_program()");
     static_assert(DATATYPE_COUNT == 2, "unhandled datatypes in type_check_program()");
 
     for (auto fn_key = program.functions.begin(); fn_key != program.functions.end(); fn_key++)
@@ -436,10 +436,6 @@ void type_check_program(Program program)
             }
            
             // memory
-            else if (op.type == OP_MEM)
-            {
-                type_stack.push_back(IluTypeWithOp(op, DATATYPE_PTR));
-            }
             else if (op.type == OP_READ8)
             {
                 if (type_stack.size() < 1)

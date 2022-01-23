@@ -1,3 +1,5 @@
+memory mem 640000 end
+
 def main in
     1 mem 2 0 syscall3
 

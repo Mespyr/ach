@@ -2,7 +2,7 @@
 
 void compile_to_asm(Program program, std::string output_filename, ASSEMBLER assembler)
 {
-    static_assert(OP_COUNT == 53, "unhandled op types in compile_to_asm()");
+    static_assert(OP_COUNT == 52, "unhandled op types in compile_to_asm()");
     static_assert(ASSEMBLER_COUNT == 2, "unhandled assemblers in compile_to_asm()");
 
     File outfile(output_filename, MODE_WRITE);
@@ -247,11 +247,6 @@ void compile_to_asm(Program program, std::string output_filename, ASSEMBLER asse
             }
             
             // memory
-            else if (op.type == OP_MEM)
-            {
-                outfile.writeln("\t; OP_MEM");
-                outfile.writeln("\tpush mem");
-            }
             else if (op.type == OP_READ8)
             {
                 outfile.writeln("\t; OP_READ8");

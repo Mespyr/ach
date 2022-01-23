@@ -32,7 +32,6 @@ enum OpType
     OP_ROT,  // [a, b, c] -> [b, c, a]
     OP_OVER, // [a, b] -> [a, b a]
     // memory
-    OP_MEM,
     OP_READ8,
     OP_WRITE8,
     OP_READ16,

@@ -2,13 +2,13 @@
 
 bool is_builtin_word(std::string word)
 {
-    static_assert(OP_COUNT == 53, "unhandled op types in type_check_program()");
+    static_assert(OP_COUNT == 52, "unhandled op types in type_check_program()");
     std::vector<std::string> builtin_words = {
         "dump",
         "+", "-", "*", "/",
         "=", ">", "<", ">=", "<=", "!=", "not", "and", "or", 
         "pop", "dup", "swp", "rot", "over",
-        "mem", "read8", "write8", "read16", "write16", "read32", "write32", "read64", "write64",
+        "read8", "write8", "read16", "write16", "read32", "write32", "read64", "write64",
         "argv", "argc",
         ">>", "<<", "orb", "andb",
         "syscall1", "syscall2", "syscall3", "syscall4", "syscall5", "syscall6",

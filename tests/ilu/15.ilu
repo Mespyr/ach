@@ -1,3 +1,5 @@
+memory mem 640000 end
+
 def main in
     mem 65 write8
     mem 1 + 66 write8

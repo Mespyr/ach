@@ -1,6 +1,9 @@
 # find largest palindrome made by the product of 2 3-digit numbers
 @include "std/math.ilu"
 
+const sizeof(u64) 8 end
+memory num sizeof(u64) end
+
 def is_palindrome 
     int -> int in
 
@@ -14,25 +17,24 @@ def is_palindrome
 end
 
 def main in
-    # get all pairs of numbers from 100-999 with numbers from 100-999
     100 while dup 1000 < do
         100 while dup 1000 < do
-            # multiply both numbers together
             over over *
-            
+
             dup is_palindrome if
-                # if number is bigger than current stored palindrome
-                dup mem read64 > if
-                    # replace stored palindrome
-                    mem swp write64
-                else pop end
-            else pop end
+                dup num read64 > if
+                    num swp write64
+                else 
+                    pop 
+                end
+            else 
+                pop
+            end
 
             1 +
         end pop
         1 +
     end pop
 
-    mem read64
-    dump
+    num read64 dump
 end

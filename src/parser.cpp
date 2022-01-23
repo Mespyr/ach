@@ -39,7 +39,7 @@ void print_error_if_illegal_word(Token tok, Program program)
 
 std::vector<Op> link_ops(std::vector<Op> ops)
 {
-    static_assert(OP_COUNT == 53, "unhandled op types in link_ops()");
+    static_assert(OP_COUNT == 52, "unhandled op types in link_ops()");
 
     // track location of newest block parsed
     std::vector<long unsigned int> ip_stack;
@@ -155,7 +155,7 @@ std::vector<Op> link_ops(std::vector<Op> ops)
 
 Op convert_token_to_op(Token tok, Program program)
 {
-    static_assert(OP_COUNT == 53, "unhandled op types in convert_tokens_to_ops()");
+    static_assert(OP_COUNT == 52, "unhandled op types in convert_tokens_to_ops()");
 
     // debugging
     if (tok.value == "dump")
@@ -204,8 +204,6 @@ Op convert_token_to_op(Token tok, Program program)
         return Op(OP_OVER, tok);
 
     // memory
-    else if (tok.value == "mem")
-        return Op(OP_MEM, tok);
     else if (tok.value == "read8")
         return Op(OP_READ8, tok);
     else if (tok.value == "write8")
@@ -295,7 +293,7 @@ Op convert_token_to_op(Token tok, Program program)
 
 Program parse_tokens(std::vector<Token> tokens)
 {
-    static_assert(OP_COUNT == 53, "unhandled op types in parse_tokens()");
+    static_assert(OP_COUNT == 52, "unhandled op types in parse_tokens()");
 
     Program program;
 
