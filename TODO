@@ -10,3 +10,4 @@
     [*] - remove 'mem' keyword
 [ ] - add static asserts
 [ ] - add support for inline functions
+[ ] - namespaces!

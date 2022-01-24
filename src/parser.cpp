@@ -39,7 +39,7 @@ void print_error_if_illegal_word(Token tok, Program program)
 
 std::vector<Op> link_ops(std::vector<Op> ops)
 {
-    static_assert(OP_COUNT == 52, "unhandled op types in link_ops()");
+    static_assert(OP_COUNT == 56, "unhandled op types in link_ops()");
 
     // track location of newest block parsed
     std::vector<long unsigned int> ip_stack;
@@ -155,7 +155,7 @@ std::vector<Op> link_ops(std::vector<Op> ops)
 
 Op convert_token_to_op(Token tok, Program program)
 {
-    static_assert(OP_COUNT == 52, "unhandled op types in convert_tokens_to_ops()");
+    static_assert(OP_COUNT == 56, "unhandled op types in convert_tokens_to_ops()");
 
     // debugging
     if (tok.value == "dump")
@@ -266,8 +266,16 @@ Op convert_token_to_op(Token tok, Program program)
         return Op(OP_IF, tok);
     else if (tok.value == "else")
         return Op(OP_ELSE, tok);
+    else if (tok.value == "def")
+        return Op(OP_DEF, tok);
+    else if (tok.value == "const")
+        return Op(OP_CONST, tok);
+    else if (tok.value == "memory")
+        return Op(OP_MEMORY, tok);
     else if (tok.value == "end")
         return Op(OP_END, tok);
+    else if (tok.value == "@include")
+        return Op(OP_INCLUDE, tok);
 
     // type checking
     else if (tok.value == "cast(ptr)")
@@ -293,40 +301,31 @@ Op convert_token_to_op(Token tok, Program program)
 
 Program parse_tokens(std::vector<Token> tokens)
 {
-    static_assert(OP_COUNT == 52, "unhandled op types in parse_tokens()");
+    static_assert(OP_COUNT == 56, "unhandled op types in parse_tokens()");
 
     Program program;
 
     std::vector<std::string> include_paths;
-    std::string func_name;
-    std::vector<Op> function_ops;
     long unsigned int iota = 0;
     long unsigned int i = 0;
-    int recursion_level = 0;
     int function_addr = 0;
 
     while (i < tokens.size())
     {
-        Token tok = tokens.at(i);
+        Op op = convert_token_to_op(tokens.at(i), program);
 
-        if (tok.value == "def")
+        if (op.type == OP_DEF)
         {
             i++;
-            // if inside function already
-            if (recursion_level > 0)
+            if (i > tokens.size() - 2)
             {
-                print_token_error(tok, "unexpected 'def' keyword found while parsing. functions cannot be defined inside other functions as there is no scoping.");
-                exit(1);
-            }
-            else if (i > tokens.size() - 2)
-            {
-                print_token_error(tok, "unexpected EOF found while parsing function definition");
+                print_op_error(op, "unexpected EOF found while parsing function definition");
                 exit(1);
             }
             else
             {
                 Token func_name_token = tokens.at(i);
-                func_name = func_name_token.value;
+                std::string func_name = func_name_token.value;
 
                 // check if function name can be used in code
                 print_error_if_illegal_word(func_name_token, program);
@@ -337,6 +336,7 @@ Program parse_tokens(std::vector<Token> tokens)
                 std::vector<IluTypeWithOp> ret_stack;
                 bool pushing_to_arg_stack = true;
 
+                // parse arguments of function
                 while (tokens.at(i).value != "in")
                 {
                     Token tok = tokens.at(i);
@@ -366,7 +366,7 @@ Program parse_tokens(std::vector<Token> tokens)
                     i++;
                     if (i > tokens.size() - 1)
                     {
-                        print_token_error(tok, "unexpected EOF found while parsing");
+                        print_token_error(tok, "unexpected EOF found while parsing function definition");
                         exit(1);
                     }
                 }
@@ -377,24 +377,81 @@ Program parse_tokens(std::vector<Token> tokens)
                     ret_stack,
                     function_addr
                 )});
-
                 function_addr++;
-                recursion_level++;
+
+                i++;
+                if (i >= tokens.size())
+                {
+                    print_token_error(tokens.back(), "unexpected EOF found while parsing function definition");
+                    exit(1);
+                }
+
+                // get function ops
+                std::vector<Op> function_ops;
+                bool function_found_end = false;
+                int recursion_level = 0;
+
+                while (i < tokens.size())
+                {
+                    Op f_op = convert_token_to_op(tokens.at(i), program);
+
+                    if (f_op.type == OP_DEF)
+                    {
+                        print_op_error(f_op, "unexpected 'def' keyword found while parsing. functions cannot be defined inside other functions as there is no scoping.");
+                        exit(1);
+                    }
+                    else if (f_op.type == OP_CONST)
+                    {
+                        print_op_error(f_op, "unexpected 'const' keyword found while parsing. consts cannot be defined inside functions as there is no scoping.");
+                        exit(1);
+                    }
+                    else if (f_op.type == OP_MEMORY)
+                    {
+                        print_op_error(f_op, "unexpected 'memory' keyword found while parsing. consts cannot be defined inside functions as there is no scoping.");
+                        exit(1);
+                    }
+                    else if (f_op.type == OP_INCLUDE)
+                    {
+                        print_op_error(f_op, "unexpected '@include' keyword found while parsing. consts cannot be defined inside functions as there is no scoping.");
+                        exit(1);
+                    }
+                    else if (f_op.type == OP_OFFSET || f_op.type == OP_RESET)
+                    {
+                        print_op_error(f_op, "'offset' and 'reset' keywords are static, and must be only used inside const definitions");
+                        exit(1);
+                    }
+                    else if (f_op.type == OP_END)
+                    {
+                        if (recursion_level == 0)
+                        {
+                            function_found_end = true;
+                            break;
+                        }
+                        else
+                            recursion_level--;
+                    }
+                    else if (f_op.type == OP_IF || f_op.type == OP_WHILE)
+                        recursion_level++;
+
+                    function_ops.push_back(f_op);
+                    i++;
+                }
+                if (function_found_end)
+                    program.functions.at(func_name).ops = link_ops(function_ops);
+                else 
+                {
+                    print_token_error(tokens.back(), "unexpected EOF found while parsing function definition");
+                    exit(1);
+                }
             }
         }
 
-        else if (tok.value == "const")
+        else if (op.type == OP_CONST)
         {
             i++;
-
-            if (recursion_level > 0)
+            if (i > tokens.size() - 2)
             {
-                print_token_error(tok, "unexpected 'const' keyword found while parsing. consts cannot be defined inside functions as there is no scoping.");
-                exit(1);
-            }
-            else if (i > tokens.size() - 2)
-            {
-                print_token_error(tok, "unexpected EOF found while parsing const definition");
+                print_op_error(op, "unexpected EOF found while parsing const definition");
                 exit(1);
             }
             else
@@ -484,18 +541,12 @@ Program parse_tokens(std::vector<Token> tokens)
             }
         }
 
-        else if (tok.value == "memory")
+        else if (op.type == OP_MEMORY)
         {
             i++;
-
-            if (recursion_level > 0)
+            if (i > tokens.size() - 2)
             {
-                print_token_error(tok, "unexpected 'memory' keyword found while parsing. consts cannot be defined inside functions as there is no scoping.");
-                exit(1);
-            }
-            else if (i > tokens.size() - 2)
-            {
-                print_token_error(tok, "unexpected EOF found while parsing memory allocation");
+                print_op_error(op, "unexpected EOF found while parsing memory allocation");
                 exit(1);
             }
             else
@@ -574,11 +625,11 @@ Program parse_tokens(std::vector<Token> tokens)
             }
         }
 
-        else if (tok.value == "@include")
+        else if (op.type == OP_INCLUDE)
         {
             if (i++ == tokens.size())
             {
-                print_token_error(tok, "Unexpected '@include' keyword found while parsing");
+                print_op_error(op, "Unexpected '@include' keyword found while parsing");
                 exit(1);
             }
 
@@ -606,48 +657,13 @@ Program parse_tokens(std::vector<Token> tokens)
             }
         }
 
-        else if (tok.value == "end")
-        {
-            recursion_level--;
-
-            // if outside function block
-            if (recursion_level == 0)
-            {
-                program.functions.at(func_name).ops = link_ops(function_ops);
-                func_name.clear();
-                function_ops.clear();
-            }
-            else function_ops.push_back(convert_token_to_op(tok, program));
-        }
-
-        // if inside function block
-        else if (recursion_level > 0)
-        {
-            Op op = convert_token_to_op(tok, program);
-            if (op.type == OP_OFFSET || op.type == OP_RESET)
-            {
-                print_op_error(op, "'" + tok.value + "' keyword is static, and must be used inside const definitions");
-                exit(1);
-            }
-            // if code block found, inc recursion_level
-            if (op.type == OP_IF) recursion_level++;
-            else if (op.type == OP_WHILE) recursion_level++;
-
-            function_ops.push_back(op);
-        }
         else
         {
-            print_token_error(tok, "Unknown keyword '" + tok.value + "' found while parsing");
+            print_op_error(op, "unexpected keyword found while parsing");
             exit(1);
         }
 
         i++;
-    }
-
-    if (function_ops.size() > 0)
-    {
-        print_op_error(function_ops.back(), "unexpected EOF found while parsing");
-        exit(1);
     }
 
     return program;

@@ -62,7 +62,11 @@ enum OpType
     OP_DO,
     OP_IF,
     OP_ELSE,
+    OP_DEF,
+    OP_CONST,
+    OP_MEMORY,
     OP_END,
+    OP_INCLUDE,
     // type checking
     OP_CAST_PTR,
     OP_CAST_INT,
