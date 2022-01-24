@@ -4,35 +4,35 @@ void print_error_if_illegal_word(Token tok, Program program)
 {
     if (is_builtin_word(tok.value))
     {
-        print_token_error(tok, "built-in word used as const or function definition");
+        print_error_at_loc(tok.loc, "built-in word used as const or function definition");
         exit(1);
     }
     else if (is_number(tok.value))
     {
-        print_token_error(tok, "numbers are not allowed to be const or function definitions");
+        print_error_at_loc(tok.loc, "numbers are not allowed to be const or function definitions");
         exit(1);
     }
     else if (is_string(tok.value))
     {
-        print_token_error(tok, "strings are not allowed to be const or function definitions");
+        print_error_at_loc(tok.loc, "strings are not allowed to be const or function definitions");
         exit(1);
     }
     else if (program.consts.count(tok.value))
     {
-        print_token_error(tok, "redefinition of word '" + tok.value + "' from a const");
-        print_op_error(program.consts.at(tok.value).op, "original const defined here");
+        print_error_at_loc(tok.loc, "redefinition of word '" + tok.value + "' from a const");
+        print_note_at_loc(program.consts.at(tok.value).op.loc, "original const defined here");
         exit(1);
     }
     else if (program.functions.count(tok.value))
     {
-        print_token_error(tok, "redefinition of word '" + tok.value + "' from a function");
-        print_op_error(program.functions.at(tok.value).op, "original function defined here");
+        print_error_at_loc(tok.loc, "redefinition of word '" + tok.value + "' from a function");
+        print_note_at_loc(program.functions.at(tok.value).op.loc, "original function defined here");
         exit(1);
     }
     else if (program.memories.count(tok.value))
     {
-        print_token_error(tok, "redefinition of word '" + tok.value + "' from a memory region");
-        print_op_error(program.functions.at(tok.value).op, "original memory region defined here");
+        print_error_at_loc(tok.loc, "redefinition of word '" + tok.value + "' from a memory region");
+        print_note_at_loc(program.functions.at(tok.value).op.loc, "original memory region defined here");
         exit(1);
     }
 }
@@ -58,7 +58,7 @@ std::vector<Op> link_ops(std::vector<Op> ops)
         {
             if (ip_stack.size() == 0)
             {
-                print_op_error(current_op, "Unexpected 'do' keyword");
+                print_error_at_loc(current_op.loc, "Unexpected 'do' keyword");
                 exit(1);
             }
             
@@ -67,7 +67,7 @@ std::vector<Op> link_ops(std::vector<Op> ops)
 
             if (ops.at(linker_ip).type != OP_WHILE)
             {
-                print_op_error(current_op, "Unexpected 'do' keyword");
+                print_error_at_loc(current_op.loc, "Unexpected 'do' keyword");
                 exit(1);
             }
             
@@ -83,7 +83,7 @@ std::vector<Op> link_ops(std::vector<Op> ops)
         {
             if (ip_stack.size() == 0)
             {
-                print_op_error(current_op, "Unexpected 'else' keyword");
+                print_error_at_loc(current_op.loc, "Unexpected 'else' keyword");
                 exit(1);
             }
 
@@ -95,7 +95,7 @@ std::vector<Op> link_ops(std::vector<Op> ops)
 
             if (linker_op.type != OP_IF)
             {
-                print_op_error(current_op, "Unexpected 'else' keyword");
+                print_error_at_loc(current_op.loc, "Unexpected 'else' keyword");
                 exit(1);
             }
             
@@ -111,7 +111,7 @@ std::vector<Op> link_ops(std::vector<Op> ops)
         {
             if (ip_stack.size() == 0)
             {
-                print_op_error(current_op, "Unexpected 'end' keyword");
+                print_error_at_loc(current_op.loc, "Unexpected 'end' keyword");
                 exit(1);
             }
 
@@ -144,7 +144,7 @@ std::vector<Op> link_ops(std::vector<Op> ops)
             }
             else
             {
-                print_op_error(current_op, "Unexpected 'end' keyword");
+                print_error_at_loc(current_op.loc, "Unexpected 'end' keyword");
                 exit(1);
             }
         }
@@ -295,7 +295,7 @@ Op convert_token_to_op(Token tok, Program program)
     else if (program.memories.count(tok.value))
         return Op(OP_PUSH_GLOBAL_MEM, program.memories.at(tok.value), tok);
 
-    print_token_error(tok, "Unknown keyword '" + tok.value + "'");
+    print_error_at_loc(tok.loc, "Unknown keyword '" + tok.value + "'");
     exit(1);
 }
 
@@ -319,7 +319,7 @@ Program parse_tokens(std::vector<Token> tokens)
             i++;
             if (i > tokens.size() - 2)
             {
-                print_op_error(op, "unexpected EOF found while parsing function definition");
+                print_error_at_loc(op.loc, "unexpected EOF found while parsing function definition");
                 exit(1);
             }
             else
@@ -359,14 +359,14 @@ Program parse_tokens(std::vector<Token> tokens)
                         pushing_to_arg_stack = false;
                     else
                     {
-                        print_token_error(tok, "unknown argument type '" + tok.value + "'");
+                        print_error_at_loc(tok.loc, "unknown argument type '" + tok.value + "'");
                         exit(1);
                     }
 
                     i++;
                     if (i > tokens.size() - 1)
                     {
-                        print_token_error(tok, "unexpected EOF found while parsing function definition");
+                        print_error_at_loc(tok.loc, "unexpected EOF found while parsing function definition");
                         exit(1);
                     }
                 }
@@ -382,7 +382,7 @@ Program parse_tokens(std::vector<Token> tokens)
                 i++;
                 if (i >= tokens.size())
                 {
-                    print_token_error(tokens.back(), "unexpected EOF found while parsing function definition");
+                    print_error_at_loc(tokens.back().loc, "unexpected EOF found while parsing function definition");
                     exit(1);
                 }
 
@@ -397,27 +397,27 @@ Program parse_tokens(std::vector<Token> tokens)
 
                     if (f_op.type == OP_DEF)
                     {
-                        print_op_error(f_op, "unexpected 'def' keyword found while parsing. functions cannot be defined inside other functions as there is no scoping.");
+                        print_error_at_loc(f_op.loc, "unexpected 'def' keyword found while parsing. functions cannot be defined inside other functions as there is no scoping.");
                         exit(1);
                     }
                     else if (f_op.type == OP_CONST)
                     {
-                        print_op_error(f_op, "unexpected 'const' keyword found while parsing. consts cannot be defined inside functions as there is no scoping.");
+                        print_error_at_loc(f_op.loc, "unexpected 'const' keyword found while parsing. consts cannot be defined inside functions as there is no scoping.");
                         exit(1);
                     }
                     else if (f_op.type == OP_MEMORY)
                     {
-                        print_op_error(f_op, "unexpected 'memory' keyword found while parsing. consts cannot be defined inside functions as there is no scoping.");
+                        print_error_at_loc(f_op.loc, "unexpected 'memory' keyword found while parsing. consts cannot be defined inside functions as there is no scoping.");
                         exit(1);
                     }
                     else if (f_op.type == OP_INCLUDE)
                     {
-                        print_op_error(f_op, "unexpected '@include' keyword found while parsing. consts cannot be defined inside functions as there is no scoping.");
+                        print_error_at_loc(f_op.loc, "unexpected '@include' keyword found while parsing. consts cannot be defined inside functions as there is no scoping.");
                         exit(1);
                     }
                     else if (f_op.type == OP_OFFSET || f_op.type == OP_RESET)
                     {
-                        print_op_error(f_op, "'offset' and 'reset' keywords are static, and must be only used inside const definitions");
+                        print_error_at_loc(f_op.loc, "'offset' and 'reset' keywords are static, and must be only used inside const definitions");
                         exit(1);
                     }
                     else if (f_op.type == OP_END)
@@ -440,7 +440,7 @@ Program parse_tokens(std::vector<Token> tokens)
                     program.functions.at(func_name).ops = link_ops(function_ops);
                 else 
                 {
-                    print_token_error(tokens.back(), "unexpected EOF found while parsing function definition");
+                    print_error_at_loc(tokens.back().loc, "unexpected EOF found while parsing function definition");
                     exit(1);
                 }
             }
@@ -451,7 +451,7 @@ Program parse_tokens(std::vector<Token> tokens)
             i++;
             if (i > tokens.size() - 2)
             {
-                print_op_error(op, "unexpected EOF found while parsing const definition");
+                print_error_at_loc(op.loc, "unexpected EOF found while parsing const definition");
                 exit(1);
             }
             else
@@ -478,7 +478,7 @@ Program parse_tokens(std::vector<Token> tokens)
                     {
                         if (stack.size() < 2)
                         {
-                            print_not_enough_arguments_error(op, 2, stack.size(), "+", "addition");
+                            print_not_enough_arguments_error(op.loc, 2, stack.size(), "+", "addition");
                             exit(1);
                         }
                         long long a = stack.back(); stack.pop_back();
@@ -489,7 +489,7 @@ Program parse_tokens(std::vector<Token> tokens)
                     {
                         if (stack.size() < 2)
                         {
-                            print_not_enough_arguments_error(op, 2, stack.size(), "*", "multiplication");
+                            print_not_enough_arguments_error(op.loc, 2, stack.size(), "*", "multiplication");
                             exit(1);
                         }
                         long long a = stack.back(); stack.pop_back();
@@ -500,7 +500,7 @@ Program parse_tokens(std::vector<Token> tokens)
                     {
                         if (stack.size() < 1)
                         {
-                            print_not_enough_arguments_error(op, 1, 0, "offset");
+                            print_not_enough_arguments_error(op.loc, 1, 0, "offset");
                             exit(1);
                         }
                         long long a = stack.back(); stack.pop_back();
@@ -514,26 +514,26 @@ Program parse_tokens(std::vector<Token> tokens)
                     }
                     else 
                     {
-                        print_op_error(op, "unsuppored keyword in compile-time evaluation of const definition");
+                        print_error_at_loc(op.loc, "unsuppored keyword in compile-time evaluation of const definition");
                         exit(1);
                     }
 
                     i++;
                     if (i > tokens.size() - 1)
                     {
-                        print_token_error(tokens.at(i - 1), "unexpected EOF found while parsing");
+                        print_error_at_loc(tokens.at(i - 1).loc, "unexpected EOF found while parsing");
                         exit(1);
                     }
                 }
 
                 if (stack.size() > 1)
                 {
-                    print_token_error(const_name_token, "too many values on stack for const definition (expected 1, got " + std::to_string(stack.size()));
+                    print_error_at_loc(const_name_token.loc, "too many values on stack for const definition (expected 1, got " + std::to_string(stack.size()));
                     exit(1);
                 }
                 else if (stack.size() < 1)
                 {
-                    print_token_error(const_name_token, "not enough values on stack for const definition (expected 1, got 0)");
+                    print_error_at_loc(const_name_token.loc, "not enough values on stack for const definition (expected 1, got 0)");
                     exit(1);
                 }
 
@@ -546,7 +546,7 @@ Program parse_tokens(std::vector<Token> tokens)
             i++;
             if (i > tokens.size() - 2)
             {
-                print_op_error(op, "unexpected EOF found while parsing memory allocation");
+                print_error_at_loc(op.loc, "unexpected EOF found while parsing memory allocation");
                 exit(1);
             }
             else
@@ -573,7 +573,7 @@ Program parse_tokens(std::vector<Token> tokens)
                     {
                         if (stack.size() < 2)
                         {
-                            print_not_enough_arguments_error(op, 2, stack.size(), "+", "addition");
+                            print_not_enough_arguments_error(op.loc, 2, stack.size(), "+", "addition");
                             exit(1);
                         }
                         long long a = stack.back(); stack.pop_back();
@@ -584,7 +584,7 @@ Program parse_tokens(std::vector<Token> tokens)
                     {
                         if (stack.size() < 2)
                         {
-                            print_not_enough_arguments_error(op, 2, stack.size(), "*", "multiplication");
+                            print_not_enough_arguments_error(op.loc, 2, stack.size(), "*", "multiplication");
                             exit(1);
                         }
                         long long a = stack.back(); stack.pop_back();
@@ -593,26 +593,26 @@ Program parse_tokens(std::vector<Token> tokens)
                     }
                     else
                     {
-                        print_op_error(op, "unsuppored keyword in compile-time evaluation of memory definition");
+                        print_error_at_loc(op.loc, "unsuppored keyword in compile-time evaluation of memory definition");
                         exit(1);
                     }
 
                     i++;
                     if (i > tokens.size() - 1)
                     {
-                        print_token_error(tokens.at(i - 1), "unexpected EOF found while parsing");
+                        print_error_at_loc(tokens.at(i - 1).loc, "unexpected EOF found while parsing");
                         exit(1);
                     }
                 }
 
                 if (stack.size() > 1)
                 {
-                    print_token_error(mem_name_token, "too many values on stack for memory definition (expected 1, got " + std::to_string(stack.size()));
+                    print_error_at_loc(mem_name_token.loc, "too many values on stack for memory definition (expected 1, got " + std::to_string(stack.size()));
                     exit(1);
                 }
                 else if (stack.size() < 1)
                 {
-                    print_token_error(mem_name_token, "not enough values on stack for memory definition (expected 1, got 0)");
+                    print_error_at_loc(mem_name_token.loc, "not enough values on stack for memory definition (expected 1, got 0)");
                     exit(1);
                 }
                 long long mem_size = stack.back(); stack.pop_back();
@@ -629,14 +629,14 @@ Program parse_tokens(std::vector<Token> tokens)
         {
             if (i++ == tokens.size())
             {
-                print_op_error(op, "Unexpected '@include' keyword found while parsing");
+                print_error_at_loc(op.loc, "Unexpected '@include' keyword found while parsing");
                 exit(1);
             }
 
             Token include_file_token = tokens.at(i);
             if (!is_string(include_file_token.value))
             {
-                print_token_error(include_file_token, "Was expecting token of type string after @include statement");
+                print_error_at_loc(include_file_token.loc, "Was expecting token of type string after @include statement");
                 exit(1);
             }
 
@@ -645,7 +645,7 @@ Program parse_tokens(std::vector<Token> tokens)
 
             if (!file.exists())
             {
-                print_token_error(include_file_token, "No such file or directory, '" + file_path + "'");
+                print_error_at_loc(include_file_token.loc, "No such file or directory, '" + file_path + "'");
                 exit(1);
             }
 
@@ -659,7 +659,7 @@ Program parse_tokens(std::vector<Token> tokens)
 
         else
         {
-            print_op_error(op, "unexpected keyword found while parsing");
+            print_error_at_loc(op.loc, "unexpected keyword found while parsing");
             exit(1);
         }
 

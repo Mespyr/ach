@@ -27,13 +27,13 @@ void verify_program(Program program)
     Function main_func = program.functions.at("main");
     if (main_func.arg_stack.size() > 0)
     {
-        print_op_error(main_func.op, "'main' function must not pass any arguments");
+        print_error_at_loc(main_func.op.loc, "'main' function must not pass any arguments");
         exit(1);
     }
 
     if (main_func.ret_stack.size() > 0)
     {
-        print_op_error(main_func.op, "'main' function must not have any return values");
+        print_error_at_loc(main_func.op.loc, "'main' function must not have any return values");
         exit(1);
     }
 }
@@ -61,7 +61,7 @@ void type_check_program(Program program)
             {
                 if (type_stack.size() < 1)
                 {
-                    print_not_enough_arguments_error(op, 1, 0, "dump");
+                    print_not_enough_arguments_error(op.loc, 1, 0, "dump");
                     exit(1);
                 }
                 type_stack.pop_back();
@@ -72,7 +72,7 @@ void type_check_program(Program program)
             {
                 if (type_stack.size() < 2)
                 {
-                    print_not_enough_arguments_error(op, 2, type_stack.size(), "+", "addition");
+                    print_not_enough_arguments_error(op.loc, 2, type_stack.size(), "+", "addition");
                     exit(1);
                 }
 
@@ -92,16 +92,16 @@ void type_check_program(Program program)
                     type_stack.push_back(IluTypeWithOp(op, DATATYPE_PTR));
                 else
                 {
-                    print_invalid_combination_of_types_error(op, {b.type, a.type}, "+", "addition");
-                    print_op_note(b.op, "first value pushed here (" + human_readable_type(b.type) + ")");
-                    print_op_note(a.op, "second value pushed here (" + human_readable_type(a.type) + ")");
+                    print_invalid_combination_of_types_error(op.loc, {b.type, a.type}, "+", "addition");
+                    print_note_at_loc(b.op.loc, "first value pushed here (" + human_readable_type(b.type) + ")");
+                    print_note_at_loc(a.op.loc, "second value pushed here (" + human_readable_type(a.type) + ")");
                     exit(1);
                 } }
             else if (op.type == OP_MINUS)
             {
                 if (type_stack.size() < 2)
                 {
-                    print_not_enough_arguments_error(op, 2, type_stack.size(), "-", "subtraction");
+                    print_not_enough_arguments_error(op.loc, 2, type_stack.size(), "-", "subtraction");
                     exit(1);
                 }
 
@@ -121,9 +121,9 @@ void type_check_program(Program program)
                     type_stack.push_back(IluTypeWithOp(op, DATATYPE_INT));
                 else
                 {
-                    print_invalid_combination_of_types_error(op, {b.type, a.type}, "-", "subtraction");
-                    print_op_note(b.op, "first value pushed here (" + human_readable_type(b.type) + ")");
-                    print_op_note(a.op, "second value pushed here (" + human_readable_type(a.type) + ")");
+                    print_invalid_combination_of_types_error(op.loc, {b.type, a.type}, "-", "subtraction");
+                    print_note_at_loc(b.op.loc, "first value pushed here (" + human_readable_type(b.type) + ")");
+                    print_note_at_loc(a.op.loc, "second value pushed here (" + human_readable_type(a.type) + ")");
                     exit(1);
                 }
             }
@@ -131,7 +131,7 @@ void type_check_program(Program program)
             {
                 if (type_stack.size() < 2)
                 {
-                    print_not_enough_arguments_error(op, 2, type_stack.size(), "*", "multiplication");
+                    print_not_enough_arguments_error(op.loc, 2, type_stack.size(), "*", "multiplication");
                     exit(1);
                 }
 
@@ -145,9 +145,9 @@ void type_check_program(Program program)
                     type_stack.push_back(IluTypeWithOp(op, DATATYPE_INT));
                 else
                 {
-                    print_invalid_combination_of_types_error(op, {b.type, a.type}, "*", "multiplication");
-                    print_op_note(b.op, "first value pushed here (" + human_readable_type(b.type) + ")");
-                    print_op_note(a.op, "second value pushed here (" + human_readable_type(a.type) + ")");
+                    print_invalid_combination_of_types_error(op.loc, {b.type, a.type}, "*", "multiplication");
+                    print_note_at_loc(b.op.loc, "first value pushed here (" + human_readable_type(b.type) + ")");
+                    print_note_at_loc(a.op.loc, "second value pushed here (" + human_readable_type(a.type) + ")");
                     exit(1);
                 }
             }
@@ -155,7 +155,7 @@ void type_check_program(Program program)
             {
                 if (type_stack.size() < 2)
                 {
-                    print_not_enough_arguments_error(op, 2, type_stack.size(), "/", "division");
+                    print_not_enough_arguments_error(op.loc, 2, type_stack.size(), "/", "division");
                     exit(1);
                 }
 
@@ -172,9 +172,9 @@ void type_check_program(Program program)
                 }
                 else
                 {
-                    print_invalid_combination_of_types_error(op, {b.type, a.type}, "/", "division");
-                    print_op_note(b.op, "first value pushed here (" + human_readable_type(b.type) + ")");
-                    print_op_note(a.op, "second value pushed here (" + human_readable_type(a.type) + ")");
+                    print_invalid_combination_of_types_error(op.loc, {b.type, a.type}, "/", "division");
+                    print_note_at_loc(b.op.loc, "first value pushed here (" + human_readable_type(b.type) + ")");
+                    print_note_at_loc(a.op.loc, "second value pushed here (" + human_readable_type(a.type) + ")");
                     exit(1);
                 }
             }
@@ -184,7 +184,7 @@ void type_check_program(Program program)
             {
                 if (type_stack.size() < 2)
                 {
-                    print_not_enough_arguments_error(op, 2, type_stack.size(), "=", "equal to");
+                    print_not_enough_arguments_error(op.loc, 2, type_stack.size(), "=", "equal to");
                     exit(1);
                 }
                 
@@ -195,9 +195,9 @@ void type_check_program(Program program)
                     type_stack.push_back(IluTypeWithOp(op, DATATYPE_INT));
                 else
                 {
-                    print_invalid_combination_of_types_error(op, {b.type, a.type}, "=", "equal to");
-                    print_op_note(b.op, "first argument found here (" + human_readable_type(b.type) + ")");
-                    print_op_note(a.op, "second argument found here (" + human_readable_type(a.type) + ")");
+                    print_invalid_combination_of_types_error(op.loc, {b.type, a.type}, "=", "equal to");
+                    print_note_at_loc(b.op.loc, "first argument found here (" + human_readable_type(b.type) + ")");
+                    print_note_at_loc(a.op.loc, "second argument found here (" + human_readable_type(a.type) + ")");
                     exit(1);
                 }
             }
@@ -205,7 +205,7 @@ void type_check_program(Program program)
             {
                 if (type_stack.size() < 2)
                 {
-                    print_not_enough_arguments_error(op, 2, type_stack.size(), ">", "greater than");
+                    print_not_enough_arguments_error(op.loc, 2, type_stack.size(), ">", "greater than");
                     exit(1);
                 }
                 
@@ -216,9 +216,9 @@ void type_check_program(Program program)
                     type_stack.push_back(IluTypeWithOp(op, DATATYPE_INT));
                 else
                 {
-                    print_invalid_combination_of_types_error(op, {b.type, a.type}, ">", "greater than");
-                    print_op_note(b.op, "first argument found here (" + human_readable_type(b.type) + ")");
-                    print_op_note(a.op, "second argument found here (" + human_readable_type(a.type) + ")");
+                    print_invalid_combination_of_types_error(op.loc, {b.type, a.type}, ">", "greater than");
+                    print_note_at_loc(b.op.loc, "first argument found here (" + human_readable_type(b.type) + ")");
+                    print_note_at_loc(a.op.loc, "second argument found here (" + human_readable_type(a.type) + ")");
                     exit(1);
                 }
             }
@@ -226,7 +226,7 @@ void type_check_program(Program program)
             {
                 if (type_stack.size() < 2)
                 {
-                    print_not_enough_arguments_error(op, 2, type_stack.size(), "<", "less than");
+                    print_not_enough_arguments_error(op.loc, 2, type_stack.size(), "<", "less than");
                     exit(1);
                 }
                 
@@ -237,9 +237,9 @@ void type_check_program(Program program)
                     type_stack.push_back(IluTypeWithOp(op, DATATYPE_INT));
                 else
                 {
-                    print_invalid_combination_of_types_error(op, {b.type, a.type}, "<", "less than");
-                    print_op_note(b.op, "first argument found here (" + human_readable_type(b.type) + ")");
-                    print_op_note(a.op, "second argument found here (" + human_readable_type(a.type) + ")");
+                    print_invalid_combination_of_types_error(op.loc, {b.type, a.type}, "<", "less than");
+                    print_note_at_loc(b.op.loc, "first argument found here (" + human_readable_type(b.type) + ")");
+                    print_note_at_loc(a.op.loc, "second argument found here (" + human_readable_type(a.type) + ")");
                     exit(1);
                 }
             }
@@ -247,7 +247,7 @@ void type_check_program(Program program)
             {
                 if (type_stack.size() < 2)
                 {
-                    print_not_enough_arguments_error(op, 2, type_stack.size(), ">=", "greater than or equal to");
+                    print_not_enough_arguments_error(op.loc, 2, type_stack.size(), ">=", "greater than or equal to");
                     exit(1);
                 }
                 
@@ -258,9 +258,9 @@ void type_check_program(Program program)
                     type_stack.push_back(IluTypeWithOp(op, DATATYPE_INT));
                 else
                 {
-                    print_invalid_combination_of_types_error(op, {b.type, a.type}, ">=", "greater than or equal to");
-                    print_op_note(b.op, "first argument found here (" + human_readable_type(b.type) + ")");
-                    print_op_note(a.op, "second argument found here (" + human_readable_type(a.type) + ")");
+                    print_invalid_combination_of_types_error(op.loc, {b.type, a.type}, ">=", "greater than or equal to");
+                    print_note_at_loc(b.op.loc, "first argument found here (" + human_readable_type(b.type) + ")");
+                    print_note_at_loc(a.op.loc, "second argument found here (" + human_readable_type(a.type) + ")");
                     exit(1);
                 }
             }
@@ -268,7 +268,7 @@ void type_check_program(Program program)
             {
                 if (type_stack.size() < 2)
                 {
-                    print_not_enough_arguments_error(op, 2, type_stack.size(), "<=", "less than or equal to");
+                    print_not_enough_arguments_error(op.loc, 2, type_stack.size(), "<=", "less than or equal to");
                     exit(1);
                 }
                 
@@ -279,9 +279,9 @@ void type_check_program(Program program)
                     type_stack.push_back(IluTypeWithOp(op, DATATYPE_INT));
                 else
                 {
-                    print_invalid_combination_of_types_error(op, {b.type, a.type}, ">=", "less than or equal to");
-                    print_op_note(b.op, "first argument found here (" + human_readable_type(b.type) + ")");
-                    print_op_note(a.op, "second argument found here (" + human_readable_type(a.type) + ")");
+                    print_invalid_combination_of_types_error(op.loc, {b.type, a.type}, ">=", "less than or equal to");
+                    print_note_at_loc(b.op.loc, "first argument found here (" + human_readable_type(b.type) + ")");
+                    print_note_at_loc(a.op.loc, "second argument found here (" + human_readable_type(a.type) + ")");
                     exit(1);
                 }
             }
@@ -289,7 +289,7 @@ void type_check_program(Program program)
             {
                 if (type_stack.size() < 2)
                 {
-                    print_not_enough_arguments_error(op, 2, type_stack.size(), "!=", "not equal to");
+                    print_not_enough_arguments_error(op.loc, 2, type_stack.size(), "!=", "not equal to");
                     exit(1);
                 }
                 
@@ -300,9 +300,9 @@ void type_check_program(Program program)
                     type_stack.push_back(IluTypeWithOp(op, DATATYPE_INT));
                 else
                 {
-                    print_invalid_combination_of_types_error(op, {b.type, a.type}, "!=", "not equal to");
-                    print_op_note(b.op, "first argument found here (" + human_readable_type(b.type) + ")");
-                    print_op_note(a.op, "second argument found here (" + human_readable_type(a.type) + ")");
+                    print_invalid_combination_of_types_error(op.loc, {b.type, a.type}, "!=", "not equal to");
+                    print_note_at_loc(b.op.loc, "first argument found here (" + human_readable_type(b.type) + ")");
+                    print_note_at_loc(a.op.loc, "second argument found here (" + human_readable_type(a.type) + ")");
                     exit(1);
                 }
             }
@@ -310,7 +310,7 @@ void type_check_program(Program program)
             {
                 if (type_stack.size() < 1)
                 {
-                    print_not_enough_arguments_error(op, 1, 0, "not");
+                    print_not_enough_arguments_error(op.loc, 1, 0, "not");
                     exit(1);
                 }
                 
@@ -320,8 +320,8 @@ void type_check_program(Program program)
                     type_stack.push_back(IluTypeWithOp(op, DATATYPE_INT));
                 else
                 {
-                    print_invalid_type_error(op, DATATYPE_INT, a.type, "not");
-                    print_op_note(a.op, "first argument found here (" + human_readable_type(a.type) + ")");
+                    print_invalid_type_error(op.loc, DATATYPE_INT, a.type, "not");
+                    print_note_at_loc(a.op.loc, "first argument found here (" + human_readable_type(a.type) + ")");
                     exit(1);
                 }
             }
@@ -329,7 +329,7 @@ void type_check_program(Program program)
             {
                 if (type_stack.size() < 2)
                 {
-                    print_not_enough_arguments_error(op, 2, type_stack.size(), "and");
+                    print_not_enough_arguments_error(op.loc, 2, type_stack.size(), "and");
                     exit(1);
                 }
                 
@@ -340,9 +340,9 @@ void type_check_program(Program program)
                     type_stack.push_back(IluTypeWithOp(op, DATATYPE_INT));
                 else
                 {
-                    print_invalid_combination_of_types_error(op, {b.type, a.type}, "and");
-                    print_op_note(b.op, "first argument found here (" + human_readable_type(b.type) + ")");
-                    print_op_note(a.op, "second argument found here (" + human_readable_type(a.type) + ")");
+                    print_invalid_combination_of_types_error(op.loc, {b.type, a.type}, "and");
+                    print_note_at_loc(b.op.loc, "first argument found here (" + human_readable_type(b.type) + ")");
+                    print_note_at_loc(a.op.loc, "second argument found here (" + human_readable_type(a.type) + ")");
                     exit(1);
                 }
             }
@@ -350,7 +350,7 @@ void type_check_program(Program program)
             {
                 if (type_stack.size() < 2)
                 {
-                    print_not_enough_arguments_error(op, 2, type_stack.size(), "or");
+                    print_not_enough_arguments_error(op.loc, 2, type_stack.size(), "or");
                     exit(1);
                 }
                 
@@ -361,9 +361,9 @@ void type_check_program(Program program)
                     type_stack.push_back(IluTypeWithOp(op, DATATYPE_INT));
                 else
                 {
-                    print_invalid_combination_of_types_error(op, {b.type, a.type}, "or");
-                    print_op_note(b.op, "first argument found here (" + human_readable_type(b.type) + ")");
-                    print_op_note(a.op, "second argument found here (" + human_readable_type(a.type) + ")");
+                    print_invalid_combination_of_types_error(op.loc, {b.type, a.type}, "or");
+                    print_note_at_loc(b.op.loc, "first argument found here (" + human_readable_type(b.type) + ")");
+                    print_note_at_loc(a.op.loc, "second argument found here (" + human_readable_type(a.type) + ")");
                     exit(1);
                 }
             }
@@ -373,7 +373,7 @@ void type_check_program(Program program)
             {
                 if (type_stack.size() < 1)
                 {
-                    print_not_enough_arguments_error(op, 1, 0, "pop");
+                    print_not_enough_arguments_error(op.loc, 1, 0, "pop");
                     exit(1);
                 }
                 type_stack.pop_back();
@@ -382,7 +382,7 @@ void type_check_program(Program program)
             {
                 if (type_stack.size() < 1)
                 {
-                    print_not_enough_arguments_error(op, 1, 0, "dup");
+                    print_not_enough_arguments_error(op.loc, 1, 0, "dup");
                     exit(1);
                 }
                 IluTypeWithOp a = type_stack.back();
@@ -393,7 +393,7 @@ void type_check_program(Program program)
             {
                 if (type_stack.size() < 2)
                 {
-                    print_not_enough_arguments_error(op, 2, type_stack.size(), "swp");
+                    print_not_enough_arguments_error(op.loc, 2, type_stack.size(), "swp");
                     exit(1);
                 }
 
@@ -406,7 +406,7 @@ void type_check_program(Program program)
             {
                 if (type_stack.size() < 3)
                 {
-                    print_not_enough_arguments_error(op, 3, type_stack.size(), "rot", "rotate");
+                    print_not_enough_arguments_error(op.loc, 3, type_stack.size(), "rot", "rotate");
                     exit(1);
                 }
 
@@ -422,7 +422,7 @@ void type_check_program(Program program)
             {
                 if (type_stack.size() < 2)
                 {
-                    print_not_enough_arguments_error(op, 2, type_stack.size(), "over");
+                    print_not_enough_arguments_error(op.loc, 2, type_stack.size(), "over");
                     exit(1);
                 }
                 
@@ -440,15 +440,15 @@ void type_check_program(Program program)
             {
                 if (type_stack.size() < 1)
                 {
-                    print_not_enough_arguments_error(op, 1, 0, "read8");
+                    print_not_enough_arguments_error(op.loc, 1, 0, "read8");
                     exit(1);
                 }
                 
                 IluTypeWithOp a = type_stack.back(); type_stack.pop_back();
                 if (a.type != DATATYPE_PTR)
                 {
-                    print_invalid_type_error(op, DATATYPE_PTR, a.type, "read8");
-                    print_op_note(op, "first value pushed here");
+                    print_invalid_type_error(op.loc, DATATYPE_PTR, a.type, "read8");
+                    print_note_at_loc(op.loc, "first value pushed here");
                     exit(1);
                 }
                 type_stack.push_back(IluTypeWithOp(op, DATATYPE_INT));
@@ -457,7 +457,7 @@ void type_check_program(Program program)
             {
                 if (type_stack.size() < 2)
                 {
-                    print_not_enough_arguments_error(op, 2, type_stack.size(), "write8");
+                    print_not_enough_arguments_error(op.loc, 2, type_stack.size(), "write8");
                     exit(1);
                 }
                  
@@ -467,8 +467,8 @@ void type_check_program(Program program)
                 // [ptr, any] or [b, a] -> []
                 if (b.type != DATATYPE_PTR)
                 {
-                    print_invalid_type_error(op, DATATYPE_PTR, b.type, "write8");
-                    print_op_note(b.op, "argument pushed here (" + human_readable_type(b.type) + ")");
+                    print_invalid_type_error(op.loc, DATATYPE_PTR, b.type, "write8");
+                    print_note_at_loc(b.op.loc, "argument pushed here (" + human_readable_type(b.type) + ")");
                     exit(1);
                 }
             }
@@ -476,15 +476,15 @@ void type_check_program(Program program)
             {
                 if (type_stack.size() < 1)
                 {
-                    print_not_enough_arguments_error(op, 1, 0, "read16");
+                    print_not_enough_arguments_error(op.loc, 1, 0, "read16");
                     exit(1);
                 }
                 
                 IluTypeWithOp a = type_stack.back(); type_stack.pop_back();
                 if (a.type != DATATYPE_PTR)
                 {
-                    print_invalid_type_error(op, DATATYPE_PTR, a.type, "read16");
-                    print_op_note(op, "first value pushed here (" + human_readable_type(a.type) + ")");
+                    print_invalid_type_error(op.loc, DATATYPE_PTR, a.type, "read16");
+                    print_note_at_loc(op.loc, "first value pushed here (" + human_readable_type(a.type) + ")");
                     exit(1);
                 }
                 type_stack.push_back(IluTypeWithOp(op, DATATYPE_INT));
@@ -493,7 +493,7 @@ void type_check_program(Program program)
             {
                 if (type_stack.size() < 2)
                 {
-                    print_not_enough_arguments_error(op, 2, type_stack.size(), "write16");
+                    print_not_enough_arguments_error(op.loc, 2, type_stack.size(), "write16");
                     exit(1);
                 }
                  
@@ -503,8 +503,8 @@ void type_check_program(Program program)
                 // [ptr, any] or [b, a] -> []
                 if (b.type != DATATYPE_PTR)
                 {
-                    print_invalid_type_error(op, DATATYPE_PTR, b.type, "write16");
-                    print_op_note(b.op, "argument pushed here (" + human_readable_type(b.type) + ")");
+                    print_invalid_type_error(op.loc, DATATYPE_PTR, b.type, "write16");
+                    print_note_at_loc(b.op.loc, "argument pushed here (" + human_readable_type(b.type) + ")");
                     exit(1);
                 }
             }
@@ -512,15 +512,15 @@ void type_check_program(Program program)
             {
                 if (type_stack.size() < 1)
                 {
-                    print_not_enough_arguments_error(op, 1, 0, "read32");
+                    print_not_enough_arguments_error(op.loc, 1, 0, "read32");
                     exit(1);
                 }
                 
                 IluTypeWithOp a = type_stack.back(); type_stack.pop_back();
                 if (a.type != DATATYPE_PTR)
                 {
-                    print_invalid_type_error(op, DATATYPE_PTR, a.type, "read32");
-                    print_op_note(op, "first value pushed here (" + human_readable_type(a.type) + ")");
+                    print_invalid_type_error(op.loc, DATATYPE_PTR, a.type, "read32");
+                    print_note_at_loc(op.loc, "first value pushed here (" + human_readable_type(a.type) + ")");
                     exit(1);
                 }
                 type_stack.push_back(IluTypeWithOp(op, DATATYPE_INT));
@@ -529,7 +529,7 @@ void type_check_program(Program program)
             {
                 if (type_stack.size() < 2)
                 {
-                    print_not_enough_arguments_error(op, 2, type_stack.size(), "write32");
+                    print_not_enough_arguments_error(op.loc, 2, type_stack.size(), "write32");
                     exit(1);
                 }
                  
@@ -539,8 +539,8 @@ void type_check_program(Program program)
                 // [ptr, any] or [b, a] -> []
                 if (b.type != DATATYPE_PTR)
                 {
-                    print_invalid_type_error(op, DATATYPE_PTR, b.type, "write32");
-                    print_op_note(b.op, "argument pushed here (" + human_readable_type(b.type) + ")");
+                    print_invalid_type_error(op.loc, DATATYPE_PTR, b.type, "write32");
+                    print_note_at_loc(b.op.loc, "argument pushed here (" + human_readable_type(b.type) + ")");
                     exit(1);
                 }
             }
@@ -548,15 +548,15 @@ void type_check_program(Program program)
             {
                 if (type_stack.size() < 1)
                 {
-                    print_not_enough_arguments_error(op, 1, 0, "read64");
+                    print_not_enough_arguments_error(op.loc, 1, 0, "read64");
                     exit(1);
                 }
                 
                 IluTypeWithOp a = type_stack.back(); type_stack.pop_back();
                 if (a.type != DATATYPE_PTR)
                 {
-                    print_invalid_type_error(op, DATATYPE_PTR, a.type, "read64");
-                    print_op_note(op, "first value pushed here (" + human_readable_type(a.type) + ")");
+                    print_invalid_type_error(op.loc, DATATYPE_PTR, a.type, "read64");
+                    print_note_at_loc(op.loc, "first value pushed here (" + human_readable_type(a.type) + ")");
                     exit(1);
                 }
                 type_stack.push_back(IluTypeWithOp(op, DATATYPE_INT));
@@ -565,7 +565,7 @@ void type_check_program(Program program)
             {
                 if (type_stack.size() < 2)
                 {
-                    print_not_enough_arguments_error(op, 2, type_stack.size(), "write64");
+                    print_not_enough_arguments_error(op.loc, 2, type_stack.size(), "write64");
                     exit(1);
                 }
                  
@@ -575,8 +575,8 @@ void type_check_program(Program program)
                 // [ptr, any] or [b, a] -> []
                 if (b.type != DATATYPE_PTR)
                 {
-                    print_invalid_type_error(op, DATATYPE_PTR, b.type, "write64");
-                    print_op_note(b.op, "first value pushed here (" + human_readable_type(b.type) + ")");
+                    print_invalid_type_error(op.loc, DATATYPE_PTR, b.type, "write64");
+                    print_note_at_loc(b.op.loc, "first value pushed here (" + human_readable_type(b.type) + ")");
                     exit(1);
                 }
             }
@@ -596,7 +596,7 @@ void type_check_program(Program program)
             {
                 if (type_stack.size() < 2)
                 {
-                    print_not_enough_arguments_error(op, 2, type_stack.size(), "<<", "shift left");
+                    print_not_enough_arguments_error(op.loc, 2, type_stack.size(), "<<", "shift left");
                     exit(1);
                 }
                 
@@ -607,9 +607,9 @@ void type_check_program(Program program)
                     type_stack.push_back(IluTypeWithOp(op, DATATYPE_INT));
                 else
                 {
-                    print_invalid_combination_of_types_error(op, {b.type, a.type}, "<<", "shift left");
-                    print_op_note(b.op, "first value pushed here (" + human_readable_type(b.type) + ")");
-                    print_op_note(a.op, "second value pushed here (" + human_readable_type(a.type) + ")");
+                    print_invalid_combination_of_types_error(op.loc, {b.type, a.type}, "<<", "shift left");
+                    print_note_at_loc(b.op.loc, "first value pushed here (" + human_readable_type(b.type) + ")");
+                    print_note_at_loc(a.op.loc, "second value pushed here (" + human_readable_type(a.type) + ")");
                     exit(1);
                 }
             }
@@ -617,7 +617,7 @@ void type_check_program(Program program)
             {
                 if (type_stack.size() < 2)
                 {
-                    print_not_enough_arguments_error(op, 2, type_stack.size(), ">>", "shift right");
+                    print_not_enough_arguments_error(op.loc, 2, type_stack.size(), ">>", "shift right");
                     exit(1);
                 }
                 
@@ -628,9 +628,9 @@ void type_check_program(Program program)
                     type_stack.push_back(IluTypeWithOp(op, DATATYPE_INT));
                 else
                 {
-                    print_invalid_combination_of_types_error(op, {b.type, a.type}, ">>", "shift right");
-                    print_op_note(b.op, "first value pushed here (" + human_readable_type(b.type) + ")");
-                    print_op_note(a.op, "second value pushed here (" + human_readable_type(a.type) + ")");
+                    print_invalid_combination_of_types_error(op.loc, {b.type, a.type}, ">>", "shift right");
+                    print_note_at_loc(b.op.loc, "first value pushed here (" + human_readable_type(b.type) + ")");
+                    print_note_at_loc(a.op.loc, "second value pushed here (" + human_readable_type(a.type) + ")");
                     exit(1);
                 }
             }
@@ -638,7 +638,7 @@ void type_check_program(Program program)
             {
                 if (type_stack.size() < 2)
                 {
-                    print_not_enough_arguments_error(op, 2, type_stack.size(), "orb", "bitwise or");
+                    print_not_enough_arguments_error(op.loc, 2, type_stack.size(), "orb", "bitwise or");
                     exit(1);
                 }
                 
@@ -649,9 +649,9 @@ void type_check_program(Program program)
                     type_stack.push_back(IluTypeWithOp(op, DATATYPE_INT));
                 else
                 {
-                    print_invalid_combination_of_types_error(op, {b.type, a.type}, "orb", "bitwise or");
-                    print_op_note(b.op, "first value pushed here (" + human_readable_type(b.type) + ")");
-                    print_op_note(a.op, "second value pushed here (" + human_readable_type(a.type) + ")");
+                    print_invalid_combination_of_types_error(op.loc, {b.type, a.type}, "orb", "bitwise or");
+                    print_note_at_loc(b.op.loc, "first value pushed here (" + human_readable_type(b.type) + ")");
+                    print_note_at_loc(a.op.loc, "second value pushed here (" + human_readable_type(a.type) + ")");
                     exit(1);
                 }
             }
@@ -659,7 +659,7 @@ void type_check_program(Program program)
             {
                 if (type_stack.size() < 2)
                 {
-                    print_not_enough_arguments_error(op, 2, type_stack.size(), "andb", "bitwise and");
+                    print_not_enough_arguments_error(op.loc, 2, type_stack.size(), "andb", "bitwise and");
                     exit(1);
                 }
                 
@@ -670,9 +670,9 @@ void type_check_program(Program program)
                     type_stack.push_back(IluTypeWithOp(op, DATATYPE_INT));
                 else
                 {
-                    print_invalid_combination_of_types_error(op, {b.type, a.type}, "andb", "bitwise and");
-                    print_op_note(b.op, "first value pushed here (" + human_readable_type(b.type) + ")");
-                    print_op_note(a.op, "second value pushed here (" + human_readable_type(a.type) + ")");
+                    print_invalid_combination_of_types_error(op.loc, {b.type, a.type}, "andb", "bitwise and");
+                    print_note_at_loc(b.op.loc, "first value pushed here (" + human_readable_type(b.type) + ")");
+                    print_note_at_loc(a.op.loc, "second value pushed here (" + human_readable_type(a.type) + ")");
                     exit(1);
                 }
             }
@@ -682,7 +682,7 @@ void type_check_program(Program program)
             {
                 if (type_stack.size() < 2)
                 {
-                    print_not_enough_arguments_error(op, 2, type_stack.size(), "syscall1");
+                    print_not_enough_arguments_error(op.loc, 2, type_stack.size(), "syscall1");
                     exit(1);
                 }
                 
@@ -691,8 +691,8 @@ void type_check_program(Program program)
 
                 if (a.type != DATATYPE_INT)
                 {
-                    print_invalid_type_error(op, DATATYPE_INT, a.type, "syscall1");
-                    print_op_note(a.op, "syscall number pushed here (" + human_readable_type(a.type) + ")");
+                    print_invalid_type_error(op.loc, DATATYPE_INT, a.type, "syscall1");
+                    print_note_at_loc(a.op.loc, "syscall number pushed here (" + human_readable_type(a.type) + ")");
                     exit(1);
                 }
             }
@@ -700,7 +700,7 @@ void type_check_program(Program program)
             {
                 if (type_stack.size() < 3)
                 {
-                    print_not_enough_arguments_error(op, 3, type_stack.size(), "syscall2");
+                    print_not_enough_arguments_error(op.loc, 3, type_stack.size(), "syscall2");
                     exit(1);
                 }
                 
@@ -710,8 +710,8 @@ void type_check_program(Program program)
 
                 if (a.type != DATATYPE_INT)
                 {
-                    print_invalid_type_error(op, DATATYPE_INT, a.type, "syscall2");
-                    print_op_note(a.op, "syscall number pushed here (" + human_readable_type(a.type) + ")");
+                    print_invalid_type_error(op.loc, DATATYPE_INT, a.type, "syscall2");
+                    print_note_at_loc(a.op.loc, "syscall number pushed here (" + human_readable_type(a.type) + ")");
                     exit(1);
                 }
             }
@@ -719,7 +719,7 @@ void type_check_program(Program program)
             {
                 if (type_stack.size() < 4)
                 {
-                    print_not_enough_arguments_error(op, 4, type_stack.size(), "syscall3");
+                    print_not_enough_arguments_error(op.loc, 4, type_stack.size(), "syscall3");
                     exit(1);
                 }
                 
@@ -730,8 +730,8 @@ void type_check_program(Program program)
 
                 if (a.type != DATATYPE_INT)
                 {
-                    print_invalid_type_error(op, DATATYPE_INT, a.type, "syscall3");
-                    print_op_note(a.op, "syscall number pushed here (" + human_readable_type(a.type) + ")");
+                    print_invalid_type_error(op.loc, DATATYPE_INT, a.type, "syscall3");
+                    print_note_at_loc(a.op.loc, "syscall number pushed here (" + human_readable_type(a.type) + ")");
                     exit(1);
                 }
             }
@@ -739,7 +739,7 @@ void type_check_program(Program program)
             {
                 if (type_stack.size() < 5)
                 {
-                    print_not_enough_arguments_error(op, 5, type_stack.size(), "syscall4");
+                    print_not_enough_arguments_error(op.loc, 5, type_stack.size(), "syscall4");
                     exit(1);
                 }
                 
@@ -751,8 +751,8 @@ void type_check_program(Program program)
 
                 if (a.type != DATATYPE_INT)
                 {
-                    print_invalid_type_error(op, DATATYPE_INT, a.type, "syscall4");
-                    print_op_note(a.op, "syscall number pushed here (" + human_readable_type(a.type) + ")");
+                    print_invalid_type_error(op.loc, DATATYPE_INT, a.type, "syscall4");
+                    print_note_at_loc(a.op.loc, "syscall number pushed here (" + human_readable_type(a.type) + ")");
                     exit(1);
                 }
             }
@@ -760,7 +760,7 @@ void type_check_program(Program program)
             {
                 if (type_stack.size() < 6)
                 {
-                    print_not_enough_arguments_error(op, 6, type_stack.size(), "syscall5");
+                    print_not_enough_arguments_error(op.loc, 6, type_stack.size(), "syscall5");
                     exit(1);
                 }
                 
@@ -773,8 +773,8 @@ void type_check_program(Program program)
 
                 if (a.type != DATATYPE_INT)
                 {
-                    print_invalid_type_error(op, DATATYPE_INT, a.type, "syscall5");
-                    print_op_note(a.op, "syscall number pushed here (" + human_readable_type(a.type) + ")");
+                    print_invalid_type_error(op.loc, DATATYPE_INT, a.type, "syscall5");
+                    print_note_at_loc(a.op.loc, "syscall number pushed here (" + human_readable_type(a.type) + ")");
                     exit(1);
                 }
             }
@@ -782,7 +782,7 @@ void type_check_program(Program program)
             {
                 if (type_stack.size() < 7)
                 {
-                    print_not_enough_arguments_error(op, 7, type_stack.size(), "syscall6");
+                    print_not_enough_arguments_error(op.loc, 7, type_stack.size(), "syscall6");
                     exit(1);
                 }
                 
@@ -796,8 +796,8 @@ void type_check_program(Program program)
 
                 if (a.type != DATATYPE_INT)
                 {
-                    print_invalid_type_error(op, DATATYPE_INT, a.type, "syscall6");
-                    print_op_note(a.op, "syscall number pushed here (" + human_readable_type(a.type) + ")");
+                    print_invalid_type_error(op.loc, DATATYPE_INT, a.type, "syscall6");
+                    print_note_at_loc(a.op.loc, "syscall number pushed here (" + human_readable_type(a.type) + ")");
                     exit(1);
                 }
             }
@@ -811,15 +811,15 @@ void type_check_program(Program program)
             {
                 if (type_stack.size() < 1)
                 {
-                    print_not_enough_arguments_error(op, 1, 0, "do", "while loop", true);
+                    print_not_enough_arguments_error(op.loc, 1, 0, "do", "while loop", true);
                     exit(1);
                 }
 
                 IluTypeWithOp a = type_stack.back(); type_stack.pop_back();
                 if (a.type != DATATYPE_INT)
                 {
-                    print_invalid_type_error(op, DATATYPE_INT, a.type, "do", "while loop", true);
-                    print_op_note(a.op, "first value pushed here");
+                    print_invalid_type_error(op.loc, DATATYPE_INT, a.type, "do", "while loop", true);
+                    print_note_at_loc(a.op.loc, "first value pushed here");
                     exit(1);
                 }
                 
@@ -828,7 +828,7 @@ void type_check_program(Program program)
 
                 if (!type_stack_equal)
                 {
-                    print_op_error(op, "while loops are not allowed to change the types and amount of items on stack in the condition");
+                    print_error_at_loc(op.loc, "while loops are not allowed to change the types and amount of items on stack in the condition");
                     // TODO: add notes for state of stack
                     exit(1);
                 }
@@ -838,15 +838,15 @@ void type_check_program(Program program)
             {
                 if (type_stack.size() < 1)
                 {
-                    print_not_enough_arguments_error(op, 1, 0, "if", "", true);
+                    print_not_enough_arguments_error(op.loc, 1, 0, "if", "", true);
                     exit(1);
                 }
 
                 IluTypeWithOp a = type_stack.back(); type_stack.pop_back();
                 if (a.type != DATATYPE_INT)
                 {
-                    print_invalid_type_error(op, DATATYPE_INT, a.type, "if", "", true);
-                    print_op_note(a.op, "first value pushed here");
+                    print_invalid_type_error(op.loc, DATATYPE_INT, a.type, "if", "", true);
+                    print_note_at_loc(a.op.loc, "first value pushed here");
                     exit(1);
                 }
                 stack_snapshots.push_back(StackSnapshot(type_stack, op.type));
@@ -866,7 +866,7 @@ void type_check_program(Program program)
                 {
                     if (!type_stack_equal)
                     {
-                        print_op_error(op, "if statements are not allowed to change the types of items on stack");
+                        print_error_at_loc(op.loc, "if statements are not allowed to change the types of items on stack");
                         // TODO: add notes for state of stack
                         exit(1);
                     }
@@ -875,7 +875,7 @@ void type_check_program(Program program)
                 {
                     if (!type_stack_equal)
                     {
-                        print_op_error(op, "both branches of if-else statements must produce the same types on the stack");
+                        print_error_at_loc(op.loc, "both branches of if-else statements must produce the same types on the stack");
                         // TODO: add notes for state of stack
                         exit(1);
                     }
@@ -884,7 +884,7 @@ void type_check_program(Program program)
                 {
                     if (!type_stack_equal)
                     {
-                        print_op_error(op, "while loop are not allowed to change the types of the items on the stack");
+                        print_error_at_loc(op.loc, "while loop are not allowed to change the types of the items on the stack");
                         // TODO: add notes for state of stack
                         exit(1);
                     }
@@ -921,7 +921,7 @@ void type_check_program(Program program)
 
                 if (type_stack.size() < call_func.arg_stack.size())
                 {
-                    print_not_enough_arguments_error(op, call_func.arg_stack.size(), type_stack.size(), op.str_operand, "", false, true);
+                    print_not_enough_arguments_error(op.loc, call_func.arg_stack.size(), type_stack.size(), op.str_operand, "", false, true);
                     exit(1);
                 }
 
@@ -937,16 +937,16 @@ void type_check_program(Program program)
                 if (!args_match_types)
                 {
                     if (call_func.arg_stack.size() == 1)
-                        print_invalid_type_error(op, call_func.arg_stack.at(0).type, args.at(0).type, op.str_operand, "", false, false, true);
+                        print_invalid_type_error(op.loc, call_func.arg_stack.at(0).type, args.at(0).type, op.str_operand, "", false, false, true);
                     else
                     {
                         std::vector<DATATYPE> types;
                         for (IluTypeWithOp t : args)
                             types.push_back(t.type);
 
-                        print_invalid_combination_of_types_error(op, types, op.str_operand, "", false, false, true);
+                        print_invalid_combination_of_types_error(op.loc, types, op.str_operand, "", false, false, true);
                         for (IluTypeWithOp t : args)
-                            print_op_note(t.op, "argument pushed here (" + human_readable_type(t.type) + ")");
+                            print_note_at_loc(t.op.loc, "argument pushed here (" + human_readable_type(t.type) + ")");
                     }
                     exit(1);
                 }
@@ -963,7 +963,7 @@ void type_check_program(Program program)
             // unreachable
             else if (op.type == OP_OFFSET || op.type == OP_RESET || op.type == OP_DEF || op.type == OP_CONST || op.type == OP_MEMORY)
             {
-                print_op_error(op, "unreachable: op should be handled in the parsing step. This is probably a bug.");
+                print_error_at_loc(op.loc, "unreachable: op should be handled in the parsing step. This is probably a bug.");
                 exit(1);
             }
         }
@@ -973,7 +973,7 @@ void type_check_program(Program program)
         {
             if (function.ret_stack.size() < type_stack.size()) // main cannot have excess data on stack
             {
-                print_op_error(function.op, "unhandled data on the stack (expected " + std::to_string(function.ret_stack.size()) + " items, got " + std::to_string(type_stack.size()) + ")");
+                print_error_at_loc(function.op.loc, "unhandled data on the stack (expected " + std::to_string(function.ret_stack.size()) + " items, got " + std::to_string(type_stack.size()) + ")");
 
                 std::vector<IluTypeWithOp> excess_stack;
                 for (unsigned long int i = type_stack.size() - function.ret_stack.size(); i > 0; i--)
@@ -984,11 +984,11 @@ void type_check_program(Program program)
                 std::reverse(excess_stack.begin(), excess_stack.end());
 
                 for (IluTypeWithOp t : excess_stack)
-                    print_op_note(t.op, "excess data pushed here (" + human_readable_type(t.type) + ")");
+                    print_note_at_loc(t.op.loc, "excess data pushed here (" + human_readable_type(t.type) + ")");
             }
 
             else if (function.ret_stack.size() > type_stack.size())
-                print_op_error(function.op, "not enough data on the stack (expected " + std::to_string(function.ret_stack.size()) + " items, got " + std::to_string(type_stack.size()) + ")");
+                print_error_at_loc(function.op.loc, "not enough data on the stack (expected " + std::to_string(function.ret_stack.size()) + " items, got " + std::to_string(type_stack.size()) + ")");
 
             else if (type_stack.size() > 1)
             {
@@ -996,15 +996,15 @@ void type_check_program(Program program)
                 for (IluTypeWithOp t : type_stack)
                     types.push_back(t.type);
 
-                print_invalid_combination_of_types_error(function.op, types, func_name, "", false, true);
+                print_invalid_combination_of_types_error(function.op.loc, types, func_name, "", false, true);
                 for (IluTypeWithOp t : type_stack)
-                    print_op_note(t.op, "argument pushed here (" + human_readable_type(t.type) + ")");
+                    print_note_at_loc(t.op.loc, "argument pushed here (" + human_readable_type(t.type) + ")");
             }
 
             else
             {
-                print_invalid_type_error(function.op, function.ret_stack.at(0).type, type_stack.at(0).type, func_name, "", false, true);
-                print_op_note(type_stack.at(0).op, "value pushed here (" + human_readable_type(type_stack.at(0).type) + ")");
+                print_invalid_type_error(function.op.loc, function.ret_stack.at(0).type, type_stack.at(0).type, func_name, "", false, true);
+                print_note_at_loc(type_stack.at(0).op.loc, "value pushed here (" + human_readable_type(type_stack.at(0).type) + ")");
             }
 
             exit(1);

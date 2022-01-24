@@ -488,7 +488,7 @@ void compile_to_asm(Program program, std::string output_filename, ASSEMBLER asse
             // unreachable
             else if (op.type == OP_OFFSET || op.type == OP_RESET || op.type == OP_DEF || op.type == OP_CONST || op.type == OP_MEMORY)
             {
-                print_op_error(op, "unreachable: op should be handled in the parsing step. This is probably a bug.");
+                print_error_at_loc(op.loc, "unreachable: op should be handled in the parsing step. This is probably a bug.");
                 exit(1);
             }
         }
