@@ -448,7 +448,7 @@ void type_check_program(Program program)
                 if (a.type != DATATYPE_PTR)
                 {
                     print_invalid_type_error(op.loc, DATATYPE_PTR, a.type, "read8");
-                    print_note_at_loc(op.loc, "first value pushed here");
+                    print_note_at_loc(a.op.loc, "first value pushed here");
                     exit(1);
                 }
                 type_stack.push_back(IluTypeWithOp(op, DATATYPE_INT));
@@ -484,7 +484,7 @@ void type_check_program(Program program)
                 if (a.type != DATATYPE_PTR)
                 {
                     print_invalid_type_error(op.loc, DATATYPE_PTR, a.type, "read16");
-                    print_note_at_loc(op.loc, "first value pushed here (" + human_readable_type(a.type) + ")");
+                    print_note_at_loc(a.op.loc, "first value pushed here (" + human_readable_type(a.type) + ")");
                     exit(1);
                 }
                 type_stack.push_back(IluTypeWithOp(op, DATATYPE_INT));
@@ -520,7 +520,7 @@ void type_check_program(Program program)
                 if (a.type != DATATYPE_PTR)
                 {
                     print_invalid_type_error(op.loc, DATATYPE_PTR, a.type, "read32");
-                    print_note_at_loc(op.loc, "first value pushed here (" + human_readable_type(a.type) + ")");
+                    print_note_at_loc(a.op.loc, "first value pushed here (" + human_readable_type(a.type) + ")");
                     exit(1);
                 }
                 type_stack.push_back(IluTypeWithOp(op, DATATYPE_INT));
@@ -556,7 +556,7 @@ void type_check_program(Program program)
                 if (a.type != DATATYPE_PTR)
                 {
                     print_invalid_type_error(op.loc, DATATYPE_PTR, a.type, "read64");
-                    print_note_at_loc(op.loc, "first value pushed here (" + human_readable_type(a.type) + ")");
+                    print_note_at_loc(a.op.loc, "first value pushed here (" + human_readable_type(a.type) + ")");
                     exit(1);
                 }
                 type_stack.push_back(IluTypeWithOp(op, DATATYPE_INT));

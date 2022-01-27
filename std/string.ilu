@@ -1,7 +1,7 @@
-def strlen 
-	ptr -> int in
+def strlen
+    ptr -> int in
 
-	dup while dup read8 0 != do
-		1 +
-	end swp -
+    dup while dup read8 0 != do
+        1 +
+    end swp -
 end

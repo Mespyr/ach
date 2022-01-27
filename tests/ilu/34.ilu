@@ -1,0 +1,41 @@
+const sizeof(u64) 8 end
+
+const Op.type    sizeof(u64) offset end
+const Op.operand sizeof(u64) offset end
+const sizeof(Op) reset end
+
+const OP_DUMP 1 offset end
+const OP_COUNT reset end
+
+const OP_LIMIT 10 end
+memory ops sizeof(Op) OP_LIMIT * end
+
+def exec_op ptr in
+    dup Op.type + read64 # op type
+
+    dup OP_DUMP = if
+        pop
+        Op.operand + read64 dump
+    else
+        pop pop
+    end
+end
+
+def main in
+    0 while dup 10 < do
+        # get op at index
+        dup sizeof(Op) * ops +
+
+        # write Op.type
+        dup Op.type +
+        OP_DUMP write64
+
+        # write Op.operand
+        over over Op.operand +
+        swp write64
+
+        exec_op
+
+        1 +
+    end pop
+end

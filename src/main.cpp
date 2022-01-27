@@ -107,7 +107,7 @@ int main(int argc, char* argv[])
         // link
         std::cout << "[info] linking object file." << std::endl;
         exit_on_error(std::system("ld -o out out.o"));
-    
+
         // cleanup
         std::cout << "[info] cleaning up object file" << std::endl;
         exit_on_error(std::system("rm out.o"));

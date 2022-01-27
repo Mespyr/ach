@@ -412,7 +412,7 @@ Program parse_tokens(std::vector<Token> tokens)
                     }
                     else if (f_op.type == OP_INCLUDE)
                     {
-                        print_error_at_loc(f_op.loc, "unexpected '@include' keyword found while parsing. consts cannot be defined inside functions as there is no scoping.");
+                        print_error_at_loc(f_op.loc, "unexpected '@include' keyword found while parsing. files cannot be included inside functions.");
                         exit(1);
                     }
                     else if (f_op.type == OP_OFFSET || f_op.type == OP_RESET)
