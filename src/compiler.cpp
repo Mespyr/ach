@@ -2,7 +2,7 @@
 
 void compile_to_asm(Program program, std::string output_filename, ASSEMBLER assembler)
 {
-    static_assert(OP_COUNT == 56, "unhandled op types in compile_to_asm()");
+    static_assert(OP_COUNT == 57, "unhandled op types in compile_to_asm()");
     static_assert(ASSEMBLER_COUNT == 2, "unhandled assemblers in compile_to_asm()");
 
     File outfile(output_filename, MODE_WRITE);
@@ -56,6 +56,7 @@ void compile_to_asm(Program program, std::string output_filename, ASSEMBLER asse
     outfile.writeln("\tret");
 
     std::vector<std::string> strings;
+    std::vector<std::string> c_strings;
     
     for (auto fn_key = program.functions.begin(); fn_key != program.functions.end(); fn_key++)
     {
@@ -466,6 +467,12 @@ void compile_to_asm(Program program, std::string output_filename, ASSEMBLER asse
                 outfile.writeln("\tpush rax");
                 outfile.writeln("\tpush str_" + std::to_string(strings.size()-1));
             }
+            else if (op.type == OP_PUSH_CSTR)
+            {
+                c_strings.push_back(op.str_operand);
+                outfile.writeln("\t; OP_PUSH_CSTR");
+                outfile.writeln("\tpush cstr_" + std::to_string(c_strings.size()-1));
+            }
             else if (op.type == OP_FUNCTION_CALL)
             {
                 assert(program.functions.count(op.str_operand));
@@ -519,11 +526,18 @@ void compile_to_asm(Program program, std::string output_filename, ASSEMBLER asse
     for (long unsigned int i = 0; i < strings.size(); i++)
     {
         std::stringstream ss;
+        for (char c : strings.at(i))
+            ss << (int) c << ",";
+        outfile.writeln("str_" + std::to_string(i) + ": db " + ss.str());
+    }
 
-    for (char c : strings.at(i))
+    for (long unsigned int i = 0; i < c_strings.size(); i++)
+    {
+        std::stringstream ss;
+        for (char c : c_strings.at(i))
             ss << (int) c << ",";
         ss << "0";
-        outfile.writeln("str_" + std::to_string(i) + ": db " + ss.str());
+        outfile.writeln("cstr_" + std::to_string(i) + ": db " + ss.str());
     }
 
     // bss section

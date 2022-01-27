@@ -4,7 +4,6 @@
 #include "ops.h"
 #include "file.h"
 #include "error.h"
-#include "function.h"
 #include "program.h"
 #include <vector>
 #include <string>

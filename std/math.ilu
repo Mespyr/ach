@@ -4,12 +4,12 @@ def modulo
 end
 
 def %
-    int int -> int in 
+    int int -> int in
     / swp pop
 end
 
 def div
-    int int -> int  in
+    int int -> int in
     / pop
 end
 

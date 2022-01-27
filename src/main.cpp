@@ -1,5 +1,4 @@
 #include "../include/ops.h"
-#include "../include/util.h"
 #include "../include/compiler.h"
 #include "../include/lexer.h"
 #include "../include/error.h"
@@ -10,6 +9,8 @@
 #include <vector>
 #include <iostream>
 #include <map>
+
+#define exit_on_error(exit_code) if (exit_code != 0) exit(exit_code);
 
 void usage(char* exec_name)
 {

@@ -40,7 +40,7 @@ void verify_program(Program program)
 
 void type_check_program(Program program)
 {
-    static_assert(OP_COUNT == 56, "unhandled op types in type_check_program()");
+    static_assert(OP_COUNT == 57, "unhandled op types in type_check_program()");
     static_assert(DATATYPE_COUNT == 2, "unhandled datatypes in type_check_program()");
 
     for (auto fn_key = program.functions.begin(); fn_key != program.functions.end(); fn_key++)
@@ -911,6 +911,10 @@ void type_check_program(Program program)
             else if (op.type == OP_PUSH_STR)
             {
                 type_stack.push_back(IluTypeWithOp(op, DATATYPE_INT));
+                type_stack.push_back(IluTypeWithOp(op, DATATYPE_PTR));
+            }
+            else if (op.type == OP_PUSH_CSTR)
+            {
                 type_stack.push_back(IluTypeWithOp(op, DATATYPE_PTR));
             }
             else if (op.type == OP_FUNCTION_CALL)

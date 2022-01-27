@@ -1,5 +1,17 @@
 #include "../include/lexer.h"
 
+bool is_number(std::string n)
+{
+    if (n.at(0) == '-')
+        n = n.substr(1);
+
+    std::string::const_iterator it = n.begin();
+    while (it != n.end() && std::isdigit(*it)) 
+        ++it;
+
+    return !n.empty() && it == n.end();
+}
+
 long unsigned int find_next_token_start_col(long unsigned int column_number, std::string line)
 {
     while (column_number < line.length() && std::isspace(line.at(column_number)) && line.at(column_number) != '#')
@@ -29,7 +41,7 @@ long unsigned int find_string_end_col(long unsigned int column_number, std::stri
 
         column_number++;
     }
-    
+
     // return position where '"' was found
     return column_number;
 }
@@ -63,16 +75,38 @@ std::vector<Token> tokenize_line(std::string line, std::string file_location, lo
                 );
                 exit(1);
             }
-            
             // inc col_end so it points to after '"'
             column_number_end++;
-        }
-        else column_number_end = find_token_end_col(column_number_start, line); 
+            TokenType token_type = TOKEN_STRING;
 
-        tokens.push_back(Token(
-            line.substr(column_number_start, column_number_end - column_number_start),
-            Location(line_number, column_number_start, column_number_end, line, file_location)
-        ));
+            if (column_number_end < line.length())
+            {
+                if (line.at(column_number_end) == 'c')
+                {
+                    token_type = TOKEN_C_STRING;
+                    column_number_end++;
+                }
+            }
+
+            tokens.push_back(Token(
+                line.substr(column_number_start, column_number_end - column_number_start), token_type,
+                Location(line_number, column_number_start, column_number_end, line, file_location)
+            ));
+        }
+        else
+        {
+            column_number_end = find_token_end_col(column_number_start, line);
+
+            std::string token_str = line.substr(column_number_start, column_number_end - column_number_start);
+            TokenType token_type = TOKEN_WORD;
+            if (is_number(token_str))
+                token_type = TOKEN_INT;
+
+            tokens.push_back(Token(
+                token_str, token_type,
+                Location(line_number, column_number_start, column_number_end, line, file_location)
+            ));
+        }
 
         // get start position of next token
         column_number_start = find_next_token_start_col(column_number_end + 1, line);

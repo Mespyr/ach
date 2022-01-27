@@ -4,7 +4,6 @@
 #include "location.h"
 #include "token.h"
 #include "ops.h"
-#include "util.h"
 #include "datatype.h"
 #include <iostream>
 #include <string>

@@ -1,0 +1,7 @@
+@include "std/string.ilu"
+@include "std/io.ilu"
+
+def main in
+    "Hello World!"c dup strlen
+    swp println
+end

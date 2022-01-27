@@ -1,7 +1,6 @@
 #ifndef ILU_FILE_H
 #define ILU_FILE_H
 
-#include "util.h"
 #include <fstream>
 #include <string>
 #include <iostream>

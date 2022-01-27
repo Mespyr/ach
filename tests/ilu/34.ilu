@@ -11,6 +11,7 @@ const OP_LIMIT 10 end
 memory ops sizeof(Op) OP_LIMIT * end
 
 def exec_op ptr in
+
     dup Op.type + read64 # op type
 
     dup OP_DUMP = if

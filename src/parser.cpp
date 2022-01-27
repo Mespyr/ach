@@ -1,20 +1,67 @@
 #include "../include/parser.h"
 
+std::string add_escapes_to_string(std::string str)
+{
+    std::string buf;
+    std::string ret;
+    long unsigned int i = 0;
+
+    // can't get 2 chars if string is 1 or 0 chars
+    if (str.length() < 2) return str;
+
+    while (i < str.length())
+    {
+        buf = str.substr(i, 2);
+
+        if (buf == "\\a")       ret.push_back('\a');
+        else if (buf == "\\b")  ret.push_back('\b');
+        else if (buf == "\\f")  ret.push_back('\f');
+        else if (buf == "\\n")  ret.push_back('\n');
+        else if (buf == "\\r")  ret.push_back('\r');
+        else if (buf == "\\t")  ret.push_back('\t');
+        else if (buf == "\\v")  ret.push_back('\v');
+        else if (buf == "\\\\") ret.push_back('\\');
+        else if (buf == "\\'")  ret.push_back('\'');
+        else if (buf == "\\\"") ret.push_back('\"');
+        else if (buf == "\\\?") ret.push_back('\?');
+        else if (buf == "\\0")  ret.push_back('\0');
+        else 
+        {
+            // if escape sequence not found, shift buffer over by one char to next section
+            ret.push_back(buf.at(0));
+            i++;
+            continue;
+        }
+
+        // skip both chars if escape sequence found in buffer
+        i+=2;
+    }
+
+    return ret;
+}
+
 void print_error_if_illegal_word(Token tok, Program program)
 {
+    static_assert(TOKEN_TYPE_COUNT == 4, "unhandled token types in print_error_if_illegal_word()");
+
     if (is_builtin_word(tok.value))
     {
-        print_error_at_loc(tok.loc, "built-in word used as const or function definition");
+        print_error_at_loc(tok.loc, "built-in word used as const or function name");
         exit(1);
     }
-    else if (is_number(tok.value))
+    else if (tok.type == TOKEN_INT)
     {
-        print_error_at_loc(tok.loc, "numbers are not allowed to be const or function definitions");
+        print_error_at_loc(tok.loc, "numbers are not allowed to be const or function name");
         exit(1);
     }
-    else if (is_string(tok.value))
+    else if (tok.type == TOKEN_STRING)
     {
-        print_error_at_loc(tok.loc, "strings are not allowed to be const or function definitions");
+        print_error_at_loc(tok.loc, "strings are not allowed to be const or function name");
+        exit(1);
+    }
+    else if (tok.type == TOKEN_C_STRING)
+    {
+        print_error_at_loc(tok.loc, "c-strings are not allowed to be const or function name");
         exit(1);
     }
     else if (program.consts.count(tok.value))
@@ -39,7 +86,7 @@ void print_error_if_illegal_word(Token tok, Program program)
 
 std::vector<Op> link_ops(std::vector<Op> ops)
 {
-    static_assert(OP_COUNT == 56, "unhandled op types in link_ops()");
+    static_assert(OP_COUNT == 57, "unhandled op types in link_ops()");
 
     // track location of newest block parsed
     std::vector<long unsigned int> ip_stack;
@@ -155,145 +202,153 @@ std::vector<Op> link_ops(std::vector<Op> ops)
 
 Op convert_token_to_op(Token tok, Program program)
 {
-    static_assert(OP_COUNT == 56, "unhandled op types in convert_tokens_to_ops()");
+    static_assert(OP_COUNT == 57, "unhandled op types in convert_tokens_to_ops()");
+    static_assert(TOKEN_TYPE_COUNT == 4, "unhandled token types in convert_token_to_op()");
 
-    // debugging
-    if (tok.value == "dump")
-        return Op(OP_DUMP, tok);
+    if (tok.type == TOKEN_WORD)
+    {
+        // debugging
+        if (tok.value == "dump")
+            return Op(OP_DUMP, tok);
 
-    // arithmetics
-    else if (tok.value == "+") 
-        return Op(OP_PLUS, tok);
-    else if (tok.value == "-") 
-        return Op(OP_MINUS, tok);
-    else if (tok.value == "*")
-        return Op(OP_MUL, tok);
-    else if (tok.value == "/")
-        return Op(OP_DIV, tok);
+        // arithmetics
+        else if (tok.value == "+") 
+            return Op(OP_PLUS, tok);
+        else if (tok.value == "-") 
+            return Op(OP_MINUS, tok);
+        else if (tok.value == "*")
+            return Op(OP_MUL, tok);
+        else if (tok.value == "/")
+            return Op(OP_DIV, tok);
 
-    // comparisons
-    else if (tok.value == "=")
-        return Op(OP_EQUAL, tok);
-    else if (tok.value == ">")
-        return Op(OP_GREATER, tok);
-    else if (tok.value == "<")
-        return Op(OP_LESS, tok);
-    else if (tok.value == ">=")
-        return Op(OP_GREATER_EQ, tok);
-    else if (tok.value == "<=")
-        return Op(OP_LESS_EQ, tok);
-    else if (tok.value == "!=")
-        return Op(OP_NOT_EQ, tok);
-    else if (tok.value == "not")
-        return Op(OP_NOT, tok);
-    else if (tok.value == "and")
-        return Op(OP_AND, tok);
-    else if (tok.value == "or")
-        return Op(OP_OR, tok);
+        // comparisons
+        else if (tok.value == "=")
+            return Op(OP_EQUAL, tok);
+        else if (tok.value == ">")
+            return Op(OP_GREATER, tok);
+        else if (tok.value == "<")
+            return Op(OP_LESS, tok);
+        else if (tok.value == ">=")
+            return Op(OP_GREATER_EQ, tok);
+        else if (tok.value == "<=")
+            return Op(OP_LESS_EQ, tok);
+        else if (tok.value == "!=")
+            return Op(OP_NOT_EQ, tok);
+        else if (tok.value == "not")
+            return Op(OP_NOT, tok);
+        else if (tok.value == "and")
+            return Op(OP_AND, tok);
+        else if (tok.value == "or")
+            return Op(OP_OR, tok);
 
-    // stack manipulation
-    else if (tok.value == "pop")
-        return Op(OP_POP, tok);
-    else if (tok.value == "dup")
-        return Op(OP_DUP, tok);
-    else if (tok.value == "swp")
-        return Op(OP_SWP, tok);
-    else if (tok.value == "rot")
-        return Op(OP_ROT, tok);
-    else if (tok.value == "over")
-        return Op(OP_OVER, tok);
+        // stack manipulation
+        else if (tok.value == "pop")
+            return Op(OP_POP, tok);
+        else if (tok.value == "dup")
+            return Op(OP_DUP, tok);
+        else if (tok.value == "swp")
+            return Op(OP_SWP, tok);
+        else if (tok.value == "rot")
+            return Op(OP_ROT, tok);
+        else if (tok.value == "over")
+            return Op(OP_OVER, tok);
 
-    // memory
-    else if (tok.value == "read8")
-        return Op(OP_READ8, tok);
-    else if (tok.value == "write8")
-        return Op(OP_WRITE8, tok);
-    else if (tok.value == "read16")
-        return Op(OP_READ16, tok);
-    else if (tok.value == "write16")
-        return Op(OP_WRITE16, tok);
-    else if (tok.value == "read32")
-        return Op(OP_READ32, tok);
-    else if (tok.value == "write32")
-        return Op(OP_WRITE32, tok);
-    else if (tok.value == "read64")
-        return Op(OP_READ64, tok);
-    else if (tok.value == "write64")
-        return Op(OP_WRITE64, tok);
+        // memory
+        else if (tok.value == "read8")
+            return Op(OP_READ8, tok);
+        else if (tok.value == "write8")
+            return Op(OP_WRITE8, tok);
+        else if (tok.value == "read16")
+            return Op(OP_READ16, tok);
+        else if (tok.value == "write16")
+            return Op(OP_WRITE16, tok);
+        else if (tok.value == "read32")
+            return Op(OP_READ32, tok);
+        else if (tok.value == "write32")
+            return Op(OP_WRITE32, tok);
+        else if (tok.value == "read64")
+            return Op(OP_READ64, tok);
+        else if (tok.value == "write64")
+            return Op(OP_WRITE64, tok);
 
-    // argv
-    else if (tok.value == "argv")
-        return Op(OP_ARGV, tok);
-    else if (tok.value == "argc")
-        return Op(OP_ARGC, tok);
+        // argv
+        else if (tok.value == "argv")
+            return Op(OP_ARGV, tok);
+        else if (tok.value == "argc")
+            return Op(OP_ARGC, tok);
 
-    // bitwise
-    else if (tok.value == "<<")
-        return Op(OP_SHIFT_LEFT, tok);
-    else if (tok.value == ">>")
-        return Op(OP_SHIFT_RIGHT, tok);
-    else if (tok.value == "orb")
-        return Op(OP_ORB, tok);
-    else if (tok.value == "andb")
-        return Op(OP_ANDB, tok);
+        // bitwise
+        else if (tok.value == "<<")
+            return Op(OP_SHIFT_LEFT, tok);
+        else if (tok.value == ">>")
+            return Op(OP_SHIFT_RIGHT, tok);
+        else if (tok.value == "orb")
+            return Op(OP_ORB, tok);
+        else if (tok.value == "andb")
+            return Op(OP_ANDB, tok);
 
-    // syscalls
-    else if (tok.value == "syscall1")
-        return Op(OP_SYSCALL1, tok);
-    else if (tok.value == "syscall2")
-        return Op(OP_SYSCALL2, tok);
-    else if (tok.value == "syscall3")
-        return Op(OP_SYSCALL3, tok);
-    else if (tok.value == "syscall4")
-        return Op(OP_SYSCALL4, tok);
-    else if (tok.value == "syscall5")
-        return Op(OP_SYSCALL5, tok);
-    else if (tok.value == "syscall6")
-        return Op(OP_SYSCALL6, tok);
+        // syscalls
+        else if (tok.value == "syscall1")
+            return Op(OP_SYSCALL1, tok);
+        else if (tok.value == "syscall2")
+            return Op(OP_SYSCALL2, tok);
+        else if (tok.value == "syscall3")
+            return Op(OP_SYSCALL3, tok);
+        else if (tok.value == "syscall4")
+            return Op(OP_SYSCALL4, tok);
+        else if (tok.value == "syscall5")
+            return Op(OP_SYSCALL5, tok);
+        else if (tok.value == "syscall6")
+            return Op(OP_SYSCALL6, tok);
 
-    // lang subset specific keywords
-    else if (tok.value == "offset")
-        return Op(OP_OFFSET, tok);
-    else if (tok.value == "reset")
-        return Op(OP_RESET, tok);
+        // lang subset specific keywords
+        else if (tok.value == "offset")
+            return Op(OP_OFFSET, tok);
+        else if (tok.value == "reset")
+            return Op(OP_RESET, tok);
 
-    // keywords
-    else if (tok.value == "while")
-        return Op(OP_WHILE, tok);
-    else if (tok.value == "do")
-        return Op(OP_DO, tok);
-    else if (tok.value == "if")
-        return Op(OP_IF, tok);
-    else if (tok.value == "else")
-        return Op(OP_ELSE, tok);
-    else if (tok.value == "def")
-        return Op(OP_DEF, tok);
-    else if (tok.value == "const")
-        return Op(OP_CONST, tok);
-    else if (tok.value == "memory")
-        return Op(OP_MEMORY, tok);
-    else if (tok.value == "end")
-        return Op(OP_END, tok);
-    else if (tok.value == "@include")
-        return Op(OP_INCLUDE, tok);
+        // keywords
+        else if (tok.value == "while")
+            return Op(OP_WHILE, tok);
+        else if (tok.value == "do")
+            return Op(OP_DO, tok);
+        else if (tok.value == "if")
+            return Op(OP_IF, tok);
+        else if (tok.value == "else")
+            return Op(OP_ELSE, tok);
+        else if (tok.value == "def")
+            return Op(OP_DEF, tok);
+        else if (tok.value == "const")
+            return Op(OP_CONST, tok);
+        else if (tok.value == "memory")
+            return Op(OP_MEMORY, tok);
+        else if (tok.value == "end")
+            return Op(OP_END, tok);
+        else if (tok.value == "@include")
+            return Op(OP_INCLUDE, tok);
 
-    // type checking
-    else if (tok.value == "cast(ptr)")
-        return Op(OP_CAST_PTR, tok);
-    else if (tok.value == "cast(int)")
-        return Op(OP_CAST_INT, tok);
+        // type checking
+        else if (tok.value == "cast(ptr)")
+            return Op(OP_CAST_PTR, tok);
+        else if (tok.value == "cast(int)")
+            return Op(OP_CAST_INT, tok);
+
+        // other
+        else if (program.consts.count(tok.value))
+            return Op(OP_PUSH_INT, program.consts.at(tok.value).value, tok);
+        else if (program.functions.count(tok.value))
+            return Op(OP_FUNCTION_CALL, tok.value, tok);
+        else if (program.memories.count(tok.value))
+            return Op(OP_PUSH_GLOBAL_MEM, program.memories.at(tok.value), tok);
+    }
 
     // other
-    else if (is_number(tok.value))
+    else if (tok.type == TOKEN_INT)
         return Op(OP_PUSH_INT, atol(tok.value.c_str()), tok);
-    else if (is_string(tok.value))
+    else if (tok.type == TOKEN_STRING)
         return Op(OP_PUSH_STR, add_escapes_to_string(tok.value.substr(1, tok.value.length() - 2)), tok);
-    else if (program.consts.count(tok.value))
-        return Op(OP_PUSH_INT, program.consts.at(tok.value).value, tok);
-    else if (program.functions.count(tok.value))
-        return Op(OP_FUNCTION_CALL, tok.value, tok);
-    else if (program.memories.count(tok.value))
-        return Op(OP_PUSH_GLOBAL_MEM, program.memories.at(tok.value), tok);
+    else if (tok.type == TOKEN_C_STRING)
+        return Op(OP_PUSH_CSTR, add_escapes_to_string(tok.value.substr(1, tok.value.length() - 3)), tok);
 
     print_error_at_loc(tok.loc, "Unknown keyword '" + tok.value + "'");
     exit(1);
@@ -301,7 +356,7 @@ Op convert_token_to_op(Token tok, Program program)
 
 Program parse_tokens(std::vector<Token> tokens)
 {
-    static_assert(OP_COUNT == 56, "unhandled op types in parse_tokens()");
+    static_assert(OP_COUNT == 57, "unhandled op types in parse_tokens()");
 
     Program program;
 
@@ -634,7 +689,7 @@ Program parse_tokens(std::vector<Token> tokens)
             }
 
             Token include_file_token = tokens.at(i);
-            if (!is_string(include_file_token.value))
+            if (include_file_token.type != TOKEN_STRING)
             {
                 print_error_at_loc(include_file_token.loc, "Was expecting token of type string after @include statement");
                 exit(1);

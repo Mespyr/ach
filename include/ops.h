@@ -76,6 +76,7 @@ enum OpType
     // other
     OP_PUSH_INT,
     OP_PUSH_STR,
+    OP_PUSH_CSTR,
     OP_FUNCTION_CALL,
     OP_PUSH_GLOBAL_MEM,
     // count | must always be last

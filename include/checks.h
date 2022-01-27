@@ -4,7 +4,6 @@
 #include "error.h"
 #include "ops.h"
 #include "datatype.h"
-#include "function.h"
 #include "program.h"
 #include "error.h"
 #include <map>

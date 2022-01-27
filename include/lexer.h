@@ -8,6 +8,7 @@
 #include <string>
 #include <cstring>
 
+bool is_number(std::string n);
 long unsigned int find_next_token_start_col(long unsigned int column_number, std::string line);
 long unsigned int find_token_end_col(long unsigned int column_number, std::string line);
 long unsigned int find_string_end_col(long unsigned int column_number, std::string line);

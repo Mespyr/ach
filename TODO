@@ -9,6 +9,6 @@
     [ ] - local memory
     [*] - remove 'mem' keyword
 [ ] - add static asserts
-[ ] - c-strings
+[*] - c-strings
 [ ] - add support for inline functions
 [ ] - namespaces!
