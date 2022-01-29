@@ -1,4 +1,4 @@
-@include "std/math.ilu"
+@include "std/core.ilu"
 
 def main in
     12 3 power dump # 12^3

@@ -2,7 +2,7 @@
 
 void compile_to_asm(Program program, std::string output_filename, ASSEMBLER assembler)
 {
-    static_assert(OP_COUNT == 57, "unhandled op types in compile_to_asm()");
+    static_assert(OP_COUNT == 58, "unhandled op types in compile_to_asm()");
     static_assert(ASSEMBLER_COUNT == 2, "unhandled assemblers in compile_to_asm()");
 
     File outfile(output_filename, MODE_WRITE);
@@ -360,12 +360,20 @@ void compile_to_asm(Program program, std::string output_filename, ASSEMBLER asse
             }
             
             // syscalls
+            else if (op.type == OP_SYSCALL0)
+            {
+                outfile.writeln("\t; OP_SYSCALL0");
+                outfile.writeln("\tpop rax");
+                outfile.writeln("\tsyscall");
+                outfile.writeln("\tpush rax");
+            }
             else if (op.type == OP_SYSCALL1)
             {
                 outfile.writeln("\t; OP_SYSCALL1");
                 outfile.writeln("\tpop rax");
                 outfile.writeln("\tpop rdi");
                 outfile.writeln("\tsyscall");
+                outfile.writeln("\tpush rax");
             }
             else if (op.type == OP_SYSCALL2)
             {
@@ -374,6 +382,7 @@ void compile_to_asm(Program program, std::string output_filename, ASSEMBLER asse
                 outfile.writeln("\tpop rsi");
                 outfile.writeln("\tpop rdi");
                 outfile.writeln("\tsyscall");
+                outfile.writeln("\tpush rax");
             }
             else if (op.type == OP_SYSCALL3)
             {
@@ -383,6 +392,7 @@ void compile_to_asm(Program program, std::string output_filename, ASSEMBLER asse
                 outfile.writeln("\tpop rsi");
                 outfile.writeln("\tpop rdi");
                 outfile.writeln("\tsyscall");
+                outfile.writeln("\tpush rax");
             }
             else if (op.type == OP_SYSCALL4)
             {
@@ -393,6 +403,7 @@ void compile_to_asm(Program program, std::string output_filename, ASSEMBLER asse
                 outfile.writeln("\tpop rsi");
                 outfile.writeln("\tpop rdi");
                 outfile.writeln("\tsyscall");
+                outfile.writeln("\tpush rax");
             }
             else if (op.type == OP_SYSCALL5)
             {
@@ -404,6 +415,7 @@ void compile_to_asm(Program program, std::string output_filename, ASSEMBLER asse
                 outfile.writeln("\tpop rsi");
                 outfile.writeln("\tpop rdi");
                 outfile.writeln("\tsyscall");
+                outfile.writeln("\tpush rax");
             }
             else if (op.type == OP_SYSCALL6)
             {
@@ -416,6 +428,7 @@ void compile_to_asm(Program program, std::string output_filename, ASSEMBLER asse
                 outfile.writeln("\tpop rsi");
                 outfile.writeln("\tpop rdi");
                 outfile.writeln("\tsyscall");
+                outfile.writeln("\tpush rax");
             }
 
             // keywords

@@ -1,4 +1,0 @@
-def main
-    34 35 12 23 + + . 
-    34 5 + * . error_tok
-end

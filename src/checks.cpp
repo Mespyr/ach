@@ -40,7 +40,7 @@ void verify_program(Program program)
 
 void type_check_program(Program program)
 {
-    static_assert(OP_COUNT == 57, "unhandled op types in type_check_program()");
+    static_assert(OP_COUNT == 58, "unhandled op types in type_check_program()");
     static_assert(DATATYPE_COUNT == 2, "unhandled datatypes in type_check_program()");
 
     for (auto fn_key = program.functions.begin(); fn_key != program.functions.end(); fn_key++)
@@ -676,8 +676,25 @@ void type_check_program(Program program)
                     exit(1);
                 }
             }
-            
+
             // syscalls
+            else if (op.type == OP_SYSCALL0)
+            {
+                if (type_stack.size() < 1)
+                {
+                    print_not_enough_arguments_error(op.loc, 1, 0, "syscall0");
+                    exit(1);
+                }
+                IluTypeWithOp a = type_stack.back(); type_stack.pop_back();
+
+                if (a.type != DATATYPE_INT)
+                {
+                    print_invalid_type_error(op.loc, DATATYPE_INT, a.type, "syscall0");
+                    print_note_at_loc(a.op.loc, "syscall number pushed here (" + human_readable_type(a.type) + ")");
+                    exit(1);
+                }
+                type_stack.push_back(IluTypeWithOp(op, DATATYPE_INT));
+            }
             else if (op.type == OP_SYSCALL1)
             {
                 if (type_stack.size() < 2)
@@ -685,7 +702,6 @@ void type_check_program(Program program)
                     print_not_enough_arguments_error(op.loc, 2, type_stack.size(), "syscall1");
                     exit(1);
                 }
-                
                 IluTypeWithOp a = type_stack.back(); type_stack.pop_back();
                 type_stack.pop_back();
 
@@ -695,6 +711,7 @@ void type_check_program(Program program)
                     print_note_at_loc(a.op.loc, "syscall number pushed here (" + human_readable_type(a.type) + ")");
                     exit(1);
                 }
+                type_stack.push_back(IluTypeWithOp(op, DATATYPE_INT));
             }
             else if (op.type == OP_SYSCALL2)
             {
@@ -703,7 +720,6 @@ void type_check_program(Program program)
                     print_not_enough_arguments_error(op.loc, 3, type_stack.size(), "syscall2");
                     exit(1);
                 }
-                
                 IluTypeWithOp a = type_stack.back(); type_stack.pop_back();
                 type_stack.pop_back();
                 type_stack.pop_back();
@@ -714,6 +730,7 @@ void type_check_program(Program program)
                     print_note_at_loc(a.op.loc, "syscall number pushed here (" + human_readable_type(a.type) + ")");
                     exit(1);
                 }
+                type_stack.push_back(IluTypeWithOp(op, DATATYPE_INT));
             }
             else if (op.type == OP_SYSCALL3)
             {
@@ -722,7 +739,6 @@ void type_check_program(Program program)
                     print_not_enough_arguments_error(op.loc, 4, type_stack.size(), "syscall3");
                     exit(1);
                 }
-                
                 IluTypeWithOp a = type_stack.back(); type_stack.pop_back();
                 type_stack.pop_back();
                 type_stack.pop_back();
@@ -734,6 +750,7 @@ void type_check_program(Program program)
                     print_note_at_loc(a.op.loc, "syscall number pushed here (" + human_readable_type(a.type) + ")");
                     exit(1);
                 }
+                type_stack.push_back(IluTypeWithOp(op, DATATYPE_INT));
             }
             else if (op.type == OP_SYSCALL4)
             {
@@ -742,7 +759,6 @@ void type_check_program(Program program)
                     print_not_enough_arguments_error(op.loc, 5, type_stack.size(), "syscall4");
                     exit(1);
                 }
-                
                 IluTypeWithOp a = type_stack.back(); type_stack.pop_back();
                 type_stack.pop_back();
                 type_stack.pop_back();
@@ -755,6 +771,7 @@ void type_check_program(Program program)
                     print_note_at_loc(a.op.loc, "syscall number pushed here (" + human_readable_type(a.type) + ")");
                     exit(1);
                 }
+                type_stack.push_back(IluTypeWithOp(op, DATATYPE_INT));
             }
             else if (op.type == OP_SYSCALL5)
             {
@@ -763,7 +780,6 @@ void type_check_program(Program program)
                     print_not_enough_arguments_error(op.loc, 6, type_stack.size(), "syscall5");
                     exit(1);
                 }
-                
                 IluTypeWithOp a = type_stack.back(); type_stack.pop_back();
                 type_stack.pop_back();
                 type_stack.pop_back();
@@ -777,6 +793,7 @@ void type_check_program(Program program)
                     print_note_at_loc(a.op.loc, "syscall number pushed here (" + human_readable_type(a.type) + ")");
                     exit(1);
                 }
+                type_stack.push_back(IluTypeWithOp(op, DATATYPE_INT));
             }
             else if (op.type == OP_SYSCALL6)
             {
@@ -785,7 +802,6 @@ void type_check_program(Program program)
                     print_not_enough_arguments_error(op.loc, 7, type_stack.size(), "syscall6");
                     exit(1);
                 }
-                
                 IluTypeWithOp a = type_stack.back(); type_stack.pop_back();
                 type_stack.pop_back();
                 type_stack.pop_back();
@@ -800,6 +816,7 @@ void type_check_program(Program program)
                     print_note_at_loc(a.op.loc, "syscall number pushed here (" + human_readable_type(a.type) + ")");
                     exit(1);
                 }
+                type_stack.push_back(IluTypeWithOp(op, DATATYPE_INT));
             }
 
             // keywords

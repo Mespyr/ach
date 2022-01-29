@@ -51,6 +51,7 @@ enum OpType
     // syscall ops for number of args to pop from stack
     // ex: syscall3: rax (syscall number), rdi, rsi, rdx
     // ex: syscall5: rax (syscall number), rdi, rsi, rdx, r10, r8
+    OP_SYSCALL0,
     OP_SYSCALL1,
     OP_SYSCALL2,
     OP_SYSCALL3,

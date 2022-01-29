@@ -1,0 +1,72 @@
+@include "std/linux.ilu"
+
+const sizeof(u64) 8 end
+const sizeof(u32) 4 end
+const sizeof(ptr) sizeof(u64) end
+const sizeof(int) sizeof(u64) end
+
+# IO
+
+def fputs int ptr int in write pop end
+def puts  int ptr in stdout rot rot swp fputs end
+def eputs int ptr in stderr rot rot swp fputs end
+
+const PUTU_BUFFER_CAP 32 end
+memory buffer PUTU_BUFFER_CAP end
+memory fd sizeof(u64) end
+
+def fputu
+    int # fd
+    int # number
+in
+    swp fd swp write64
+
+    dup 0 = if
+        fd read64 "0" swp fputs
+    else
+        buffer PUTU_BUFFER_CAP +
+        while over 0 != do
+            1 - dup rot
+            10 /
+            rot swp 48 + write8 swp
+        end
+
+        dup
+        buffer PUTU_BUFFER_CAP + swp - # length
+        fd read64                      # fd
+        rot rot
+        # fd, buffer, length
+        fputs
+    end pop
+end
+def putu  int in stdout swp fputu end
+def eputu int in stderr swp fputu end
+
+# MATH
+
+def modulo int int -> int in / swp pop end
+def % int int -> int in / swp pop end
+def div int int -> int in / pop end
+def negative int -> int in dup dup + - end
+
+def power
+    int int -> int
+in
+    1 while over 0 > do
+        rot swp over *  # multiply a with itself
+        rot 1 -         # decrement b
+        swp
+    end rot rot pop pop # get rid of a and b
+end
+
+# STRING
+
+def cstrlen
+    ptr -> int
+in
+    dup while dup read8 0 != do
+        1 +
+    end swp -
+end
+
+def cstr-to-str ptr -> int ptr in dup cstrlen swp end

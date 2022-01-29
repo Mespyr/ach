@@ -1,6 +1,5 @@
 # print argv and length
-@include "std/io.ilu"
-@include "std/string.ilu"
+@include "std/core.ilu"
 
 memory mem 640000 end
 
@@ -8,7 +7,7 @@ def main in
     argv argc
     while dup 0 > do
         over read64 cast(ptr) # get value in argv
-        dup strlen swp        # get length of value
+        dup cstrlen swp        # get length of value
         over 
         swp puts 
         " " puts

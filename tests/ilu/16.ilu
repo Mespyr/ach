@@ -1,18 +1,18 @@
 memory mem 640000 end
 
 def main in
-    1 mem 2 0 syscall3
+    1 mem 2 0 syscall3 pop
 
     mem read8 48 = if
         mem 121 write8
         mem 1 + 101 write8
         mem 2 + 115 write8
         mem 3 + 10 write8
-        1 mem 4 1 syscall3
+        1 mem 4 1 syscall3 pop
     else
         mem 110 write8
         mem 1 + 111 write8
         mem 2 + 10 write8
-        1 mem 3 1 syscall3
+        1 mem 3 1 syscall3 pop
     end
 end

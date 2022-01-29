@@ -1,7 +1,6 @@
-@include "std/string.ilu"
-@include "std/io.ilu"
+@include "std/core.ilu"
 
 def main in
-    "Hello World!"c dup strlen
-    swp println
+    "Hello World!\n"c dup cstrlen
+    swp puts
 end

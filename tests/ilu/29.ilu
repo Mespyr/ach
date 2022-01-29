@@ -1,9 +1,9 @@
-@include "std/io.ilu"
-@include "std/string.ilu"
+@include "std/core.ilu"
 
 def main in
     argv argc 8 * 8 - +  # point at last value in argv
     read64 cast(ptr)
-    dup strlen           # get length of value
-    swp println
+    dup cstrlen           # get length of value
+    swp puts
+    "\n" puts
 end

@@ -1,5 +1,5 @@
-@include "std/io.ilu"
+@include "std/core.ilu"
 
 def main in
-    "Hello World!" println
+    "Hello World!\n" puts
 end

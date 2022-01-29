@@ -1,7 +1,7 @@
 # rule110
 # borrowed and modified (slightly) from https://gitlab.com/tsoding/porth/-/blob/master/examples/rule110.porth
 
-@include "std/io.ilu"
+@include "std/core.ilu"
 
 const BOARD_SIZE 100 end
 memory row BOARD_SIZE end
@@ -21,7 +21,8 @@ def rule110 in
             1 +
         end pop
 
-        BOARD_SIZE display println
+        BOARD_SIZE display puts
+        "\n" puts
 
         # pattern
         row read8 1 <<

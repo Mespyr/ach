@@ -11,7 +11,7 @@ def main in
         # write to memory
         rot swp write8
         # perform write syscall
-        1 mem 1 1 syscall3
+        1 mem 1 1 syscall3 pop
         # increment counter
         1 +
     end pop

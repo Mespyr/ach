@@ -1,4 +1,4 @@
-@include "std/math.ilu"
+@include "std/core.ilu"
 
 def main in
     0 1 2 while over 4000000 < do

@@ -1,20 +1,19 @@
-@include "std/io.ilu"
-@include "std/string.ilu"
+@include "std/core.ilu"
 
 def main in
-    "Hello World!"                                        strlen
-    "Length using strlen: "                               puts dump # length of string by strlen function (doesn't include \0 as it counts up to \0)
-    "Length provided by pushing string onto stack: "      puts dump # length of string provided by pushing string onto stack (includes \0)
+    "Hello World!"                                         cstrlen
+    "Length using strlen: "                                puts dump # length of string by strlen function (doesn't include \0 as it counts up to \0)
+    "Length provided by pushing string onto stack: "       puts dump # length of string provided by pushing string onto stack (includes \0)
 
-    "--------------------------------------------------"  println
+    "--------------------------------------------------\n" puts
 
-    "Hello World!\0"                                      strlen
-    "Length using strlen: "                               puts dump # length of string by strlen function (doesn't include \0 as it counts up to \0)
-    "Length provided by pushing string onto stack: "      puts dump # length of string provided by pushing string onto stack (includes \0)
+    "Hello World!\0"                                       cstrlen
+    "Length using strlen: "                                puts dump # length of string by strlen function (doesn't include \0 as it counts up to \0)
+    "Length provided by pushing string onto stack: "       puts dump # length of string provided by pushing string onto stack (includes \0)
 
-    "--------------------------------------------------"  println
+    "--------------------------------------------------\n" puts
 
-    "Hello\0 World!"                                      strlen
-    "Length using strlen: "                               puts dump # length of string by strlen function (doesn't include \0 as it counts up to \0)
-    "Length provided by pushing string onto stack: "      puts dump # length of string provided by pushing string onto stack (includes \0 and goes past \0)
+    "Hello\0 World!"                                       cstrlen
+    "Length using strlen: "                                puts dump # length of string by strlen function (doesn't include \0 as it counts up to \0)
+    "Length provided by pushing string onto stack: "       puts dump # length of string provided by pushing string onto stack (includes \0 and goes past \0)
 end
