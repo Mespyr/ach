@@ -1,0 +1,22 @@
+@include "std/core.ilu"
+
+def print-verse int in
+    dup 1 = if
+        "1 bottle of beer on the wall, 1 bottle of beer,\n" puts
+        "Take one down, pass it around, no more bottles of beer on the wall!\n" puts
+        pop
+    else
+        dup putu " bottles of beer on the wall, "    puts
+        dup putu " bottles of beer,\n"               puts
+
+        "Take one down, pass it around, "            puts
+        1 - putu " bottles of beer on the wall!\n\n" puts
+    end
+end
+
+def main in
+    100 while dup 0 > do
+        dup print-verse
+        1 -
+    end pop
+end

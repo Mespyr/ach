@@ -1,6 +1,6 @@
 #include "../include/checks.h"
 
-bool compare_type_stacks(std::vector<IluTypeWithOp> type_stack_1, std::vector<IluTypeWithOp> type_stack_2)
+bool compare_type_stacks(std::vector<TypeAtLoc> type_stack_1, std::vector<TypeAtLoc> type_stack_2)
 {
     if (type_stack_1.size() != type_stack_2.size())
         return false;
@@ -27,13 +27,13 @@ void verify_program(Program program)
     Function main_func = program.functions.at("main");
     if (main_func.arg_stack.size() > 0)
     {
-        print_error_at_loc(main_func.op.loc, "'main' function must not pass any arguments");
+        print_error_at_loc(main_func.loc, "'main' function must not pass any arguments");
         exit(1);
     }
 
     if (main_func.ret_stack.size() > 0)
     {
-        print_error_at_loc(main_func.op.loc, "'main' function must not have any return values");
+        print_error_at_loc(main_func.loc, "'main' function must not have any return values");
         exit(1);
     }
 }
@@ -45,11 +45,11 @@ void type_check_program(Program program)
 
     for (auto fn_key = program.functions.begin(); fn_key != program.functions.end(); fn_key++)
     {
-        std::vector<IluTypeWithOp> type_stack;
+        std::vector<TypeAtLoc> type_stack;
         std::vector<StackSnapshot> stack_snapshots;
         Function function = fn_key->second;
 
-        for (IluTypeWithOp t : function.arg_stack)
+        for (TypeAtLoc t : function.arg_stack)
             type_stack.push_back(t);
 
         std::string func_name = fn_key->first;
@@ -76,25 +76,25 @@ void type_check_program(Program program)
                     exit(1);
                 }
 
-                IluTypeWithOp a = type_stack.back(); type_stack.pop_back();
-                IluTypeWithOp b = type_stack.back(); type_stack.pop_back();
+                TypeAtLoc a = type_stack.back(); type_stack.pop_back();
+                TypeAtLoc b = type_stack.back(); type_stack.pop_back();
 
                 // additions goes in following combinations [b, a] -> [b + a]
 
                 // int + int -> int
                 if (a.type == DATATYPE_INT && b.type == DATATYPE_INT)
-                    type_stack.push_back(IluTypeWithOp(op, DATATYPE_INT));
+                    type_stack.push_back(TypeAtLoc(op.loc, DATATYPE_INT));
                 // ptr + int -> ptr
                 else if (a.type == DATATYPE_INT && b.type == DATATYPE_PTR)
-                    type_stack.push_back(IluTypeWithOp(op, DATATYPE_PTR));
+                    type_stack.push_back(TypeAtLoc(op.loc, DATATYPE_PTR));
                 // int + ptr -> ptr
                 else if (a.type == DATATYPE_PTR && b.type == DATATYPE_INT)
-                    type_stack.push_back(IluTypeWithOp(op, DATATYPE_PTR));
+                    type_stack.push_back(TypeAtLoc(op.loc, DATATYPE_PTR));
                 else
                 {
                     print_invalid_combination_of_types_error(op.loc, {b.type, a.type}, "+", "addition");
-                    print_note_at_loc(b.op.loc, "first value pushed here (" + human_readable_type(b.type) + ")");
-                    print_note_at_loc(a.op.loc, "second value pushed here (" + human_readable_type(a.type) + ")");
+                    print_note_at_loc(b.loc, "first value pushed here (" + human_readable_type(b.type) + ")");
+                    print_note_at_loc(a.loc, "second value pushed here (" + human_readable_type(a.type) + ")");
                     exit(1);
                 } }
             else if (op.type == OP_MINUS)
@@ -105,25 +105,25 @@ void type_check_program(Program program)
                     exit(1);
                 }
 
-                IluTypeWithOp a = type_stack.back(); type_stack.pop_back();
-                IluTypeWithOp b = type_stack.back(); type_stack.pop_back();
+                TypeAtLoc a = type_stack.back(); type_stack.pop_back();
+                TypeAtLoc b = type_stack.back(); type_stack.pop_back();
 
                 // subtraction goes in following combinations [b, a] -> [b - a]
 
                 // int - int -> int
                 if (a.type == DATATYPE_INT && b.type == DATATYPE_INT)
-                    type_stack.push_back(IluTypeWithOp(op, DATATYPE_INT));
+                    type_stack.push_back(TypeAtLoc(op.loc, DATATYPE_INT));
                 // ptr - int -> ptr
                 else if (a.type == DATATYPE_INT && b.type == DATATYPE_PTR)
-                    type_stack.push_back(IluTypeWithOp(op, DATATYPE_PTR));
+                    type_stack.push_back(TypeAtLoc(op.loc, DATATYPE_PTR));
                 // ptr - ptr -> int
                 else if (a.type == DATATYPE_PTR && b.type == DATATYPE_PTR)
-                    type_stack.push_back(IluTypeWithOp(op, DATATYPE_INT));
+                    type_stack.push_back(TypeAtLoc(op.loc, DATATYPE_INT));
                 else
                 {
                     print_invalid_combination_of_types_error(op.loc, {b.type, a.type}, "-", "subtraction");
-                    print_note_at_loc(b.op.loc, "first value pushed here (" + human_readable_type(b.type) + ")");
-                    print_note_at_loc(a.op.loc, "second value pushed here (" + human_readable_type(a.type) + ")");
+                    print_note_at_loc(b.loc, "first value pushed here (" + human_readable_type(b.type) + ")");
+                    print_note_at_loc(a.loc, "second value pushed here (" + human_readable_type(a.type) + ")");
                     exit(1);
                 }
             }
@@ -135,19 +135,19 @@ void type_check_program(Program program)
                     exit(1);
                 }
 
-                IluTypeWithOp a = type_stack.back(); type_stack.pop_back();
-                IluTypeWithOp b = type_stack.back(); type_stack.pop_back();
+                TypeAtLoc a = type_stack.back(); type_stack.pop_back();
+                TypeAtLoc b = type_stack.back(); type_stack.pop_back();
 
                 // multiplication goes in following combinations
 
                 // int * int -> int
                 if (a.type == DATATYPE_INT && b.type == DATATYPE_INT)
-                    type_stack.push_back(IluTypeWithOp(op, DATATYPE_INT));
+                    type_stack.push_back(TypeAtLoc(op.loc, DATATYPE_INT));
                 else
                 {
                     print_invalid_combination_of_types_error(op.loc, {b.type, a.type}, "*", "multiplication");
-                    print_note_at_loc(b.op.loc, "first value pushed here (" + human_readable_type(b.type) + ")");
-                    print_note_at_loc(a.op.loc, "second value pushed here (" + human_readable_type(a.type) + ")");
+                    print_note_at_loc(b.loc, "first value pushed here (" + human_readable_type(b.type) + ")");
+                    print_note_at_loc(a.loc, "second value pushed here (" + human_readable_type(a.type) + ")");
                     exit(1);
                 }
             }
@@ -159,22 +159,22 @@ void type_check_program(Program program)
                     exit(1);
                 }
 
-                IluTypeWithOp a = type_stack.back(); type_stack.pop_back();
-                IluTypeWithOp b = type_stack.back(); type_stack.pop_back();
+                TypeAtLoc a = type_stack.back(); type_stack.pop_back();
+                TypeAtLoc b = type_stack.back(); type_stack.pop_back();
 
                 // division goes in following combinations
 
                 // int / int -> int, int
                 if (a.type == DATATYPE_INT && b.type == DATATYPE_INT)
                 {
-                    type_stack.push_back(IluTypeWithOp(op, DATATYPE_INT));
-                    type_stack.push_back(IluTypeWithOp(op, DATATYPE_INT));
+                    type_stack.push_back(TypeAtLoc(op.loc, DATATYPE_INT));
+                    type_stack.push_back(TypeAtLoc(op.loc, DATATYPE_INT));
                 }
                 else
                 {
                     print_invalid_combination_of_types_error(op.loc, {b.type, a.type}, "/", "division");
-                    print_note_at_loc(b.op.loc, "first value pushed here (" + human_readable_type(b.type) + ")");
-                    print_note_at_loc(a.op.loc, "second value pushed here (" + human_readable_type(a.type) + ")");
+                    print_note_at_loc(b.loc, "first value pushed here (" + human_readable_type(b.type) + ")");
+                    print_note_at_loc(a.loc, "second value pushed here (" + human_readable_type(a.type) + ")");
                     exit(1);
                 }
             }
@@ -188,16 +188,16 @@ void type_check_program(Program program)
                     exit(1);
                 }
                 
-                IluTypeWithOp a = type_stack.back(); type_stack.pop_back();
-                IluTypeWithOp b = type_stack.back(); type_stack.pop_back();
+                TypeAtLoc a = type_stack.back(); type_stack.pop_back();
+                TypeAtLoc b = type_stack.back(); type_stack.pop_back();
 
                 if (a.type == b.type)
-                    type_stack.push_back(IluTypeWithOp(op, DATATYPE_INT));
+                    type_stack.push_back(TypeAtLoc(op.loc, DATATYPE_INT));
                 else
                 {
                     print_invalid_combination_of_types_error(op.loc, {b.type, a.type}, "=", "equal to");
-                    print_note_at_loc(b.op.loc, "first argument found here (" + human_readable_type(b.type) + ")");
-                    print_note_at_loc(a.op.loc, "second argument found here (" + human_readable_type(a.type) + ")");
+                    print_note_at_loc(b.loc, "first argument found here (" + human_readable_type(b.type) + ")");
+                    print_note_at_loc(a.loc, "second argument found here (" + human_readable_type(a.type) + ")");
                     exit(1);
                 }
             }
@@ -209,16 +209,16 @@ void type_check_program(Program program)
                     exit(1);
                 }
                 
-                IluTypeWithOp a = type_stack.back(); type_stack.pop_back();
-                IluTypeWithOp b = type_stack.back(); type_stack.pop_back();
+                TypeAtLoc a = type_stack.back(); type_stack.pop_back();
+                TypeAtLoc b = type_stack.back(); type_stack.pop_back();
 
                 if (a.type == b.type)
-                    type_stack.push_back(IluTypeWithOp(op, DATATYPE_INT));
+                    type_stack.push_back(TypeAtLoc(op.loc, DATATYPE_INT));
                 else
                 {
                     print_invalid_combination_of_types_error(op.loc, {b.type, a.type}, ">", "greater than");
-                    print_note_at_loc(b.op.loc, "first argument found here (" + human_readable_type(b.type) + ")");
-                    print_note_at_loc(a.op.loc, "second argument found here (" + human_readable_type(a.type) + ")");
+                    print_note_at_loc(b.loc, "first argument found here (" + human_readable_type(b.type) + ")");
+                    print_note_at_loc(a.loc, "second argument found here (" + human_readable_type(a.type) + ")");
                     exit(1);
                 }
             }
@@ -230,16 +230,16 @@ void type_check_program(Program program)
                     exit(1);
                 }
                 
-                IluTypeWithOp a = type_stack.back(); type_stack.pop_back();
-                IluTypeWithOp b = type_stack.back(); type_stack.pop_back();
+                TypeAtLoc a = type_stack.back(); type_stack.pop_back();
+                TypeAtLoc b = type_stack.back(); type_stack.pop_back();
 
                 if (a.type == b.type)
-                    type_stack.push_back(IluTypeWithOp(op, DATATYPE_INT));
+                    type_stack.push_back(TypeAtLoc(op.loc, DATATYPE_INT));
                 else
                 {
                     print_invalid_combination_of_types_error(op.loc, {b.type, a.type}, "<", "less than");
-                    print_note_at_loc(b.op.loc, "first argument found here (" + human_readable_type(b.type) + ")");
-                    print_note_at_loc(a.op.loc, "second argument found here (" + human_readable_type(a.type) + ")");
+                    print_note_at_loc(b.loc, "first argument found here (" + human_readable_type(b.type) + ")");
+                    print_note_at_loc(a.loc, "second argument found here (" + human_readable_type(a.type) + ")");
                     exit(1);
                 }
             }
@@ -251,16 +251,16 @@ void type_check_program(Program program)
                     exit(1);
                 }
                 
-                IluTypeWithOp a = type_stack.back(); type_stack.pop_back();
-                IluTypeWithOp b = type_stack.back(); type_stack.pop_back();
+                TypeAtLoc a = type_stack.back(); type_stack.pop_back();
+                TypeAtLoc b = type_stack.back(); type_stack.pop_back();
 
                 if (a.type == b.type)
-                    type_stack.push_back(IluTypeWithOp(op, DATATYPE_INT));
+                    type_stack.push_back(TypeAtLoc(op.loc, DATATYPE_INT));
                 else
                 {
                     print_invalid_combination_of_types_error(op.loc, {b.type, a.type}, ">=", "greater than or equal to");
-                    print_note_at_loc(b.op.loc, "first argument found here (" + human_readable_type(b.type) + ")");
-                    print_note_at_loc(a.op.loc, "second argument found here (" + human_readable_type(a.type) + ")");
+                    print_note_at_loc(b.loc, "first argument found here (" + human_readable_type(b.type) + ")");
+                    print_note_at_loc(a.loc, "second argument found here (" + human_readable_type(a.type) + ")");
                     exit(1);
                 }
             }
@@ -272,16 +272,16 @@ void type_check_program(Program program)
                     exit(1);
                 }
                 
-                IluTypeWithOp a = type_stack.back(); type_stack.pop_back();
-                IluTypeWithOp b = type_stack.back(); type_stack.pop_back();
+                TypeAtLoc a = type_stack.back(); type_stack.pop_back();
+                TypeAtLoc b = type_stack.back(); type_stack.pop_back();
 
                 if (a.type == b.type)
-                    type_stack.push_back(IluTypeWithOp(op, DATATYPE_INT));
+                    type_stack.push_back(TypeAtLoc(op.loc, DATATYPE_INT));
                 else
                 {
                     print_invalid_combination_of_types_error(op.loc, {b.type, a.type}, ">=", "less than or equal to");
-                    print_note_at_loc(b.op.loc, "first argument found here (" + human_readable_type(b.type) + ")");
-                    print_note_at_loc(a.op.loc, "second argument found here (" + human_readable_type(a.type) + ")");
+                    print_note_at_loc(b.loc, "first argument found here (" + human_readable_type(b.type) + ")");
+                    print_note_at_loc(a.loc, "second argument found here (" + human_readable_type(a.type) + ")");
                     exit(1);
                 }
             }
@@ -293,16 +293,16 @@ void type_check_program(Program program)
                     exit(1);
                 }
                 
-                IluTypeWithOp a = type_stack.back(); type_stack.pop_back();
-                IluTypeWithOp b = type_stack.back(); type_stack.pop_back();
+                TypeAtLoc a = type_stack.back(); type_stack.pop_back();
+                TypeAtLoc b = type_stack.back(); type_stack.pop_back();
 
                 if (a.type == b.type)
-                    type_stack.push_back(IluTypeWithOp(op, DATATYPE_INT));
+                    type_stack.push_back(TypeAtLoc(op.loc, DATATYPE_INT));
                 else
                 {
                     print_invalid_combination_of_types_error(op.loc, {b.type, a.type}, "!=", "not equal to");
-                    print_note_at_loc(b.op.loc, "first argument found here (" + human_readable_type(b.type) + ")");
-                    print_note_at_loc(a.op.loc, "second argument found here (" + human_readable_type(a.type) + ")");
+                    print_note_at_loc(b.loc, "first argument found here (" + human_readable_type(b.type) + ")");
+                    print_note_at_loc(a.loc, "second argument found here (" + human_readable_type(a.type) + ")");
                     exit(1);
                 }
             }
@@ -314,14 +314,14 @@ void type_check_program(Program program)
                     exit(1);
                 }
                 
-                IluTypeWithOp a = type_stack.back(); type_stack.pop_back();
+                TypeAtLoc a = type_stack.back(); type_stack.pop_back();
 
                 if (a.type == DATATYPE_INT)
-                    type_stack.push_back(IluTypeWithOp(op, DATATYPE_INT));
+                    type_stack.push_back(TypeAtLoc(op.loc, DATATYPE_INT));
                 else
                 {
                     print_invalid_type_error(op.loc, DATATYPE_INT, a.type, "not");
-                    print_note_at_loc(a.op.loc, "first argument found here (" + human_readable_type(a.type) + ")");
+                    print_note_at_loc(a.loc, "first argument found here (" + human_readable_type(a.type) + ")");
                     exit(1);
                 }
             }
@@ -333,16 +333,16 @@ void type_check_program(Program program)
                     exit(1);
                 }
                 
-                IluTypeWithOp a = type_stack.back(); type_stack.pop_back();
-                IluTypeWithOp b = type_stack.back(); type_stack.pop_back();
+                TypeAtLoc a = type_stack.back(); type_stack.pop_back();
+                TypeAtLoc b = type_stack.back(); type_stack.pop_back();
 
                 if (a.type == b.type)
-                    type_stack.push_back(IluTypeWithOp(op, DATATYPE_INT));
+                    type_stack.push_back(TypeAtLoc(op.loc, DATATYPE_INT));
                 else
                 {
                     print_invalid_combination_of_types_error(op.loc, {b.type, a.type}, "and");
-                    print_note_at_loc(b.op.loc, "first argument found here (" + human_readable_type(b.type) + ")");
-                    print_note_at_loc(a.op.loc, "second argument found here (" + human_readable_type(a.type) + ")");
+                    print_note_at_loc(b.loc, "first argument found here (" + human_readable_type(b.type) + ")");
+                    print_note_at_loc(a.loc, "second argument found here (" + human_readable_type(a.type) + ")");
                     exit(1);
                 }
             }
@@ -354,16 +354,16 @@ void type_check_program(Program program)
                     exit(1);
                 }
                 
-                IluTypeWithOp a = type_stack.back(); type_stack.pop_back();
-                IluTypeWithOp b = type_stack.back(); type_stack.pop_back();
+                TypeAtLoc a = type_stack.back(); type_stack.pop_back();
+                TypeAtLoc b = type_stack.back(); type_stack.pop_back();
 
                 if (a.type == b.type)
-                    type_stack.push_back(IluTypeWithOp(op, DATATYPE_INT));
+                    type_stack.push_back(TypeAtLoc(op.loc, DATATYPE_INT));
                 else
                 {
                     print_invalid_combination_of_types_error(op.loc, {b.type, a.type}, "or");
-                    print_note_at_loc(b.op.loc, "first argument found here (" + human_readable_type(b.type) + ")");
-                    print_note_at_loc(a.op.loc, "second argument found here (" + human_readable_type(a.type) + ")");
+                    print_note_at_loc(b.loc, "first argument found here (" + human_readable_type(b.type) + ")");
+                    print_note_at_loc(a.loc, "second argument found here (" + human_readable_type(a.type) + ")");
                     exit(1);
                 }
             }
@@ -385,8 +385,8 @@ void type_check_program(Program program)
                     print_not_enough_arguments_error(op.loc, 1, 0, "dup");
                     exit(1);
                 }
-                IluTypeWithOp a = type_stack.back();
-                a.op = op;
+                TypeAtLoc a = type_stack.back();
+                a.loc = op.loc;
                 type_stack.push_back(a);
             }
             else if (op.type == OP_SWP)
@@ -397,8 +397,8 @@ void type_check_program(Program program)
                     exit(1);
                 }
 
-                IluTypeWithOp a = type_stack.back(); type_stack.pop_back();
-                IluTypeWithOp b = type_stack.back(); type_stack.pop_back();
+                TypeAtLoc a = type_stack.back(); type_stack.pop_back();
+                TypeAtLoc b = type_stack.back(); type_stack.pop_back();
                 type_stack.push_back(a);
                 type_stack.push_back(b);
             }
@@ -411,9 +411,9 @@ void type_check_program(Program program)
                 }
 
                 // [c, b, a] -> [b, a, c]
-                IluTypeWithOp a = type_stack.back(); type_stack.pop_back();
-                IluTypeWithOp b = type_stack.back(); type_stack.pop_back();
-                IluTypeWithOp c = type_stack.back(); type_stack.pop_back();
+                TypeAtLoc a = type_stack.back(); type_stack.pop_back();
+                TypeAtLoc b = type_stack.back(); type_stack.pop_back();
+                TypeAtLoc c = type_stack.back(); type_stack.pop_back();
                 type_stack.push_back(b);
                 type_stack.push_back(a);
                 type_stack.push_back(c);
@@ -427,11 +427,11 @@ void type_check_program(Program program)
                 }
                 
                 // [b, a] -> [b, a, b]
-                IluTypeWithOp a = type_stack.back(); type_stack.pop_back();
-                IluTypeWithOp b = type_stack.back(); type_stack.pop_back();
+                TypeAtLoc a = type_stack.back(); type_stack.pop_back();
+                TypeAtLoc b = type_stack.back(); type_stack.pop_back();
                 type_stack.push_back(b);
                 type_stack.push_back(a);
-                b.op = op;
+                b.loc = op.loc;
                 type_stack.push_back(b);
             }
            
@@ -444,14 +444,14 @@ void type_check_program(Program program)
                     exit(1);
                 }
                 
-                IluTypeWithOp a = type_stack.back(); type_stack.pop_back();
+                TypeAtLoc a = type_stack.back(); type_stack.pop_back();
                 if (a.type != DATATYPE_PTR)
                 {
                     print_invalid_type_error(op.loc, DATATYPE_PTR, a.type, "read8");
-                    print_note_at_loc(a.op.loc, "first value pushed here");
+                    print_note_at_loc(a.loc, "first value pushed here");
                     exit(1);
                 }
-                type_stack.push_back(IluTypeWithOp(op, DATATYPE_INT));
+                type_stack.push_back(TypeAtLoc(op.loc, DATATYPE_INT));
             }
             else if (op.type == OP_WRITE8)
             {
@@ -461,14 +461,14 @@ void type_check_program(Program program)
                     exit(1);
                 }
                  
-                IluTypeWithOp a = type_stack.back(); type_stack.pop_back();
-                IluTypeWithOp b = type_stack.back(); type_stack.pop_back();
+                TypeAtLoc a = type_stack.back(); type_stack.pop_back();
+                TypeAtLoc b = type_stack.back(); type_stack.pop_back();
 
                 // [ptr, any] or [b, a] -> []
                 if (b.type != DATATYPE_PTR)
                 {
                     print_invalid_type_error(op.loc, DATATYPE_PTR, b.type, "write8");
-                    print_note_at_loc(b.op.loc, "argument pushed here (" + human_readable_type(b.type) + ")");
+                    print_note_at_loc(b.loc, "argument pushed here (" + human_readable_type(b.type) + ")");
                     exit(1);
                 }
             }
@@ -480,14 +480,14 @@ void type_check_program(Program program)
                     exit(1);
                 }
                 
-                IluTypeWithOp a = type_stack.back(); type_stack.pop_back();
+                TypeAtLoc a = type_stack.back(); type_stack.pop_back();
                 if (a.type != DATATYPE_PTR)
                 {
                     print_invalid_type_error(op.loc, DATATYPE_PTR, a.type, "read16");
-                    print_note_at_loc(a.op.loc, "first value pushed here (" + human_readable_type(a.type) + ")");
+                    print_note_at_loc(a.loc, "first value pushed here (" + human_readable_type(a.type) + ")");
                     exit(1);
                 }
-                type_stack.push_back(IluTypeWithOp(op, DATATYPE_INT));
+                type_stack.push_back(TypeAtLoc(op.loc, DATATYPE_INT));
             }
             else if (op.type == OP_WRITE16)
             {
@@ -497,14 +497,14 @@ void type_check_program(Program program)
                     exit(1);
                 }
                  
-                IluTypeWithOp a = type_stack.back(); type_stack.pop_back();
-                IluTypeWithOp b = type_stack.back(); type_stack.pop_back();
+                TypeAtLoc a = type_stack.back(); type_stack.pop_back();
+                TypeAtLoc b = type_stack.back(); type_stack.pop_back();
 
                 // [ptr, any] or [b, a] -> []
                 if (b.type != DATATYPE_PTR)
                 {
                     print_invalid_type_error(op.loc, DATATYPE_PTR, b.type, "write16");
-                    print_note_at_loc(b.op.loc, "argument pushed here (" + human_readable_type(b.type) + ")");
+                    print_note_at_loc(b.loc, "argument pushed here (" + human_readable_type(b.type) + ")");
                     exit(1);
                 }
             }
@@ -516,14 +516,14 @@ void type_check_program(Program program)
                     exit(1);
                 }
                 
-                IluTypeWithOp a = type_stack.back(); type_stack.pop_back();
+                TypeAtLoc a = type_stack.back(); type_stack.pop_back();
                 if (a.type != DATATYPE_PTR)
                 {
                     print_invalid_type_error(op.loc, DATATYPE_PTR, a.type, "read32");
-                    print_note_at_loc(a.op.loc, "first value pushed here (" + human_readable_type(a.type) + ")");
+                    print_note_at_loc(a.loc, "first value pushed here (" + human_readable_type(a.type) + ")");
                     exit(1);
                 }
-                type_stack.push_back(IluTypeWithOp(op, DATATYPE_INT));
+                type_stack.push_back(TypeAtLoc(op.loc, DATATYPE_INT));
             }
             else if (op.type == OP_WRITE32)
             {
@@ -533,14 +533,14 @@ void type_check_program(Program program)
                     exit(1);
                 }
                  
-                IluTypeWithOp a = type_stack.back(); type_stack.pop_back();
-                IluTypeWithOp b = type_stack.back(); type_stack.pop_back();
+                TypeAtLoc a = type_stack.back(); type_stack.pop_back();
+                TypeAtLoc b = type_stack.back(); type_stack.pop_back();
                 
                 // [ptr, any] or [b, a] -> []
                 if (b.type != DATATYPE_PTR)
                 {
                     print_invalid_type_error(op.loc, DATATYPE_PTR, b.type, "write32");
-                    print_note_at_loc(b.op.loc, "argument pushed here (" + human_readable_type(b.type) + ")");
+                    print_note_at_loc(b.loc, "argument pushed here (" + human_readable_type(b.type) + ")");
                     exit(1);
                 }
             }
@@ -552,14 +552,14 @@ void type_check_program(Program program)
                     exit(1);
                 }
                 
-                IluTypeWithOp a = type_stack.back(); type_stack.pop_back();
+                TypeAtLoc a = type_stack.back(); type_stack.pop_back();
                 if (a.type != DATATYPE_PTR)
                 {
                     print_invalid_type_error(op.loc, DATATYPE_PTR, a.type, "read64");
-                    print_note_at_loc(a.op.loc, "first value pushed here (" + human_readable_type(a.type) + ")");
+                    print_note_at_loc(a.loc, "first value pushed here (" + human_readable_type(a.type) + ")");
                     exit(1);
                 }
-                type_stack.push_back(IluTypeWithOp(op, DATATYPE_INT));
+                type_stack.push_back(TypeAtLoc(op.loc, DATATYPE_INT));
             }
             else if (op.type == OP_WRITE64)
             {
@@ -569,14 +569,14 @@ void type_check_program(Program program)
                     exit(1);
                 }
                  
-                IluTypeWithOp a = type_stack.back(); type_stack.pop_back();
-                IluTypeWithOp b = type_stack.back(); type_stack.pop_back();
+                TypeAtLoc a = type_stack.back(); type_stack.pop_back();
+                TypeAtLoc b = type_stack.back(); type_stack.pop_back();
 
                 // [ptr, any] or [b, a] -> []
                 if (b.type != DATATYPE_PTR)
                 {
                     print_invalid_type_error(op.loc, DATATYPE_PTR, b.type, "write64");
-                    print_note_at_loc(b.op.loc, "first value pushed here (" + human_readable_type(b.type) + ")");
+                    print_note_at_loc(b.loc, "first value pushed here (" + human_readable_type(b.type) + ")");
                     exit(1);
                 }
             }
@@ -584,11 +584,11 @@ void type_check_program(Program program)
             // argv
             else if (op.type == OP_ARGV)
             {
-                type_stack.push_back(IluTypeWithOp(op, DATATYPE_PTR));
+                type_stack.push_back(TypeAtLoc(op.loc, DATATYPE_PTR));
             }
             else if (op.type == OP_ARGC)
             {
-                type_stack.push_back(IluTypeWithOp(op, DATATYPE_INT));
+                type_stack.push_back(TypeAtLoc(op.loc, DATATYPE_INT));
             }
 
             // bitwise
@@ -600,16 +600,16 @@ void type_check_program(Program program)
                     exit(1);
                 }
                 
-                IluTypeWithOp a = type_stack.back(); type_stack.pop_back();
-                IluTypeWithOp b = type_stack.back(); type_stack.pop_back();
+                TypeAtLoc a = type_stack.back(); type_stack.pop_back();
+                TypeAtLoc b = type_stack.back(); type_stack.pop_back();
 
                 if (a.type == DATATYPE_INT && b.type == DATATYPE_INT)
-                    type_stack.push_back(IluTypeWithOp(op, DATATYPE_INT));
+                    type_stack.push_back(TypeAtLoc(op.loc, DATATYPE_INT));
                 else
                 {
                     print_invalid_combination_of_types_error(op.loc, {b.type, a.type}, "<<", "shift left");
-                    print_note_at_loc(b.op.loc, "first value pushed here (" + human_readable_type(b.type) + ")");
-                    print_note_at_loc(a.op.loc, "second value pushed here (" + human_readable_type(a.type) + ")");
+                    print_note_at_loc(b.loc, "first value pushed here (" + human_readable_type(b.type) + ")");
+                    print_note_at_loc(a.loc, "second value pushed here (" + human_readable_type(a.type) + ")");
                     exit(1);
                 }
             }
@@ -621,16 +621,16 @@ void type_check_program(Program program)
                     exit(1);
                 }
                 
-                IluTypeWithOp a = type_stack.back(); type_stack.pop_back();
-                IluTypeWithOp b = type_stack.back(); type_stack.pop_back();
+                TypeAtLoc a = type_stack.back(); type_stack.pop_back();
+                TypeAtLoc b = type_stack.back(); type_stack.pop_back();
 
                 if (a.type == DATATYPE_INT && b.type == DATATYPE_INT)
-                    type_stack.push_back(IluTypeWithOp(op, DATATYPE_INT));
+                    type_stack.push_back(TypeAtLoc(op.loc, DATATYPE_INT));
                 else
                 {
                     print_invalid_combination_of_types_error(op.loc, {b.type, a.type}, ">>", "shift right");
-                    print_note_at_loc(b.op.loc, "first value pushed here (" + human_readable_type(b.type) + ")");
-                    print_note_at_loc(a.op.loc, "second value pushed here (" + human_readable_type(a.type) + ")");
+                    print_note_at_loc(b.loc, "first value pushed here (" + human_readable_type(b.type) + ")");
+                    print_note_at_loc(a.loc, "second value pushed here (" + human_readable_type(a.type) + ")");
                     exit(1);
                 }
             }
@@ -642,16 +642,16 @@ void type_check_program(Program program)
                     exit(1);
                 }
                 
-                IluTypeWithOp a = type_stack.back(); type_stack.pop_back();
-                IluTypeWithOp b = type_stack.back(); type_stack.pop_back();
+                TypeAtLoc a = type_stack.back(); type_stack.pop_back();
+                TypeAtLoc b = type_stack.back(); type_stack.pop_back();
 
                 if (a.type == DATATYPE_INT && b.type == DATATYPE_INT)
-                    type_stack.push_back(IluTypeWithOp(op, DATATYPE_INT));
+                    type_stack.push_back(TypeAtLoc(op.loc, DATATYPE_INT));
                 else
                 {
                     print_invalid_combination_of_types_error(op.loc, {b.type, a.type}, "orb", "bitwise or");
-                    print_note_at_loc(b.op.loc, "first value pushed here (" + human_readable_type(b.type) + ")");
-                    print_note_at_loc(a.op.loc, "second value pushed here (" + human_readable_type(a.type) + ")");
+                    print_note_at_loc(b.loc, "first value pushed here (" + human_readable_type(b.type) + ")");
+                    print_note_at_loc(a.loc, "second value pushed here (" + human_readable_type(a.type) + ")");
                     exit(1);
                 }
             }
@@ -663,16 +663,16 @@ void type_check_program(Program program)
                     exit(1);
                 }
                 
-                IluTypeWithOp a = type_stack.back(); type_stack.pop_back();
-                IluTypeWithOp b = type_stack.back(); type_stack.pop_back();
+                TypeAtLoc a = type_stack.back(); type_stack.pop_back();
+                TypeAtLoc b = type_stack.back(); type_stack.pop_back();
 
                 if (a.type == DATATYPE_INT && b.type == DATATYPE_INT)
-                    type_stack.push_back(IluTypeWithOp(op, DATATYPE_INT));
+                    type_stack.push_back(TypeAtLoc(op.loc, DATATYPE_INT));
                 else
                 {
                     print_invalid_combination_of_types_error(op.loc, {b.type, a.type}, "andb", "bitwise and");
-                    print_note_at_loc(b.op.loc, "first value pushed here (" + human_readable_type(b.type) + ")");
-                    print_note_at_loc(a.op.loc, "second value pushed here (" + human_readable_type(a.type) + ")");
+                    print_note_at_loc(b.loc, "first value pushed here (" + human_readable_type(b.type) + ")");
+                    print_note_at_loc(a.loc, "second value pushed here (" + human_readable_type(a.type) + ")");
                     exit(1);
                 }
             }
@@ -685,15 +685,15 @@ void type_check_program(Program program)
                     print_not_enough_arguments_error(op.loc, 1, 0, "syscall0");
                     exit(1);
                 }
-                IluTypeWithOp a = type_stack.back(); type_stack.pop_back();
+                TypeAtLoc a = type_stack.back(); type_stack.pop_back();
 
                 if (a.type != DATATYPE_INT)
                 {
                     print_invalid_type_error(op.loc, DATATYPE_INT, a.type, "syscall0");
-                    print_note_at_loc(a.op.loc, "syscall number pushed here (" + human_readable_type(a.type) + ")");
+                    print_note_at_loc(a.loc, "syscall number pushed here (" + human_readable_type(a.type) + ")");
                     exit(1);
                 }
-                type_stack.push_back(IluTypeWithOp(op, DATATYPE_INT));
+                type_stack.push_back(TypeAtLoc(op.loc, DATATYPE_INT));
             }
             else if (op.type == OP_SYSCALL1)
             {
@@ -702,16 +702,16 @@ void type_check_program(Program program)
                     print_not_enough_arguments_error(op.loc, 2, type_stack.size(), "syscall1");
                     exit(1);
                 }
-                IluTypeWithOp a = type_stack.back(); type_stack.pop_back();
+                TypeAtLoc a = type_stack.back(); type_stack.pop_back();
                 type_stack.pop_back();
 
                 if (a.type != DATATYPE_INT)
                 {
                     print_invalid_type_error(op.loc, DATATYPE_INT, a.type, "syscall1");
-                    print_note_at_loc(a.op.loc, "syscall number pushed here (" + human_readable_type(a.type) + ")");
+                    print_note_at_loc(a.loc, "syscall number pushed here (" + human_readable_type(a.type) + ")");
                     exit(1);
                 }
-                type_stack.push_back(IluTypeWithOp(op, DATATYPE_INT));
+                type_stack.push_back(TypeAtLoc(op.loc, DATATYPE_INT));
             }
             else if (op.type == OP_SYSCALL2)
             {
@@ -720,17 +720,17 @@ void type_check_program(Program program)
                     print_not_enough_arguments_error(op.loc, 3, type_stack.size(), "syscall2");
                     exit(1);
                 }
-                IluTypeWithOp a = type_stack.back(); type_stack.pop_back();
+                TypeAtLoc a = type_stack.back(); type_stack.pop_back();
                 type_stack.pop_back();
                 type_stack.pop_back();
 
                 if (a.type != DATATYPE_INT)
                 {
                     print_invalid_type_error(op.loc, DATATYPE_INT, a.type, "syscall2");
-                    print_note_at_loc(a.op.loc, "syscall number pushed here (" + human_readable_type(a.type) + ")");
+                    print_note_at_loc(a.loc, "syscall number pushed here (" + human_readable_type(a.type) + ")");
                     exit(1);
                 }
-                type_stack.push_back(IluTypeWithOp(op, DATATYPE_INT));
+                type_stack.push_back(TypeAtLoc(op.loc, DATATYPE_INT));
             }
             else if (op.type == OP_SYSCALL3)
             {
@@ -739,7 +739,7 @@ void type_check_program(Program program)
                     print_not_enough_arguments_error(op.loc, 4, type_stack.size(), "syscall3");
                     exit(1);
                 }
-                IluTypeWithOp a = type_stack.back(); type_stack.pop_back();
+                TypeAtLoc a = type_stack.back(); type_stack.pop_back();
                 type_stack.pop_back();
                 type_stack.pop_back();
                 type_stack.pop_back();
@@ -747,10 +747,10 @@ void type_check_program(Program program)
                 if (a.type != DATATYPE_INT)
                 {
                     print_invalid_type_error(op.loc, DATATYPE_INT, a.type, "syscall3");
-                    print_note_at_loc(a.op.loc, "syscall number pushed here (" + human_readable_type(a.type) + ")");
+                    print_note_at_loc(a.loc, "syscall number pushed here (" + human_readable_type(a.type) + ")");
                     exit(1);
                 }
-                type_stack.push_back(IluTypeWithOp(op, DATATYPE_INT));
+                type_stack.push_back(TypeAtLoc(op.loc, DATATYPE_INT));
             }
             else if (op.type == OP_SYSCALL4)
             {
@@ -759,7 +759,7 @@ void type_check_program(Program program)
                     print_not_enough_arguments_error(op.loc, 5, type_stack.size(), "syscall4");
                     exit(1);
                 }
-                IluTypeWithOp a = type_stack.back(); type_stack.pop_back();
+                TypeAtLoc a = type_stack.back(); type_stack.pop_back();
                 type_stack.pop_back();
                 type_stack.pop_back();
                 type_stack.pop_back();
@@ -768,10 +768,10 @@ void type_check_program(Program program)
                 if (a.type != DATATYPE_INT)
                 {
                     print_invalid_type_error(op.loc, DATATYPE_INT, a.type, "syscall4");
-                    print_note_at_loc(a.op.loc, "syscall number pushed here (" + human_readable_type(a.type) + ")");
+                    print_note_at_loc(a.loc, "syscall number pushed here (" + human_readable_type(a.type) + ")");
                     exit(1);
                 }
-                type_stack.push_back(IluTypeWithOp(op, DATATYPE_INT));
+                type_stack.push_back(TypeAtLoc(op.loc, DATATYPE_INT));
             }
             else if (op.type == OP_SYSCALL5)
             {
@@ -780,7 +780,7 @@ void type_check_program(Program program)
                     print_not_enough_arguments_error(op.loc, 6, type_stack.size(), "syscall5");
                     exit(1);
                 }
-                IluTypeWithOp a = type_stack.back(); type_stack.pop_back();
+                TypeAtLoc a = type_stack.back(); type_stack.pop_back();
                 type_stack.pop_back();
                 type_stack.pop_back();
                 type_stack.pop_back();
@@ -790,10 +790,10 @@ void type_check_program(Program program)
                 if (a.type != DATATYPE_INT)
                 {
                     print_invalid_type_error(op.loc, DATATYPE_INT, a.type, "syscall5");
-                    print_note_at_loc(a.op.loc, "syscall number pushed here (" + human_readable_type(a.type) + ")");
+                    print_note_at_loc(a.loc, "syscall number pushed here (" + human_readable_type(a.type) + ")");
                     exit(1);
                 }
-                type_stack.push_back(IluTypeWithOp(op, DATATYPE_INT));
+                type_stack.push_back(TypeAtLoc(op.loc, DATATYPE_INT));
             }
             else if (op.type == OP_SYSCALL6)
             {
@@ -802,7 +802,7 @@ void type_check_program(Program program)
                     print_not_enough_arguments_error(op.loc, 7, type_stack.size(), "syscall6");
                     exit(1);
                 }
-                IluTypeWithOp a = type_stack.back(); type_stack.pop_back();
+                TypeAtLoc a = type_stack.back(); type_stack.pop_back();
                 type_stack.pop_back();
                 type_stack.pop_back();
                 type_stack.pop_back();
@@ -813,10 +813,10 @@ void type_check_program(Program program)
                 if (a.type != DATATYPE_INT)
                 {
                     print_invalid_type_error(op.loc, DATATYPE_INT, a.type, "syscall6");
-                    print_note_at_loc(a.op.loc, "syscall number pushed here (" + human_readable_type(a.type) + ")");
+                    print_note_at_loc(a.loc, "syscall number pushed here (" + human_readable_type(a.type) + ")");
                     exit(1);
                 }
-                type_stack.push_back(IluTypeWithOp(op, DATATYPE_INT));
+                type_stack.push_back(TypeAtLoc(op.loc, DATATYPE_INT));
             }
 
             // keywords
@@ -832,11 +832,11 @@ void type_check_program(Program program)
                     exit(1);
                 }
 
-                IluTypeWithOp a = type_stack.back(); type_stack.pop_back();
+                TypeAtLoc a = type_stack.back(); type_stack.pop_back();
                 if (a.type != DATATYPE_INT)
                 {
                     print_invalid_type_error(op.loc, DATATYPE_INT, a.type, "do", "while loop", true);
-                    print_note_at_loc(a.op.loc, "first value pushed here");
+                    print_note_at_loc(a.loc, "first value pushed here");
                     exit(1);
                 }
                 
@@ -859,11 +859,11 @@ void type_check_program(Program program)
                     exit(1);
                 }
 
-                IluTypeWithOp a = type_stack.back(); type_stack.pop_back();
+                TypeAtLoc a = type_stack.back(); type_stack.pop_back();
                 if (a.type != DATATYPE_INT)
                 {
                     print_invalid_type_error(op.loc, DATATYPE_INT, a.type, "if", "", true);
-                    print_note_at_loc(a.op.loc, "first value pushed here");
+                    print_note_at_loc(a.loc, "first value pushed here");
                     exit(1);
                 }
                 stack_snapshots.push_back(StackSnapshot(type_stack, op.type));
@@ -912,27 +912,27 @@ void type_check_program(Program program)
             else if (op.type == OP_CAST_PTR)
             {
                 type_stack.pop_back();
-                type_stack.push_back(IluTypeWithOp(op, DATATYPE_PTR));
+                type_stack.push_back(TypeAtLoc(op.loc, DATATYPE_PTR));
             }
             else if (op.type == OP_CAST_INT)
             {
                 type_stack.pop_back();
-                type_stack.push_back(IluTypeWithOp(op, DATATYPE_INT));
+                type_stack.push_back(TypeAtLoc(op.loc, DATATYPE_INT));
             }
 
             // other
             else if (op.type == OP_PUSH_INT)
             {
-                type_stack.push_back(IluTypeWithOp(op, DATATYPE_INT));
+                type_stack.push_back(TypeAtLoc(op.loc, DATATYPE_INT));
             }
             else if (op.type == OP_PUSH_STR)
             {
-                type_stack.push_back(IluTypeWithOp(op, DATATYPE_INT));
-                type_stack.push_back(IluTypeWithOp(op, DATATYPE_PTR));
+                type_stack.push_back(TypeAtLoc(op.loc, DATATYPE_INT));
+                type_stack.push_back(TypeAtLoc(op.loc, DATATYPE_PTR));
             }
             else if (op.type == OP_PUSH_CSTR)
             {
-                type_stack.push_back(IluTypeWithOp(op, DATATYPE_PTR));
+                type_stack.push_back(TypeAtLoc(op.loc, DATATYPE_PTR));
             }
             else if (op.type == OP_FUNCTION_CALL)
             {
@@ -946,7 +946,7 @@ void type_check_program(Program program)
                     exit(1);
                 }
 
-                std::vector<IluTypeWithOp> args;
+                std::vector<TypeAtLoc> args;
                 for (unsigned long int i = call_func.arg_stack.size(); i > 0; i--)
                 {
                     args.push_back(type_stack.back());
@@ -962,23 +962,23 @@ void type_check_program(Program program)
                     else
                     {
                         std::vector<DATATYPE> types;
-                        for (IluTypeWithOp t : args)
+                        for (TypeAtLoc t : args)
                             types.push_back(t.type);
 
                         print_invalid_combination_of_types_error(op.loc, types, op.str_operand, "", false, false, true);
-                        for (IluTypeWithOp t : args)
-                            print_note_at_loc(t.op.loc, "argument pushed here (" + human_readable_type(t.type) + ")");
+                        for (TypeAtLoc t : args)
+                            print_note_at_loc(t.loc, "argument pushed here (" + human_readable_type(t.type) + ")");
                     }
                     exit(1);
                 }
 
-                for (IluTypeWithOp t : call_func.ret_stack)
+                for (TypeAtLoc t : call_func.ret_stack)
                     type_stack.push_back(t);
             }
 
             else if (op.type == OP_PUSH_GLOBAL_MEM)
             {
-                type_stack.push_back(IluTypeWithOp(op, DATATYPE_PTR));
+                type_stack.push_back(TypeAtLoc(op.loc, DATATYPE_PTR));
             }
 
             // unreachable
@@ -994,9 +994,9 @@ void type_check_program(Program program)
         {
             if (function.ret_stack.size() < type_stack.size()) // main cannot have excess data on stack
             {
-                print_error_at_loc(function.op.loc, "unhandled data on the stack (expected " + std::to_string(function.ret_stack.size()) + " items, got " + std::to_string(type_stack.size()) + ")");
+                print_error_at_loc(function.loc, "unhandled data on the stack (expected " + std::to_string(function.ret_stack.size()) + " items, got " + std::to_string(type_stack.size()) + ")");
 
-                std::vector<IluTypeWithOp> excess_stack;
+                std::vector<TypeAtLoc> excess_stack;
                 for (unsigned long int i = type_stack.size() - function.ret_stack.size(); i > 0; i--)
                 {
                     excess_stack.push_back(type_stack.back());
@@ -1004,28 +1004,28 @@ void type_check_program(Program program)
                 }
                 std::reverse(excess_stack.begin(), excess_stack.end());
 
-                for (IluTypeWithOp t : excess_stack)
-                    print_note_at_loc(t.op.loc, "excess data pushed here (" + human_readable_type(t.type) + ")");
+                for (TypeAtLoc t : excess_stack)
+                    print_note_at_loc(t.loc, "excess data pushed here (" + human_readable_type(t.type) + ")");
             }
 
             else if (function.ret_stack.size() > type_stack.size())
-                print_error_at_loc(function.op.loc, "not enough data on the stack (expected " + std::to_string(function.ret_stack.size()) + " items, got " + std::to_string(type_stack.size()) + ")");
+                print_error_at_loc(function.loc, "not enough data on the stack (expected " + std::to_string(function.ret_stack.size()) + " items, got " + std::to_string(type_stack.size()) + ")");
 
             else if (type_stack.size() > 1)
             {
                 std::vector<DATATYPE> types;
-                for (IluTypeWithOp t : type_stack)
+                for (TypeAtLoc t : type_stack)
                     types.push_back(t.type);
 
-                print_invalid_combination_of_types_error(function.op.loc, types, func_name, "", false, true);
-                for (IluTypeWithOp t : type_stack)
-                    print_note_at_loc(t.op.loc, "argument pushed here (" + human_readable_type(t.type) + ")");
+                print_invalid_combination_of_types_error(function.loc, types, func_name, "", false, true);
+                for (TypeAtLoc t : type_stack)
+                    print_note_at_loc(t.loc, "argument pushed here (" + human_readable_type(t.type) + ")");
             }
 
             else
             {
-                print_invalid_type_error(function.op.loc, function.ret_stack.at(0).type, type_stack.at(0).type, func_name, "", false, true);
-                print_note_at_loc(type_stack.at(0).op.loc, "value pushed here (" + human_readable_type(type_stack.at(0).type) + ")");
+                print_invalid_type_error(function.loc, function.ret_stack.at(0).type, type_stack.at(0).type, func_name, "", false, true);
+                print_note_at_loc(type_stack.at(0).loc, "value pushed here (" + human_readable_type(type_stack.at(0).type) + ")");
             }
 
             exit(1);

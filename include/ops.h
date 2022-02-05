@@ -26,7 +26,7 @@ enum OpType
     OP_AND,
     OP_OR,
     // stack manipulation
-    OP_POP, 
+    OP_POP,
     OP_DUP,  // [a] -> [a, a]
     OP_SWP,  // [a, b] -> [b, a]
     OP_ROT,  // [a, b, c] -> [b, c, a]
@@ -87,25 +87,25 @@ enum OpType
 class Op
 {
 public:
-    Op(OpType type, Token token) :
-        type(type),
-        loc(token.loc)
+    Op( Location loc, OpType type) : 
+        loc(loc),
+        type(type)
     {}
 
-    Op(OpType type, unsigned long int int_operand, Token token) :
-        type(type), 
-        loc(token.loc),
+    Op(Location loc, OpType type, unsigned long int int_operand) :
+        loc(loc),
+        type(type),
         int_operand(int_operand)
     {}
 
-    Op(OpType type, std::string str_operand, Token token) :
-        type(type), 
-        loc(token.loc),
+    Op(Location loc, OpType type, std::string str_operand) :
+        loc(loc),
+        type(type),
         str_operand(str_operand)
     {}
 
-    OpType type;
     Location loc;
+    OpType type;
 
     unsigned long int int_operand;
     std::string str_operand;

@@ -1,37 +1,38 @@
 #ifndef ILU_PROGRAM_H
 #define ILU_PROGRAM_H
 
-#include "ops.h"
+#include "location.h"
 #include "datatype.h"
+#include "ops.h"
 #include <map>
 #include <string>
 
 class Const
 {
 public:
-    Const(Op op, long long value) :
-        op(op),
+    Const(Location loc, long long value) :
+        loc(loc),
         value(value)
     {}
 
-    Op op;
+    Location loc;
     long long value;
 };
 
 class Function
 {
 public:
-    Function(Op op, std::vector<IluTypeWithOp> arg_stack, std::vector<IluTypeWithOp> ret_stack, int addr) :
-        op(op),
+    Function(Location loc, std::vector<TypeAtLoc> arg_stack, std::vector<TypeAtLoc> ret_stack, int addr) :
+        loc(loc),
         arg_stack(arg_stack),
         ret_stack(ret_stack),
         addr(addr)
     {}
 
-    Op op;
+    Location loc;
     std::vector<Op> ops;
-    std::vector<IluTypeWithOp> arg_stack;
-    std::vector<IluTypeWithOp> ret_stack;
+    std::vector<TypeAtLoc> arg_stack;
+    std::vector<TypeAtLoc> ret_stack;
     int addr;
 };
 

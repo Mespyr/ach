@@ -1,4 +1,5 @@
 #include "../include/compiler.h"
+#include <ios>
 
 void compile_to_asm(Program program, std::string output_filename, ASSEMBLER assembler)
 {
@@ -539,8 +540,11 @@ void compile_to_asm(Program program, std::string output_filename, ASSEMBLER asse
     for (long unsigned int i = 0; i < strings.size(); i++)
     {
         std::stringstream ss;
-        for (char c : strings.at(i))
-            ss << (int) c << ",";
+        std::string str = strings.at(i);
+        for (long unsigned int a = 0; a < str.size() - 1; a++)
+            ss << "0x" << std::hex << (int) str.at(a) << ",";
+        ss << "0x" << std::hex << (int) str.back();
+
         outfile.writeln("str_" + std::to_string(i) + ": db " + ss.str());
     }
 

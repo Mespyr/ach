@@ -67,19 +67,19 @@ void print_error_if_illegal_word(Token tok, Program program)
     else if (program.consts.count(tok.value))
     {
         print_error_at_loc(tok.loc, "redefinition of word '" + tok.value + "' from a const");
-        print_note_at_loc(program.consts.at(tok.value).op.loc, "original const defined here");
+        print_note_at_loc(program.consts.at(tok.value).loc, "original const defined here");
         exit(1);
     }
     else if (program.functions.count(tok.value))
     {
         print_error_at_loc(tok.loc, "redefinition of word '" + tok.value + "' from a function");
-        print_note_at_loc(program.functions.at(tok.value).op.loc, "original function defined here");
+        print_note_at_loc(program.functions.at(tok.value).loc, "original function defined here");
         exit(1);
     }
     else if (program.memories.count(tok.value))
     {
         print_error_at_loc(tok.loc, "redefinition of word '" + tok.value + "' from a memory region");
-        print_note_at_loc(program.functions.at(tok.value).op.loc, "original memory region defined here");
+        print_note_at_loc(program.functions.at(tok.value).loc, "original memory region defined here");
         exit(1);
     }
 }
@@ -209,148 +209,148 @@ Op convert_token_to_op(Token tok, Program program)
     {
         // debugging
         if (tok.value == "dump")
-            return Op(OP_DUMP, tok);
+            return Op(tok.loc, OP_DUMP);
 
         // arithmetics
         else if (tok.value == "+") 
-            return Op(OP_PLUS, tok);
+            return Op(tok.loc, OP_PLUS);
         else if (tok.value == "-") 
-            return Op(OP_MINUS, tok);
+            return Op(tok.loc, OP_MINUS);
         else if (tok.value == "*")
-            return Op(OP_MUL, tok);
+            return Op(tok.loc, OP_MUL);
         else if (tok.value == "/")
-            return Op(OP_DIV, tok);
+            return Op(tok.loc, OP_DIV);
 
         // comparisons
         else if (tok.value == "=")
-            return Op(OP_EQUAL, tok);
+            return Op(tok.loc, OP_EQUAL);
         else if (tok.value == ">")
-            return Op(OP_GREATER, tok);
+            return Op(tok.loc, OP_GREATER);
         else if (tok.value == "<")
-            return Op(OP_LESS, tok);
+            return Op(tok.loc, OP_LESS);
         else if (tok.value == ">=")
-            return Op(OP_GREATER_EQ, tok);
+            return Op(tok.loc, OP_GREATER_EQ);
         else if (tok.value == "<=")
-            return Op(OP_LESS_EQ, tok);
+            return Op(tok.loc, OP_LESS_EQ);
         else if (tok.value == "!=")
-            return Op(OP_NOT_EQ, tok);
+            return Op(tok.loc, OP_NOT_EQ);
         else if (tok.value == "not")
-            return Op(OP_NOT, tok);
+            return Op(tok.loc, OP_NOT);
         else if (tok.value == "and")
-            return Op(OP_AND, tok);
+            return Op(tok.loc, OP_AND);
         else if (tok.value == "or")
-            return Op(OP_OR, tok);
+            return Op(tok.loc, OP_OR);
 
         // stack manipulation
         else if (tok.value == "pop")
-            return Op(OP_POP, tok);
+            return Op(tok.loc, OP_POP);
         else if (tok.value == "dup")
-            return Op(OP_DUP, tok);
+            return Op(tok.loc, OP_DUP);
         else if (tok.value == "swp")
-            return Op(OP_SWP, tok);
+            return Op(tok.loc, OP_SWP);
         else if (tok.value == "rot")
-            return Op(OP_ROT, tok);
+            return Op(tok.loc, OP_ROT);
         else if (tok.value == "over")
-            return Op(OP_OVER, tok);
+            return Op(tok.loc, OP_OVER);
 
         // memory
         else if (tok.value == "read8")
-            return Op(OP_READ8, tok);
+            return Op(tok.loc, OP_READ8);
         else if (tok.value == "write8")
-            return Op(OP_WRITE8, tok);
+            return Op(tok.loc, OP_WRITE8);
         else if (tok.value == "read16")
-            return Op(OP_READ16, tok);
+            return Op(tok.loc, OP_READ16);
         else if (tok.value == "write16")
-            return Op(OP_WRITE16, tok);
+            return Op(tok.loc, OP_WRITE16);
         else if (tok.value == "read32")
-            return Op(OP_READ32, tok);
+            return Op(tok.loc, OP_READ32);
         else if (tok.value == "write32")
-            return Op(OP_WRITE32, tok);
+            return Op(tok.loc, OP_WRITE32);
         else if (tok.value == "read64")
-            return Op(OP_READ64, tok);
+            return Op(tok.loc, OP_READ64);
         else if (tok.value == "write64")
-            return Op(OP_WRITE64, tok);
+            return Op(tok.loc, OP_WRITE64);
 
         // argv
         else if (tok.value == "argv")
-            return Op(OP_ARGV, tok);
+            return Op(tok.loc, OP_ARGV);
         else if (tok.value == "argc")
-            return Op(OP_ARGC, tok);
+            return Op(tok.loc, OP_ARGC);
 
         // bitwise
         else if (tok.value == "<<")
-            return Op(OP_SHIFT_LEFT, tok);
+            return Op(tok.loc, OP_SHIFT_LEFT);
         else if (tok.value == ">>")
-            return Op(OP_SHIFT_RIGHT, tok);
+            return Op(tok.loc, OP_SHIFT_RIGHT);
         else if (tok.value == "orb")
-            return Op(OP_ORB, tok);
+            return Op(tok.loc, OP_ORB);
         else if (tok.value == "andb")
-            return Op(OP_ANDB, tok);
+            return Op(tok.loc, OP_ANDB);
 
         // syscalls
         else if (tok.value == "syscall0")
-            return Op(OP_SYSCALL0, tok);
+            return Op(tok.loc, OP_SYSCALL0);
         else if (tok.value == "syscall1")
-            return Op(OP_SYSCALL1, tok);
+            return Op(tok.loc, OP_SYSCALL1);
         else if (tok.value == "syscall2")
-            return Op(OP_SYSCALL2, tok);
+            return Op(tok.loc, OP_SYSCALL2);
         else if (tok.value == "syscall3")
-            return Op(OP_SYSCALL3, tok);
+            return Op(tok.loc, OP_SYSCALL3);
         else if (tok.value == "syscall4")
-            return Op(OP_SYSCALL4, tok);
+            return Op(tok.loc, OP_SYSCALL4);
         else if (tok.value == "syscall5")
-            return Op(OP_SYSCALL5, tok);
+            return Op(tok.loc, OP_SYSCALL5);
         else if (tok.value == "syscall6")
-            return Op(OP_SYSCALL6, tok);
+            return Op(tok.loc, OP_SYSCALL6);
 
         // lang subset specific keywords
         else if (tok.value == "offset")
-            return Op(OP_OFFSET, tok);
+            return Op(tok.loc, OP_OFFSET);
         else if (tok.value == "reset")
-            return Op(OP_RESET, tok);
+            return Op(tok.loc, OP_RESET);
 
         // keywords
         else if (tok.value == "while")
-            return Op(OP_WHILE, tok);
+            return Op(tok.loc, OP_WHILE);
         else if (tok.value == "do")
-            return Op(OP_DO, tok);
+            return Op(tok.loc, OP_DO);
         else if (tok.value == "if")
-            return Op(OP_IF, tok);
+            return Op(tok.loc, OP_IF);
         else if (tok.value == "else")
-            return Op(OP_ELSE, tok);
+            return Op(tok.loc, OP_ELSE);
         else if (tok.value == "def")
-            return Op(OP_DEF, tok);
+            return Op(tok.loc, OP_DEF);
         else if (tok.value == "const")
-            return Op(OP_CONST, tok);
+            return Op(tok.loc, OP_CONST);
         else if (tok.value == "memory")
-            return Op(OP_MEMORY, tok);
+            return Op(tok.loc, OP_MEMORY);
         else if (tok.value == "end")
-            return Op(OP_END, tok);
+            return Op(tok.loc, OP_END);
         else if (tok.value == "@include")
-            return Op(OP_INCLUDE, tok);
+            return Op(tok.loc, OP_INCLUDE);
 
         // type checking
         else if (tok.value == "cast(ptr)")
-            return Op(OP_CAST_PTR, tok);
+            return Op(tok.loc, OP_CAST_PTR);
         else if (tok.value == "cast(int)")
-            return Op(OP_CAST_INT, tok);
+            return Op(tok.loc, OP_CAST_INT);
 
         // other
         else if (program.consts.count(tok.value))
-            return Op(OP_PUSH_INT, program.consts.at(tok.value).value, tok);
+            return Op(tok.loc, OP_PUSH_INT, program.consts.at(tok.value).value);
         else if (program.functions.count(tok.value))
-            return Op(OP_FUNCTION_CALL, tok.value, tok);
+            return Op(tok.loc, OP_FUNCTION_CALL, tok.value);
         else if (program.memories.count(tok.value))
-            return Op(OP_PUSH_GLOBAL_MEM, program.memories.at(tok.value), tok);
+            return Op(tok.loc, OP_PUSH_GLOBAL_MEM, program.memories.at(tok.value));
     }
 
     // other
     else if (tok.type == TOKEN_INT)
-        return Op(OP_PUSH_INT, atol(tok.value.c_str()), tok);
+        return Op(tok.loc, OP_PUSH_INT, atol(tok.value.c_str()));
     else if (tok.type == TOKEN_STRING)
-        return Op(OP_PUSH_STR, add_escapes_to_string(tok.value.substr(1, tok.value.length() - 2)), tok);
+        return Op(tok.loc, OP_PUSH_STR, add_escapes_to_string(tok.value.substr(1, tok.value.length() - 2)));
     else if (tok.type == TOKEN_C_STRING)
-        return Op(OP_PUSH_CSTR, add_escapes_to_string(tok.value.substr(1, tok.value.length() - 3)), tok);
+        return Op(tok.loc, OP_PUSH_CSTR, add_escapes_to_string(tok.value.substr(1, tok.value.length() - 3)));
 
     print_error_at_loc(tok.loc, "Unknown keyword '" + tok.value + "'");
     exit(1);
@@ -389,8 +389,8 @@ Program parse_tokens(std::vector<Token> tokens)
 
                 i++;
 
-                std::vector<IluTypeWithOp> arg_stack;
-                std::vector<IluTypeWithOp> ret_stack;
+                std::vector<TypeAtLoc> arg_stack;
+                std::vector<TypeAtLoc> ret_stack;
                 bool pushing_to_arg_stack = true;
 
                 // parse arguments of function
@@ -401,16 +401,16 @@ Program parse_tokens(std::vector<Token> tokens)
                     if (tok.value == human_readable_type(DATATYPE_INT))
                     {
                         if (pushing_to_arg_stack)
-                            arg_stack.push_back(IluTypeWithOp(Op(OP_COUNT, tok), DATATYPE_INT));
+                            arg_stack.push_back(TypeAtLoc(tok.loc, DATATYPE_INT));
                         else
-                            ret_stack.push_back(IluTypeWithOp(Op(OP_COUNT, tok), DATATYPE_INT));
+                            ret_stack.push_back(TypeAtLoc(tok.loc, DATATYPE_INT));
                     }
                     else if (tok.value == human_readable_type(DATATYPE_PTR))
                     {
                         if (pushing_to_arg_stack)
-                            arg_stack.push_back(IluTypeWithOp(Op(OP_COUNT, tok), DATATYPE_PTR));
+                            arg_stack.push_back(TypeAtLoc(tok.loc, DATATYPE_PTR));
                         else
-                            ret_stack.push_back(IluTypeWithOp(Op(OP_COUNT, tok), DATATYPE_PTR));
+                            ret_stack.push_back(TypeAtLoc(tok.loc, DATATYPE_PTR));
                     }
                     else if (tok.value == "->")
                         pushing_to_arg_stack = false;
@@ -429,7 +429,7 @@ Program parse_tokens(std::vector<Token> tokens)
                 }
 
                 program.functions.insert({func_name, Function(
-                    Op(OP_COUNT, func_name_token),
+                    func_name_token.loc,
                     arg_stack,
                     ret_stack,
                     function_addr
@@ -594,7 +594,7 @@ Program parse_tokens(std::vector<Token> tokens)
                     exit(1);
                 }
 
-                program.consts.insert({const_name, Const(Op(OP_COUNT, const_name_token), stack.back())});
+                program.consts.insert({const_name, Const(const_name_token.loc, stack.back())});
             }
         }
 

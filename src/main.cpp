@@ -32,7 +32,7 @@ struct Options
 Options parse_argv(std::vector<std::string> argv)
 {
     Options options;
-    options.assembler = NASM;
+    options.assembler = FASM;
     options.filename = "";
     options.help = false;
     options.unsafe = false;

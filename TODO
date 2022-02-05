@@ -10,6 +10,7 @@
     [*] - remove 'mem' keyword
 [*] - c-strings
 [*] - return exit code from syscalls and syscall0
+[ ] - negative numbers
 [ ] - add static asserts
 [ ] - add support for inline functions
 [ ] - chars

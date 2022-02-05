@@ -1,7 +1,7 @@
 #ifndef ILU_DATATYPE_H
 #define ILU_DATATYPE_H
 
-#include "ops.h"
+#include "location.h"
 #include <string>
 
 enum DATATYPE
@@ -13,15 +13,15 @@ enum DATATYPE
     DATATYPE_COUNT
 };
 
-class IluTypeWithOp
+class TypeAtLoc
 {
 public:
-    IluTypeWithOp(Op op, DATATYPE type) :
-        op(op),
+    TypeAtLoc(Location loc, DATATYPE type) :
+        loc(loc),
         type(type) 
     {}
 
-    Op op;
+    Location loc;
     DATATYPE type;
 };
 
