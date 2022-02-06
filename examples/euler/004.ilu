@@ -1,8 +1,6 @@
 # find largest palindrome made by the product of 2 3-digit numbers
 @include "std/core.ilu"
 
-memory num sizeof(u64) end
-
 def is_palindrome
     int -> int in
 
@@ -16,6 +14,8 @@ def is_palindrome
 end
 
 def main in
+	memory num sizeof(u64) end
+
     100 while dup 1000 < do
         100 while dup 1000 < do
             over over *
