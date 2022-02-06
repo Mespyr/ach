@@ -6,7 +6,7 @@
     [*] - offset and reset keywords for consts
 [*] - custom memory to replace 'mem' keyword
     [*] - global memory
-    [ ] - local memory
+    [*] - local memory
     [*] - remove 'mem' keyword
 [*] - c-strings
 [*] - return exit code from syscalls and syscall0

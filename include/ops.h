@@ -80,6 +80,7 @@ enum OpType
     OP_PUSH_CSTR,
     OP_FUNCTION_CALL,
     OP_PUSH_GLOBAL_MEM,
+    OP_PUSH_LOCAL_MEM,
     // count | must always be last
     OP_COUNT
 };

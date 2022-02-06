@@ -19,6 +19,18 @@ public:
     long long value;
 };
 
+class Memory
+{
+public:
+	Memory(Location loc, long unsigned int offset) :
+		loc(loc),
+		offset(offset)
+	{}
+
+	Location loc;
+	long unsigned int offset;
+};
+
 class Function
 {
 public:
@@ -34,6 +46,9 @@ public:
     std::vector<TypeAtLoc> arg_stack;
     std::vector<TypeAtLoc> ret_stack;
     int addr;
+
+    std::map<std::string, Memory> memories;
+    long unsigned int memory_capacity = 0;
 };
 
 class Program 
@@ -41,8 +56,7 @@ class Program
 public:
     std::map<std::string, Function> functions;
     std::map<std::string, Const> consts;
-    std::map<std::string, long unsigned int> memories;
-
+    std::map<std::string, Memory> memories;
     long unsigned int memory_capacity = 0;
 };
 

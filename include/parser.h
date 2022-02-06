@@ -13,10 +13,17 @@
 #include <map>
 #include <algorithm>
 
+struct ConstValueWithContext
+{
+	long long value;
+	long long iota;
+	long unsigned int i;
+};
+
 std::string add_escapes_to_string(std::string str);
-void print_error_if_illegal_word(Token tok, Program program);
 std::vector<Op> link_ops(std::vector<Op> ops);
-Op convert_token_to_op(Token tok, Program program);
+ConstValueWithContext eval_const_value(Program program, std::vector<Token> tokens, long unsigned int i, long long iota, Location definition_loc);
+Op convert_token_to_op(Token tok, Program program, bool in_function = false, std::string current_func_name = "");
 Program parse_tokens(std::vector<Token> tokens);
 
 #endif

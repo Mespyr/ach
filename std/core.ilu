@@ -12,32 +12,32 @@ def puts  int ptr in stdout rot rot swp fputs end
 def eputs int ptr in stderr rot rot swp fputs end
 
 const PUTU_BUFFER_CAP 32 end
-memory buffer PUTU_BUFFER_CAP end
-memory fd sizeof(u64) end
-
 def fputu
     int # fd
     int # number
 in
-    swp fd swp write64
+	memory buffer PUTU_BUFFER_CAP end
+	memory fd sizeof(u64) end
 
-    dup 0 = if
-        fd read64 "0" swp fputs
-    else
-        buffer PUTU_BUFFER_CAP +
-        while over 0 != do
-            1 - dup rot
-            10 /
-            rot swp 48 + write8 swp
-        end
+	swp fd swp write64
 
-        dup
-        buffer PUTU_BUFFER_CAP + swp - # length
-        fd read64                      # fd
-        rot rot
-        # fd, buffer, length
-        fputs
-    end pop
+	dup 0 = if
+		fd read64 "0" swp
+	else
+		buffer PUTU_BUFFER_CAP +
+		while over 0 != do
+			1 - dup rot
+			10 /
+			rot swp 48 + write8 swp
+		end
+
+		dup
+		buffer PUTU_BUFFER_CAP + swp - # length
+		fd read64                      # fd
+		rot rot
+		# fd, buffer, length
+	end
+	fputs pop
 end
 def putu  int in stdout swp fputu end
 def eputu int in stderr swp fputu end
