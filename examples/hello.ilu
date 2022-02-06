@@ -1,5 +1,5 @@
 @include "std/core.ilu"
 
 def main in
-    "Hello World!\n" puts
+	"Hello World!\n" puts
 end

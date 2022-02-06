@@ -13,8 +13,8 @@ def eputs int ptr in stderr rot rot swp fputs end
 
 const PUTU_BUFFER_CAP 32 end
 def fputu
-    int # fd
-    int # number
+	int # fd
+	int # number
 in
 	memory buffer PUTU_BUFFER_CAP end
 	memory fd sizeof(u64) end
@@ -33,7 +33,7 @@ in
 
 		dup
 		buffer PUTU_BUFFER_CAP + swp - # length
-		fd read64                      # fd
+		fd read64					   # fd
 		rot rot
 		# fd, buffer, length
 	end
@@ -50,23 +50,23 @@ def div int int -> int in / pop end
 def negative int -> int in dup dup + - end
 
 def power
-    int int -> int
+	int int -> int
 in
-    1 while over 0 > do
-        rot swp over *  # multiply a with itself
-        rot 1 -         # decrement b
-        swp
-    end rot rot pop pop # get rid of a and b
+	1 while over 0 > do
+		rot swp over *	# multiply a with itself
+		rot 1 -			# decrement b
+		swp
+	end rot rot pop pop # get rid of a and b
 end
 
 # STRING
 
 def cstrlen
-    ptr -> int
+	ptr -> int
 in
-    dup while dup read8 0 != do
-        1 +
-    end swp -
+	dup while dup read8 0 != do
+		1 +
+	end swp -
 end
 
 def cstr-to-str ptr -> int ptr in dup cstrlen swp end

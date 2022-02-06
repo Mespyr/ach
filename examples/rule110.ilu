@@ -8,42 +8,42 @@ memory row BOARD_SIZE end
 memory display BOARD_SIZE 1 + end
 
 def rule110 in
-    row BOARD_SIZE 2 - +
-    1 write8
+	row BOARD_SIZE 2 - +
+	1 write8
 
-    0 while dup BOARD_SIZE 2 - < do
-        0 while dup BOARD_SIZE < do
-            dup row + read8 if
-                dup display + 46 write8
-            else
-                dup display + 32 write8
-            end
-            1 +
-        end pop
+	0 while dup BOARD_SIZE 2 - < do
+		0 while dup BOARD_SIZE < do
+			dup row + read8 if
+				dup display + 46 write8
+			else
+				dup display + 32 write8
+			end
+			1 +
+		end pop
 
-        BOARD_SIZE display puts
-        "\n" puts
+		BOARD_SIZE display puts
+		"\n" puts
 
-        # pattern
-        row read8 1 <<
-        row 1 + read8
-        orb
+		# pattern
+		row read8 1 <<
+		row 1 + read8
+		orb
 
-        1 while dup BOARD_SIZE 1 - < do
-            # new pattern
-            swp 1 << 7 andb over
-            row + 1 + read8 orb
+		1 while dup BOARD_SIZE 1 - < do
+			# new pattern
+			swp 1 << 7 andb over
+			row + 1 + read8 orb
 
-            over over 110 swp >> 1 andb
-            swp row + swp write8
-            swp
+			over over 110 swp >> 1 andb
+			swp row + swp write8
+			swp
 
-            1 +
-        end pop pop
-        1 +
-    end pop
+			1 +
+		end pop pop
+		1 +
+	end pop
 end
 
 def main in
-    rule110
+	rule110
 end

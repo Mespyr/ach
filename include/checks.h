@@ -15,13 +15,13 @@
 class StackSnapshot
 {
 public:
-    StackSnapshot(std::vector<TypeAtLoc> type_stack, OpType type) :
-        type_stack(type_stack),
-        type(type)
-    {}
+	StackSnapshot(std::vector<TypeAtLoc> type_stack, OpType type) :
+		type_stack(type_stack),
+		type(type)
+	{}
 
-    std::vector<TypeAtLoc> type_stack;
-    OpType type;
+	std::vector<TypeAtLoc> type_stack;
+	OpType type;
 };
 
 bool compare_type_stacks(std::vector<TypeAtLoc> type_stack_1, std::vector<TypeAtLoc> type_stack_2);

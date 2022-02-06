@@ -1,14 +1,14 @@
 @include "std/core.ilu"
 
 def main in
-    0 1 2 while over 4000000 < do
-        over 2 modulo
-        0 = if
-            swp rot over +
-            rot rot over +
-        else
-            swp over +
-        end
-    end pop pop
-    dump
+	0 1 2 while over 4000000 < do
+		over 2 modulo
+		0 = if
+			swp rot over +
+			rot rot over +
+		else
+			swp over +
+		end
+	end pop pop
+	dump
 end

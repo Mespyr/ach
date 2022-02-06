@@ -2,34 +2,34 @@
 @include "std/core.ilu"
 
 def is_palindrome
-    int -> int in
+	int -> int in
 
-    dup 0 while over 0 > do
-        10 *
-        over 10 modulo +
-        swp 10 div swp
-    end
+	dup 0 while over 0 > do
+		10 *
+		over 10 modulo +
+		swp 10 div swp
+	end
 
-    swp pop =
+	swp pop =
 end
 
 def main in
 	memory num sizeof(u64) end
 
-    100 while dup 1000 < do
-        100 while dup 1000 < do
-            over over *
+	100 while dup 1000 < do
+		100 while dup 1000 < do
+			over over *
 
-            dup is_palindrome if
-                dup num read64 > if
-                    num swp write64
-                else pop end
-            else pop end
+			dup is_palindrome if
+				dup num read64 > if
+					num swp write64
+				else pop end
+			else pop end
 
-            1 +
-        end pop
-        1 +
-    end pop
+			1 +
+		end pop
+		1 +
+	end pop
 
-    num read64 dump
+	num read64 dump
 end

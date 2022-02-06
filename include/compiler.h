@@ -14,11 +14,11 @@
 
 enum ASSEMBLER
 {
-    NASM,
-    FASM,
+	NASM,
+	FASM,
 
-    // count | must always be last
-    ASSEMBLER_COUNT
+	// count | must always be last
+	ASSEMBLER_COUNT
 };
 
 void compile_to_asm(Program program, std::string output_filename, ASSEMBLER assembler);

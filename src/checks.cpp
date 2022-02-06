@@ -2,46 +2,46 @@
 
 bool compare_type_stacks(std::vector<TypeAtLoc> type_stack_1, std::vector<TypeAtLoc> type_stack_2)
 {
-    if (type_stack_1.size() != type_stack_2.size())
-        return false;
+	if (type_stack_1.size() != type_stack_2.size())
+		return false;
 
-    for (long unsigned int i = 0; i < type_stack_1.size(); i++)
-    {
-        DATATYPE type_1 = type_stack_1.at(i).type;
-        DATATYPE type_2 = type_stack_2.at(i).type;
-        if (type_1 != type_2)
-            return false;
-    }
+	for (long unsigned int i = 0; i < type_stack_1.size(); i++)
+	{
+		DATATYPE type_1 = type_stack_1.at(i).type;
+		DATATYPE type_2 = type_stack_2.at(i).type;
+		if (type_1 != type_2)
+			return false;
+	}
 
-    return true;
+	return true;
 }
 
 void verify_program(Program program)
 {
-    if (!program.functions.count("main"))
-    {
-        print_error("no entry point found in program (no 'main' function)");
-        exit(1);
-    }
+	if (!program.functions.count("main"))
+	{
+		print_error("no entry point found in program (no 'main' function)");
+		exit(1);
+	}
 
-    Function main_func = program.functions.at("main");
-    if (main_func.arg_stack.size() > 0)
-    {
-        print_error_at_loc(main_func.loc, "'main' function must not pass any arguments");
-        exit(1);
-    }
+	Function main_func = program.functions.at("main");
+	if (main_func.arg_stack.size() > 0)
+	{
+		print_error_at_loc(main_func.loc, "'main' function must not pass any arguments");
+		exit(1);
+	}
 
-    if (main_func.ret_stack.size() > 0)
-    {
-        print_error_at_loc(main_func.loc, "'main' function must not have any return values");
-        exit(1);
-    }
+	if (main_func.ret_stack.size() > 0)
+	{
+		print_error_at_loc(main_func.loc, "'main' function must not have any return values");
+		exit(1);
+	}
 }
 
 void type_check_program(Program program)
 {
-    static_assert(OP_COUNT == 59, "unhandled op types in type_check_program()");
-    static_assert(DATATYPE_COUNT == 2, "unhandled datatypes in type_check_program()");
+	static_assert(OP_COUNT == 59, "unhandled op types in type_check_program()");
+	static_assert(DATATYPE_COUNT == 2, "unhandled datatypes in type_check_program()");
 
 	for (auto fn_key = program.functions.begin(); fn_key != program.functions.end(); fn_key++)
 	{
@@ -984,54 +984,54 @@ void type_check_program(Program program)
 				type_stack.push_back(TypeAtLoc(op.loc, DATATYPE_PTR));
 			}
 
-            // unreachable
+			// unreachable
 			else if (op.type == OP_OFFSET || op.type == OP_RESET || op.type == OP_DEF || op.type == OP_CONST || op.type == OP_MEMORY)
-            {
+			{
 				print_error_at_loc(op.loc, "unreachable: op should be handled in the parsing step. This is probably a bug.");
 				exit(1);
 			}
 		}
 
-        bool return_vals_equal = compare_type_stacks(type_stack, function.ret_stack);
-        if (!return_vals_equal)
-        {
-            if (function.ret_stack.size() < type_stack.size()) // main cannot have excess data on stack
-            {
-                print_error_at_loc(function.loc, "unhandled data on the stack (expected " + std::to_string(function.ret_stack.size()) + " items, got " + std::to_string(type_stack.size()) + ")");
+		bool return_vals_equal = compare_type_stacks(type_stack, function.ret_stack);
+		if (!return_vals_equal)
+		{
+			if (function.ret_stack.size() < type_stack.size()) // main cannot have excess data on stack
+			{
+				print_error_at_loc(function.loc, "unhandled data on the stack (expected " + std::to_string(function.ret_stack.size()) + " items, got " + std::to_string(type_stack.size()) + ")");
 
-                std::vector<TypeAtLoc> excess_stack;
-                for (unsigned long int i = type_stack.size() - function.ret_stack.size(); i > 0; i--)
-                {
-                    excess_stack.push_back(type_stack.back());
-                    type_stack.pop_back();
-                }
-                std::reverse(excess_stack.begin(), excess_stack.end());
+				std::vector<TypeAtLoc> excess_stack;
+				for (unsigned long int i = type_stack.size() - function.ret_stack.size(); i > 0; i--)
+				{
+					excess_stack.push_back(type_stack.back());
+					type_stack.pop_back();
+				}
+				std::reverse(excess_stack.begin(), excess_stack.end());
 
-                for (TypeAtLoc t : excess_stack)
-                    print_note_at_loc(t.loc, "excess data pushed here (" + human_readable_type(t.type) + ")");
-            }
+				for (TypeAtLoc t : excess_stack)
+					print_note_at_loc(t.loc, "excess data pushed here (" + human_readable_type(t.type) + ")");
+			}
 
-            else if (function.ret_stack.size() > type_stack.size())
-                print_error_at_loc(function.loc, "not enough data on the stack (expected " + std::to_string(function.ret_stack.size()) + " items, got " + std::to_string(type_stack.size()) + ")");
+			else if (function.ret_stack.size() > type_stack.size())
+				print_error_at_loc(function.loc, "not enough data on the stack (expected " + std::to_string(function.ret_stack.size()) + " items, got " + std::to_string(type_stack.size()) + ")");
 
-            else if (type_stack.size() > 1)
-            {
-                std::vector<DATATYPE> types;
-                for (TypeAtLoc t : type_stack)
-                    types.push_back(t.type);
+			else if (type_stack.size() > 1)
+			{
+				std::vector<DATATYPE> types;
+				for (TypeAtLoc t : type_stack)
+					types.push_back(t.type);
 
-                print_invalid_combination_of_types_error(function.loc, types, func_name, "", false, true);
-                for (TypeAtLoc t : type_stack)
-                    print_note_at_loc(t.loc, "argument pushed here (" + human_readable_type(t.type) + ")");
-            }
+				print_invalid_combination_of_types_error(function.loc, types, func_name, "", false, true);
+				for (TypeAtLoc t : type_stack)
+					print_note_at_loc(t.loc, "argument pushed here (" + human_readable_type(t.type) + ")");
+			}
 
-            else
-            {
-                print_invalid_type_error(function.loc, function.ret_stack.at(0).type, type_stack.at(0).type, func_name, "", false, true);
-                print_note_at_loc(type_stack.at(0).loc, "value pushed here (" + human_readable_type(type_stack.at(0).type) + ")");
-            }
+			else
+			{
+				print_invalid_type_error(function.loc, function.ret_stack.at(0).type, type_stack.at(0).type, func_name, "", false, true);
+				print_note_at_loc(type_stack.at(0).loc, "value pushed here (" + human_readable_type(type_stack.at(0).type) + ")");
+			}
 
-            exit(1);
-        }
-    }
+			exit(1);
+		}
+	}
 }
