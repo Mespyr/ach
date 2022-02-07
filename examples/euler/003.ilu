@@ -1,12 +1,12 @@
 @include "std/core.ilu"
 
 def main in
-    600851475143 2 while over 1 > do
-        over over modulo 0 = if
-            swp over div swp
-        else
-            1 +
-        end
-    end
-    dump pop
+	600851475143 2 while over 1 > do
+		over over modulo 0 = if
+			swp over div swp
+		else
+			1 +
+		end
+	end
+	dump pop
 end

@@ -93,7 +93,7 @@ public:
 		type(type)
 	{}
 
-	Op(Location loc, OpType type, unsigned long int int_operand) :
+	Op(Location loc, OpType type, long long int_operand) :
 		loc(loc),
 		type(type),
 		int_operand(int_operand)
@@ -108,7 +108,7 @@ public:
 	Location loc;
 	OpType type;
 
-	unsigned long int int_operand;
+	long long int_operand;
 	std::string str_operand;
 	bool link_back;
 };
