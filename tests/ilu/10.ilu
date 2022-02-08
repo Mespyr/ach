@@ -1,7 +1,7 @@
 def main in
-    10 dup dump dump
-    34 35 +
-    dup dump
-    dup dump
-    dump
+	10 dup dump dump
+	34 35 +
+	dup dump
+	dup dump
+	dump
 end

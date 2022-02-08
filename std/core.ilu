@@ -1,4 +1,4 @@
-@include "std/linux.ilu"
+include "std/linux.ilu"
 
 const sizeof(u64) 8 end
 const sizeof(u32) 4 end
@@ -33,7 +33,7 @@ in
 
 		dup
 		buffer PUTU_BUFFER_CAP + swp - # length
-		fd read64					   # fd
+		fd read64                      # fd
 		rot rot
 		# fd, buffer, length
 	end
@@ -53,8 +53,8 @@ def power
 	int int -> int
 in
 	1 while over 0 > do
-		rot swp over *	# multiply a with itself
-		rot 1 -			# decrement b
+		rot swp over *  # multiply a with itself
+		rot 1 -         # decrement b
 		swp
 	end rot rot pop pop # get rid of a and b
 end

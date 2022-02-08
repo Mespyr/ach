@@ -6,7 +6,7 @@ EXEC="ilu"
 
 for f in src/* 
 do
-    SOURCES="$SOURCES $f"
+	SOURCES="$SOURCES $f"
 done
 
 set -xe

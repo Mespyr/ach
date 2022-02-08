@@ -1,6 +1,6 @@
 def main in
-    # run program inside program
-    "/usr/bin/echo" argv 0
-    59 syscall3 pop
-    pop # pop sizeof string
+	# run program inside program
+	"/usr/bin/echo" argv 0
+	59 syscall3 pop
+	pop # pop sizeof string
 end

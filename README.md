@@ -11,20 +11,23 @@ There should be an executeable called `ilu` which you can run.
 ### examples
 Hello World!
 ```python
-@include "std/io.ilu"
+@include "std/core.ilu"
 
 def main in
-    "Hello World!" println
+    "Hello World!\n" puts
 end
 ```
 
-Loop through numbers from 0-100 and print them:
+Print numbers from 0-100 and print them:
 ```python
+@include "std/core.ilu"
+
 def main in
-    0 while dup 100 < do
-        dup dump
-        1 +
-    end
+	0 while dup 100 <= do
+		dup putu
+		"\n" puts
+		1 +
+	end pop
 end
 ```
 

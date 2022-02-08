@@ -1,6 +1,6 @@
 @include "std/core.ilu"
 
 def main in
-    "Hello World!\n"c dup cstrlen
-    swp puts
+	"Hello World!\n"c dup cstrlen
+	swp puts
 end

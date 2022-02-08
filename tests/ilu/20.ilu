@@ -8,9 +8,9 @@
 # another test\n\last string to print
 
 def main in
-    1 "Hello World!\n"                   swp 1 syscall3 pop
-    1 "\"femboys are cool\" - someone\n" swp 1 syscall3 pop
-    1 "testing having stuff\\n\n"        swp 1 syscall3 pop
-    1 "another test \\n\\"               swp 1 syscall3 pop
-    1 "last string to print\n"           swp 1 syscall3 pop
+	1 "Hello World!\n"                   swp 1 syscall3 pop
+	1 "\"femboys are cool\" - someone\n" swp 1 syscall3 pop
+	1 "testing having stuff\\n\n"        swp 1 syscall3 pop
+	1 "another test \\n\\"               swp 1 syscall3 pop
+	1 "last string to print\n"           swp 1 syscall3 pop
 end

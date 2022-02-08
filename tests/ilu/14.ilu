@@ -1,9 +1,9 @@
 def main in
-    1 2 dump dump
-    1 2 swp dump dump
+	1 2 dump dump
+	1 2 swp dump dump
 
-    1 2 3 dump dump dump
-    1 2 3 rot dump dump dump
+	1 2 3 dump dump dump
+	1 2 3 rot dump dump dump
 
-    1 2 over dump dump dump
+	1 2 over dump dump dump
 end

@@ -1,16 +1,16 @@
 def main in
-    12 13 + 25 = if
-        34 35 +
-        21 3 / pop *
-        69 420 + = if 
-            69 dump
-        else 
-            35 34 +
-            23 3 * = if
-                21 3 / pop dump
-            else
-                420 dump
-            end
-        end
-    end
+	12 13 + 25 = if
+		34 35 +
+		21 3 / pop *
+		69 420 + = if
+			69 dump
+		else
+			35 34 +
+			23 3 * = if
+				21 3 / pop dump
+			else
+				420 dump
+			end
+		end
+	end
 end

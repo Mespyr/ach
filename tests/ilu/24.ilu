@@ -4,5 +4,5 @@
 @include "tests/ilu/test_lib/util.ilu"
 
 def main in
-    8 4 add_div dump
+	8 4 add_div dump
 end

@@ -1,5 +1,5 @@
 def main in
-    34 35 + dump
-    500 80 - dump
-    20 10 + dump
+	34 35 + dump
+	500 80 - dump
+	20 10 + dump
 end

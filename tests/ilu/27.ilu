@@ -1,10 +1,10 @@
 # recursive functions
 
 def p69 in
-    34 35 + dump
-    #p69
+	34 35 + dump
+	#p69
 end
 
 def main in
-    p69
+	p69
 end

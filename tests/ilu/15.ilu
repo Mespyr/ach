@@ -1,16 +1,16 @@
 memory mem 640000 end
 
 def main in
-    mem 65 write8
-    mem 1 + 66 write8
-    mem 2 + 67 write8
-    mem 3 + 10 write8
+	mem 65 write8
+	mem 1 + 66 write8
+	mem 2 + 67 write8
+	mem 3 + 10 write8
 
-    1 mem 4 1 syscall3 pop
+	1 mem 4 1 syscall3 pop
 
-    mem dup read8 1 + write8
-    mem 1 + dup read8 1 + write8
-    mem 2 + dup read8 1 + write8
+	mem dup read8 1 + write8
+	mem 1 + dup read8 1 + write8
+	mem 2 + dup read8 1 + write8
 
-    1 1 mem 4 syscall3 pop
+	1 1 mem 4 syscall3 pop
 end

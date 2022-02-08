@@ -1,5 +1,5 @@
 def main in
-    # bug when string is at end of line
-    1 "hello\n"
-    swp 1 syscall3 pop
+	# bug when string is at end of line
+	1 "hello\n"
+	swp 1 syscall3 pop
 end
