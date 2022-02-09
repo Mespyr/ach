@@ -11,7 +11,10 @@
 [*] - c-strings
 [*] - return exit code from syscalls and syscall0
 [*] - negative numbers
+[ ] - chars
+[ ] - let bindings
 [ ] - add static asserts
 [ ] - add support for inline functions
-[ ] - chars
+[ ] - structs
 [ ] - namespaces!
+[ ] - remove andb and orb keywords (same function as `and` and `or`)
