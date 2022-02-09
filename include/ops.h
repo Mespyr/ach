@@ -6,7 +6,7 @@
 #include <string>
 #include <vector>
 
-enum OpType 
+enum OpType
 {
 	// debugging
 	OP_DUMP,
@@ -46,8 +46,6 @@ enum OpType
 	// bitwise
 	OP_SHIFT_RIGHT,
 	OP_SHIFT_LEFT,
-	OP_ORB,
-	OP_ANDB,
 	// syscall ops for number of args to pop from stack
 	// ex: syscall3: rax (syscall number), rdi, rsi, rdx
 	// ex: syscall5: rax (syscall number), rdi, rsi, rdx, r10, r8

@@ -2,7 +2,7 @@
 
 void compile_to_asm(Program program, std::string output_filename, ASSEMBLER assembler)
 {
-	static_assert(OP_COUNT == 59, "unhandled op types in compile_to_asm()");
+	static_assert(OP_COUNT == 57, "unhandled op types in compile_to_asm()");
 	static_assert(ASSEMBLER_COUNT == 2, "unhandled assemblers in compile_to_asm()");
 
 	File outfile(output_filename, MODE_WRITE);
@@ -342,22 +342,6 @@ void compile_to_asm(Program program, std::string output_filename, ASSEMBLER asse
 				outfile.writeln("\tshr rbx, cl");
 				outfile.writeln("\tpush rbx");
 			}
-			else if (op.type == OP_ORB)
-			{
-				outfile.writeln("\t; OP_ORB");
-				outfile.writeln("\tpop rax");
-				outfile.writeln("\tpop rbx");
-				outfile.writeln("\tor rbx, rax");
-				outfile.writeln("\tpush rbx");
-			}
-			else if (op.type == OP_ANDB)
-			{
-				outfile.writeln("\t; OP_ANDB");
-				outfile.writeln("\tpop rax");
-				outfile.writeln("\tpop rbx");
-				outfile.writeln("\tand rbx, rax");
-				outfile.writeln("\tpush rbx");
-			}
 			
 			// syscalls
 			else if (op.type == OP_SYSCALL0)
@@ -546,21 +530,24 @@ void compile_to_asm(Program program, std::string output_filename, ASSEMBLER asse
 
 	for (long unsigned int i = 0; i < strings.size(); i++)
 	{
-		std::stringstream ss;
 		std::string str = strings.at(i);
-		for (long unsigned int a = 0; a < str.size() - 1; a++)
-			ss << "0x" << std::hex << (int) str.at(a) << ",";
-		ss << "0x" << std::hex << (int) str.back();
-
+		std::stringstream ss;
+		if (str.size() == 0)
+			ss << "0x0";
+		else
+		{
+			for (long unsigned int a = 0; a < str.size() - 1; a++)
+				ss << "0x" << std::hex << (int) str.at(a) << ",";
+			ss << "0x" << std::hex << (int) str.back();
+		}
 		outfile.writeln("str_" + std::to_string(i) + ": db " + ss.str());
 	}
-
 	for (long unsigned int i = 0; i < c_strings.size(); i++)
 	{
 		std::stringstream ss;
 		for (char c : c_strings.at(i))
-			ss << (int) c << ",";
-		ss << "0";
+			ss << "0x" << std::hex << (int) c << ",";
+		ss << "0x0";
 		outfile.writeln("cstr_" + std::to_string(i) + ": db " + ss.str());
 	}
 

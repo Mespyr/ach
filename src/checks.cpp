@@ -40,7 +40,7 @@ void verify_program(Program program)
 
 void type_check_program(Program program)
 {
-	static_assert(OP_COUNT == 59, "unhandled op types in type_check_program()");
+	static_assert(OP_COUNT == 57, "unhandled op types in type_check_program()");
 	static_assert(DATATYPE_COUNT == 2, "unhandled datatypes in type_check_program()");
 
 	for (auto fn_key = program.functions.begin(); fn_key != program.functions.end(); fn_key++)
@@ -629,48 +629,6 @@ void type_check_program(Program program)
 				else
 				{
 					print_invalid_combination_of_types_error(op.loc, {b.type, a.type}, ">>", "shift right");
-					print_note_at_loc(b.loc, "first value pushed here (" + human_readable_type(b.type) + ")");
-					print_note_at_loc(a.loc, "second value pushed here (" + human_readable_type(a.type) + ")");
-					exit(1);
-				}
-			}
-			else if (op.type == OP_ORB)
-			{
-				if (type_stack.size() < 2)
-				{
-					print_not_enough_arguments_error(op.loc, 2, type_stack.size(), "orb", "bitwise or");
-					exit(1);
-				}
-				
-				TypeAtLoc a = type_stack.back(); type_stack.pop_back();
-				TypeAtLoc b = type_stack.back(); type_stack.pop_back();
-
-				if (a.type == DATATYPE_INT && b.type == DATATYPE_INT)
-					type_stack.push_back(TypeAtLoc(op.loc, DATATYPE_INT));
-				else
-				{
-					print_invalid_combination_of_types_error(op.loc, {b.type, a.type}, "orb", "bitwise or");
-					print_note_at_loc(b.loc, "first value pushed here (" + human_readable_type(b.type) + ")");
-					print_note_at_loc(a.loc, "second value pushed here (" + human_readable_type(a.type) + ")");
-					exit(1);
-				}
-			}
-			else if (op.type == OP_ANDB)
-			{
-				if (type_stack.size() < 2)
-				{
-					print_not_enough_arguments_error(op.loc, 2, type_stack.size(), "andb", "bitwise and");
-					exit(1);
-				}
-				
-				TypeAtLoc a = type_stack.back(); type_stack.pop_back();
-				TypeAtLoc b = type_stack.back(); type_stack.pop_back();
-
-				if (a.type == DATATYPE_INT && b.type == DATATYPE_INT)
-					type_stack.push_back(TypeAtLoc(op.loc, DATATYPE_INT));
-				else
-				{
-					print_invalid_combination_of_types_error(op.loc, {b.type, a.type}, "andb", "bitwise and");
 					print_note_at_loc(b.loc, "first value pushed here (" + human_readable_type(b.type) + ")");
 					print_note_at_loc(a.loc, "second value pushed here (" + human_readable_type(a.type) + ")");
 					exit(1);

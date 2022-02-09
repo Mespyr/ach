@@ -27,14 +27,14 @@ def rule110 in
 		# pattern
 		row read8 1 <<
 		row 1 + read8
-		orb
+		or
 
 		1 while dup BOARD_SIZE 1 - < do
 			# new pattern
-			swp 1 << 7 andb over
-			row + 1 + read8 orb
+			swp 1 << 7 and over
+			row + 1 + read8 or
 
-			over over 110 swp >> 1 andb
+			over over 110 swp >> 1 and
 			swp row + swp write8
 			swp
 

@@ -42,7 +42,7 @@ std::string add_escapes_to_string(std::string str)
 
 std::vector<Op> link_ops(std::vector<Op> ops)
 {
-	static_assert(OP_COUNT == 59, "unhandled op types in link_ops()");
+	static_assert(OP_COUNT == 57, "unhandled op types in link_ops()");
 
 	// track location of newest block parsed
 	std::vector<long unsigned int> ip_stack;
@@ -158,7 +158,7 @@ std::vector<Op> link_ops(std::vector<Op> ops)
 
 ConstValueWithContext eval_const_value(Program program, std::vector<Token> tokens, long unsigned int i, long long iota, Location definition_loc)
 {
-	static_assert(OP_COUNT == 59, "unhandled op types in eval_const_value()");
+	static_assert(OP_COUNT == 57, "unhandled op types in eval_const_value()");
 
 	// subset of language supports:
 	// pushing integers
@@ -239,7 +239,7 @@ ConstValueWithContext eval_const_value(Program program, std::vector<Token> token
 
 Op convert_token_to_op(Token tok, Program program, bool in_function, std::string current_func_name)
 {
-	static_assert(OP_COUNT == 59, "unhandled op types in convert_tokens_to_ops()");
+	static_assert(OP_COUNT == 57, "unhandled op types in convert_tokens_to_ops()");
 	static_assert(TOKEN_TYPE_COUNT == 4, "unhandled token types in convert_token_to_op()");
 
 	if (tok.type == TOKEN_WORD)
@@ -319,10 +319,6 @@ Op convert_token_to_op(Token tok, Program program, bool in_function, std::string
 			return Op(tok.loc, OP_SHIFT_LEFT);
 		else if (tok.value == ">>")
 			return Op(tok.loc, OP_SHIFT_RIGHT);
-		else if (tok.value == "orb")
-			return Op(tok.loc, OP_ORB);
-		else if (tok.value == "andb")
-			return Op(tok.loc, OP_ANDB);
 
 		// syscalls
 		else if (tok.value == "syscall0")
@@ -398,7 +394,7 @@ Op convert_token_to_op(Token tok, Program program, bool in_function, std::string
 
 Program parse_tokens(std::vector<Token> tokens)
 {
-	static_assert(OP_COUNT == 59, "unhandled op types in parse_tokens()");
+	static_assert(OP_COUNT == 57, "unhandled op types in parse_tokens()");
 
 	Program program;
 
