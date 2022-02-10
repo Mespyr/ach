@@ -1,4 +1,4 @@
-@include "std/linux.ilu"
+include "std/linux.ilu"
 
 const sizeof(u64) 8 end
 const sizeof(u32) 4 end

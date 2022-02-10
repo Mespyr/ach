@@ -1,7 +1,7 @@
 # rule110
 # borrowed and modified (slightly) from https://gitlab.com/tsoding/porth/-/blob/master/examples/rule110.porth
 
-@include "std/core.ilu"
+include "std/core.ilu"
 
 const BOARD_SIZE 100 end
 memory row BOARD_SIZE end

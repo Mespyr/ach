@@ -1,5 +1,5 @@
 # find largest palindrome made by the product of 2 3-digit numbers
-@include "std/core.ilu"
+include "std/core.ilu"
 
 def is_palindrome
 	int -> int in

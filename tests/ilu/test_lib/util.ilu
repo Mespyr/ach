@@ -1,4 +1,4 @@
-@include "tests/ilu/test_lib/main.ilu"
+include "tests/ilu/test_lib/main.ilu"
 
 def ovr2 
     int int -> int int int int in

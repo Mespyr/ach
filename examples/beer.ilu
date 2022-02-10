@@ -1,4 +1,4 @@
-@include "std/core.ilu"
+include "std/core.ilu"
 
 def print-verse int in
 	dup 1 = if

@@ -1,5 +1,5 @@
 # print argv and length
-@include "std/core.ilu"
+include "std/core.ilu"
 
 def main in
 	argv argc

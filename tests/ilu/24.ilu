@@ -1,7 +1,7 @@
 # protection against including same file more than once
-@include "tests/ilu/test_lib/main.ilu"
-@include "tests/ilu/test_lib/main.ilu"
-@include "tests/ilu/test_lib/util.ilu"
+include "tests/ilu/test_lib/main.ilu"
+include "tests/ilu/test_lib/main.ilu"
+include "tests/ilu/test_lib/util.ilu"
 
 def main in
 	8 4 add_div dump

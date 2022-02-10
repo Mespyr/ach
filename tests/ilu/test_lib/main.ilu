@@ -1,5 +1,5 @@
-@include "std/core.ilu"
-@include "tests/ilu/test_lib/util.ilu"
+include "std/core.ilu"
+include "tests/ilu/test_lib/util.ilu"
 
 def add_div
     int int -> int in
