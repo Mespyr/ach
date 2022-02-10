@@ -6,9 +6,9 @@ bool is_builtin_word(std::string word)
 	std::vector<std::string> builtin_words = {
 		"dump",
 		"+", "-", "*", "/",
-		"=", ">", "<", ">=", "<=", "!=", "not", "and", "or", 
+		"=", ">", "<", ">=", "<=", "!=", "not", "and", "or",
 		"pop", "dup", "swp", "rot", "over",
-		"read8", "write8", "read16", "write16", "read32", "write32", "read64", "write64",
+		"@8", "!8", "@16", "!16", "@32", "!32", "@64", "!64",
 		"argv", "argc",
 		">>", "<<",
 		"syscall0", "syscall1", "syscall2", "syscall3", "syscall4", "syscall5", "syscall6",

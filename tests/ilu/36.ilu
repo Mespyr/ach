@@ -4,20 +4,20 @@ memory num 8 end
 
 def write_global_mem in
 	# read global memory
-	num 7 3 * write64
+	num 7 3 * !64
 end
 
 def print_global_mem in
 	# print global memory
-	num read64 dump
+	num @64 dump
 end
 
 def main in
 	memory num 8 end
-	num 69 write64
+	num 69 !64
 
 	write_global_mem
 
-	num read64 dump
+	num @64 dump
 	print_global_mem
 end

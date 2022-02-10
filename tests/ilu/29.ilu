@@ -2,7 +2,7 @@
 
 def main in
 	argv argc 8 * 8 - + # point at last value in argv
-	read64 cast(ptr)
+	@64 cast(ptr)
 	dup cstrlen         # get length of value
 	swp puts
 	"\n" puts

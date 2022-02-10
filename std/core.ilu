@@ -19,21 +19,21 @@ in
 	memory buffer PUTU_BUFFER_CAP end
 	memory fd sizeof(u64) end
 
-	swp fd swp write64
+	swp fd swp !64
 
 	dup 0 = if
-		fd read64 "0" swp
+		fd @64 "0" swp
 	else
 		buffer PUTU_BUFFER_CAP +
 		while over 0 != do
 			1 - dup rot
 			10 /
-			rot swp 48 + write8 swp
+			rot swp 48 + !8 swp
 		end
 
 		dup
 		buffer PUTU_BUFFER_CAP + swp - # length
-		fd read64                      # fd
+		fd @64                         # fd
 		rot rot
 		# fd, buffer, length
 	end
@@ -64,7 +64,7 @@ end
 def cstrlen
 	ptr -> int
 in
-	dup while dup read8 0 != do
+	dup while dup @8 0 != do
 		1 +
 	end swp -
 end

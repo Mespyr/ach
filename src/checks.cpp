@@ -440,14 +440,14 @@ void type_check_program(Program program)
 			{
 				if (type_stack.size() < 1)
 				{
-					print_not_enough_arguments_error(op.loc, 1, 0, "read8");
+					print_not_enough_arguments_error(op.loc, 1, 0, "@8", "8-bit read");
 					exit(1);
 				}
 				
 				TypeAtLoc a = type_stack.back(); type_stack.pop_back();
 				if (a.type != DATATYPE_PTR)
 				{
-					print_invalid_type_error(op.loc, DATATYPE_PTR, a.type, "read8");
+					print_invalid_type_error(op.loc, DATATYPE_PTR, a.type, "@8", "8-bit read");
 					print_note_at_loc(a.loc, "first value pushed here");
 					exit(1);
 				}
@@ -457,7 +457,7 @@ void type_check_program(Program program)
 			{
 				if (type_stack.size() < 2)
 				{
-					print_not_enough_arguments_error(op.loc, 2, type_stack.size(), "write8");
+					print_not_enough_arguments_error(op.loc, 2, type_stack.size(), "!8", "8-bit write");
 					exit(1);
 				}
 				 
@@ -467,7 +467,7 @@ void type_check_program(Program program)
 				// [ptr, any] or [b, a] -> []
 				if (b.type != DATATYPE_PTR)
 				{
-					print_invalid_type_error(op.loc, DATATYPE_PTR, b.type, "write8");
+					print_invalid_type_error(op.loc, DATATYPE_PTR, b.type, "!8", "8-bit write");
 					print_note_at_loc(b.loc, "argument pushed here (" + human_readable_type(b.type) + ")");
 					exit(1);
 				}
@@ -476,14 +476,14 @@ void type_check_program(Program program)
 			{
 				if (type_stack.size() < 1)
 				{
-					print_not_enough_arguments_error(op.loc, 1, 0, "read16");
+					print_not_enough_arguments_error(op.loc, 1, 0, "@16", "16-bit read");
 					exit(1);
 				}
 				
 				TypeAtLoc a = type_stack.back(); type_stack.pop_back();
 				if (a.type != DATATYPE_PTR)
 				{
-					print_invalid_type_error(op.loc, DATATYPE_PTR, a.type, "read16");
+					print_invalid_type_error(op.loc, DATATYPE_PTR, a.type, "@16", "16-bit read");
 					print_note_at_loc(a.loc, "first value pushed here (" + human_readable_type(a.type) + ")");
 					exit(1);
 				}
@@ -493,7 +493,7 @@ void type_check_program(Program program)
 			{
 				if (type_stack.size() < 2)
 				{
-					print_not_enough_arguments_error(op.loc, 2, type_stack.size(), "write16");
+					print_not_enough_arguments_error(op.loc, 2, type_stack.size(), "!16", "16-bit write");
 					exit(1);
 				}
 				 
@@ -503,7 +503,7 @@ void type_check_program(Program program)
 				// [ptr, any] or [b, a] -> []
 				if (b.type != DATATYPE_PTR)
 				{
-					print_invalid_type_error(op.loc, DATATYPE_PTR, b.type, "write16");
+					print_invalid_type_error(op.loc, DATATYPE_PTR, b.type, "!16", "16-bit write");
 					print_note_at_loc(b.loc, "argument pushed here (" + human_readable_type(b.type) + ")");
 					exit(1);
 				}
@@ -512,14 +512,14 @@ void type_check_program(Program program)
 			{
 				if (type_stack.size() < 1)
 				{
-					print_not_enough_arguments_error(op.loc, 1, 0, "read32");
+					print_not_enough_arguments_error(op.loc, 1, 0, "@32", "32-bit read");
 					exit(1);
 				}
 				
 				TypeAtLoc a = type_stack.back(); type_stack.pop_back();
 				if (a.type != DATATYPE_PTR)
 				{
-					print_invalid_type_error(op.loc, DATATYPE_PTR, a.type, "read32");
+					print_invalid_type_error(op.loc, DATATYPE_PTR, a.type, "@32", "32-bit read");
 					print_note_at_loc(a.loc, "first value pushed here (" + human_readable_type(a.type) + ")");
 					exit(1);
 				}
@@ -529,7 +529,7 @@ void type_check_program(Program program)
 			{
 				if (type_stack.size() < 2)
 				{
-					print_not_enough_arguments_error(op.loc, 2, type_stack.size(), "write32");
+					print_not_enough_arguments_error(op.loc, 2, type_stack.size(), "!32", "32-bit write");
 					exit(1);
 				}
 				 
@@ -539,7 +539,7 @@ void type_check_program(Program program)
 				// [ptr, any] or [b, a] -> []
 				if (b.type != DATATYPE_PTR)
 				{
-					print_invalid_type_error(op.loc, DATATYPE_PTR, b.type, "write32");
+					print_invalid_type_error(op.loc, DATATYPE_PTR, b.type, "!32", "32-bit write");
 					print_note_at_loc(b.loc, "argument pushed here (" + human_readable_type(b.type) + ")");
 					exit(1);
 				}
@@ -548,14 +548,14 @@ void type_check_program(Program program)
 			{
 				if (type_stack.size() < 1)
 				{
-					print_not_enough_arguments_error(op.loc, 1, 0, "read64");
+					print_not_enough_arguments_error(op.loc, 1, 0, "@64", "64-bit read");
 					exit(1);
 				}
 				
 				TypeAtLoc a = type_stack.back(); type_stack.pop_back();
 				if (a.type != DATATYPE_PTR)
 				{
-					print_invalid_type_error(op.loc, DATATYPE_PTR, a.type, "read64");
+					print_invalid_type_error(op.loc, DATATYPE_PTR, a.type, "@64", "64-bit read");
 					print_note_at_loc(a.loc, "first value pushed here (" + human_readable_type(a.type) + ")");
 					exit(1);
 				}
@@ -565,7 +565,7 @@ void type_check_program(Program program)
 			{
 				if (type_stack.size() < 2)
 				{
-					print_not_enough_arguments_error(op.loc, 2, type_stack.size(), "write64");
+					print_not_enough_arguments_error(op.loc, 2, type_stack.size(), "!64", "64-bit write");
 					exit(1);
 				}
 				 
@@ -575,7 +575,7 @@ void type_check_program(Program program)
 				// [ptr, any] or [b, a] -> []
 				if (b.type != DATATYPE_PTR)
 				{
-					print_invalid_type_error(op.loc, DATATYPE_PTR, b.type, "write64");
+					print_invalid_type_error(op.loc, DATATYPE_PTR, b.type, "!64", "64-bit write");
 					print_note_at_loc(b.loc, "first value pushed here (" + human_readable_type(b.type) + ")");
 					exit(1);
 				}

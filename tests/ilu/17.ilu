@@ -9,7 +9,7 @@ def main in
 		# get ascii value to print out
 		swp dup 48 +
 		# write to memory
-		rot swp write8
+		rot swp !8
 		# perform write syscall
 		1 mem 1 1 syscall3 pop
 		# increment counter

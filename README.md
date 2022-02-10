@@ -121,8 +121,6 @@ If the stack is currently [a, b]
 - `not` - if b is equal to 0, push 1, else push 0
 - `>>` - shift a by b bytes to the right
 - `<<` - shift a by b bytes to the left
-- `orb` - bitwise or
-- `andb` - bitwise and
 
 See [bitwise calculator](https://miniwebtool.com/bitwise-calculator/)
 
@@ -196,16 +194,9 @@ def main in
 
   # 12 >> 1 -> 6
   12 1 >> dump
+
   # 12 << 1 -> 24
   12 1 << dump
-
-  # 12 orb 1 -> 13
-  12 1 orb dump
-
-  # 2 andb 2 -> 2
-  2 2 andb dump
-  # 2 andb 1 -> 0
-  2 1 andb dump
 end
 ```
 
@@ -217,17 +208,28 @@ Based off [https://gitlab.com/tsoding/porth/-/tree/master](Porth).
 include "std/core.ilu"
 
 struct Struct
-  Num int
-  String str
+  num int
+  string str
+end
+
+# fairly useless function
+def cstrlen2(str str) int int in
+  let str_a str_b in
+  str_a cstrlen
+  str_b cstrlen
 end
 
 def main in
   Struct let my_struct in
 
-  my_struct "Hello"c !Struct.String
-  my_struct 69       !Struct.Num
+  my_struct "Hello"c !Struct.string
+  my_struct 69       !Struct.num
 
   my_struct @Struct.String cstr-to-str puts
   my_struct @Struct.Num putu "\n" puts
+
+  "Hello"c "World!"c cstrlen2
+  putu "\n" puts
+  putu "\n" puts
 end
 ```

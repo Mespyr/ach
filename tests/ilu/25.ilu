@@ -1,18 +1,16 @@
 # print argv and length
 @include "std/core.ilu"
 
-memory mem 640000 end
-
 def main in
 	argv argc
 	while dup 0 > do
-		over read64 cast(ptr) # get value in argv
-		dup cstrlen swp       # get length of value
-		over 
-		swp puts 
+		over @64 cast(ptr) # get value in argv
+		dup cstrlen swp    # get length of value
+		over
+		swp puts
 		" " puts
 		dump
-		1 -         # decrement argc
+		1 -         # decement argc
 		swp 8 + swp # point to next value in argv
 	end pop pop
 end

@@ -291,21 +291,21 @@ Op convert_token_to_op(Token tok, Program program, bool in_function, std::string
 			return Op(tok.loc, OP_OVER);
 
 		// memory
-		else if (tok.value == "read8")
+		else if (tok.value == "@8")
 			return Op(tok.loc, OP_READ8);
-		else if (tok.value == "write8")
+		else if (tok.value == "!8")
 			return Op(tok.loc, OP_WRITE8);
-		else if (tok.value == "read16")
+		else if (tok.value == "@16")
 			return Op(tok.loc, OP_READ16);
-		else if (tok.value == "write16")
+		else if (tok.value == "!16")
 			return Op(tok.loc, OP_WRITE16);
-		else if (tok.value == "read32")
+		else if (tok.value == "@32")
 			return Op(tok.loc, OP_READ32);
-		else if (tok.value == "write32")
+		else if (tok.value == "!32")
 			return Op(tok.loc, OP_WRITE32);
-		else if (tok.value == "read64")
+		else if (tok.value == "@64")
 			return Op(tok.loc, OP_READ64);
-		else if (tok.value == "write64")
+		else if (tok.value == "!64")
 			return Op(tok.loc, OP_WRITE64);
 
 		// argv

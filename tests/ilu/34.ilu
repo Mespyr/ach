@@ -11,11 +11,11 @@ const OP_LIMIT 10 end
 memory ops sizeof(Op) OP_LIMIT * end
 
 def exec_op ptr in
-	dup Op.type + read64 # op type
+	dup Op.type + @64 # op type
 
 	dup OP_DUMP = if
 		pop
-		Op.operand + read64 dump
+		Op.operand + @64 dump
 	else
 		pop pop
 	end
@@ -28,11 +28,11 @@ def main in
 
 		# write Op.type
 		dup Op.type +
-		OP_DUMP write64
+		OP_DUMP !64
 
 		# write Op.operand
 		over over Op.operand +
-		swp write64
+		swp !64
 
 		exec_op
 

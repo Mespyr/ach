@@ -21,8 +21,8 @@ def main in
 			over over *
 
 			dup is_palindrome if
-				dup num read64 > if
-					num swp write64
+				dup num @64 > if
+					num swp !64
 				else pop end
 			else pop end
 
@@ -31,5 +31,5 @@ def main in
 		1 +
 	end pop
 
-	num read64 dump
+	num @64 putu
 end

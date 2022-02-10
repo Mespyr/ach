@@ -2,6 +2,6 @@ const sizeof(int) 8 end
 memory SIZE sizeof(int) end
 
 def main in
-	SIZE 69 write64
-	SIZE read64 dump
+	SIZE 69 !64
+	SIZE @64 dump
 end

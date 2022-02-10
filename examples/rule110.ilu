@@ -9,14 +9,14 @@ memory display BOARD_SIZE 1 + end
 
 def rule110 in
 	row BOARD_SIZE 2 - +
-	1 write8
+	1 !8
 
 	0 while dup BOARD_SIZE 2 - < do
 		0 while dup BOARD_SIZE < do
-			dup row + read8 if
-				dup display + 46 write8
+			dup row + @8 if
+				dup display + 46 !8
 			else
-				dup display + 32 write8
+				dup display + 32 !8
 			end
 			1 +
 		end pop
@@ -25,17 +25,17 @@ def rule110 in
 		"\n" puts
 
 		# pattern
-		row read8 1 <<
-		row 1 + read8
+		row @8 1 <<
+		row 1 + @8
 		or
 
 		1 while dup BOARD_SIZE 1 - < do
 			# new pattern
 			swp 1 << 7 and over
-			row + 1 + read8 or
+			row + 1 + @8 or
 
 			over over 110 swp >> 1 and
-			swp row + swp write8
+			swp row + swp !8
 			swp
 
 			1 +
