@@ -1,0 +1,12 @@
+# let bindings with local memory regions
+
+def main in
+	memory LOCAL 8 end
+
+	69 420 let N M in
+		LOCAL M !64
+		N dump
+		LOCAL @64 dump
+		M dump
+	end
+end

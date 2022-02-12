@@ -42,7 +42,8 @@ std::string add_escapes_to_string(std::string str)
 
 std::vector<Op> link_ops(std::vector<Op> ops)
 {
-	static_assert(OP_COUNT == 57, "unhandled op types in link_ops()");
+	static_assert(OP_COUNT == 59, "unhandled op types in link_ops()");
+	static_assert(BLOCK_END_COUNT == 3, "unhandled end block types in link_ops()");
 
 	// track location of newest block parsed
 	std::vector<long unsigned int> ip_stack;
@@ -55,6 +56,9 @@ std::vector<Op> link_ops(std::vector<Op> ops)
 			ip_stack.push_back(ip);
 
 		else if (current_op.type == OP_WHILE)
+			ip_stack.push_back(ip);
+
+		else if (current_op.type == OP_LET)
 			ip_stack.push_back(ip);
 
 		else if (current_op.type == OP_DO)
@@ -126,24 +130,28 @@ std::vector<Op> link_ops(std::vector<Op> ops)
 
 			if (linker_op.type == OP_IF || linker_op.type == OP_ELSE)
 			{
-				// unlink 'end' op (it doesn't need to jump anywhere on if statements
-				current_op.link_back = false;
 				ops.at(ip) = current_op;
-				
+				current_op.end_type = IF_BLOCK_END;
+
 				// link linker op to 'end' op ip
 				linker_op.int_operand = ip;
 				ops.at(linker_ip) = linker_op;
 			}
 			else if (linker_op.type == OP_DO)
 			{
-				// link 'end' op to 'do' op's ip ('while')
 				current_op.int_operand = linker_op.int_operand;
-				current_op.link_back = true;
+				current_op.end_type = WHILE_BLOCK_END;
 				ops.at(ip) = current_op;
 
 				// link 'do' op to 'end' op's ip
 				linker_op.int_operand = ip;
 				ops.at(linker_ip) = linker_op;
+			}
+			else if (linker_op.type == OP_LET)
+			{
+				current_op.end_type = LET_BLOCK_END;
+				current_op.int_operand = linker_op.int_operand;
+				ops.at(ip) = current_op;
 			}
 			else
 			{
@@ -158,7 +166,7 @@ std::vector<Op> link_ops(std::vector<Op> ops)
 
 ConstValueWithContext eval_const_value(Program program, std::vector<Token> tokens, long unsigned int i, long long iota, Location definition_loc)
 {
-	static_assert(OP_COUNT == 57, "unhandled op types in eval_const_value()");
+	static_assert(OP_COUNT == 59, "unhandled op types in eval_const_value()");
 
 	// subset of language supports:
 	// pushing integers
@@ -237,9 +245,9 @@ ConstValueWithContext eval_const_value(Program program, std::vector<Token> token
 	return ConstValueWithContext { stack.back(), iota, i };
 }
 
-Op convert_token_to_op(Token tok, Program program, bool in_function, std::string current_func_name)
+Op convert_token_to_op(Token tok, Program program, bool in_function, std::string current_func_name, std::map<std::string, long unsigned int> let_bound_vars)
 {
-	static_assert(OP_COUNT == 57, "unhandled op types in convert_tokens_to_ops()");
+	static_assert(OP_COUNT == 59, "unhandled op types in convert_tokens_to_ops()");
 	static_assert(TOKEN_TYPE_COUNT == 4, "unhandled token types in convert_token_to_op()");
 
 	if (tok.type == TOKEN_WORD)
@@ -357,6 +365,8 @@ Op convert_token_to_op(Token tok, Program program, bool in_function, std::string
 			return Op(tok.loc, OP_CONST);
 		else if (tok.value == "memory")
 			return Op(tok.loc, OP_MEMORY);
+		else if (tok.value == "let")
+			return Op(tok.loc, OP_LET);
 		else if (tok.value == "end")
 			return Op(tok.loc, OP_END);
 		else if (tok.value == "include")
@@ -378,6 +388,8 @@ Op convert_token_to_op(Token tok, Program program, bool in_function, std::string
 			return Op(tok.loc, OP_PUSH_LOCAL_MEM, tok.value);
 		else if (program.memories.count(tok.value))
 			return Op(tok.loc, OP_PUSH_GLOBAL_MEM, tok.value);
+		else if (let_bound_vars.count(tok.value))
+			return Op(tok.loc, OP_PUSH_LET_BOUND_VAR, let_bound_vars.at(tok.value));
 	}
 
 	// other
@@ -394,7 +406,7 @@ Op convert_token_to_op(Token tok, Program program, bool in_function, std::string
 
 Program parse_tokens(std::vector<Token> tokens)
 {
-	static_assert(OP_COUNT == 57, "unhandled op types in parse_tokens()");
+	static_assert(OP_COUNT == 59, "unhandled op types in parse_tokens()");
 
 	Program program;
 
@@ -520,12 +532,16 @@ Program parse_tokens(std::vector<Token> tokens)
 
 				// get function ops
 				std::vector<Op> function_ops;
+				std::vector<OpType> recursion_stack;
 				bool function_found_end = false;
 				int recursion_level = 0;
 
+				std::map<std::string, long unsigned int> let_bound_vars;
+				long unsigned int let_bound_var_offset = 0;
+
 				while (i < tokens.size())
 				{
-					Op f_op = convert_token_to_op(tokens.at(i), program, true, func_name);
+					Op f_op = convert_token_to_op(tokens.at(i), program, true, func_name, let_bound_vars);
 
 					if (f_op.type == OP_DEF)
 					{
@@ -604,6 +620,82 @@ Program parse_tokens(std::vector<Token> tokens)
 							program.functions.at(func_name).memory_capacity += m.value;
 						}
 					}
+					else if (f_op.type == OP_LET)
+					{
+						i++;
+						if (i > tokens.size() - 2)
+						{
+							print_error_at_loc(f_op.loc, "unexpected EOF while parsing 'let' binding");
+							exit(1);
+						}
+
+						f_op.int_operand = 0;
+						while (tokens.at(i).value != "in")
+						{
+							Token tok = tokens.at(i);
+							std::string var_name = tok.value;
+							if (tok.type == TOKEN_WORD)
+							{
+								if (is_builtin_word(var_name))
+								{
+									print_error_at_loc(tok.loc, "let-bound variable name cannot be a built-in word");
+									exit(1);
+								}
+								else if (program.consts.count(var_name))
+								{
+									print_error_at_loc(tok.loc, "redefinition of const '" + var_name + "' as a let-bound variable");
+									print_note_at_loc(program.consts.at(var_name).loc, "original const defined here");
+									exit(1);
+								}
+								else if (program.functions.count(var_name))
+								{
+									print_error_at_loc(tok.loc, "redefinition of function '" + var_name + "' as a let-bound variable");
+									print_note_at_loc(program.functions.at(var_name).loc, "original function defined here");
+									exit(1);
+								}
+								else if (program.functions.at(func_name).memories.count(var_name))
+								{
+									print_error_at_loc(tok.loc, "redefinition of local memory region '" + var_name + "' as a let-bound variable");
+									print_note_at_loc(program.memories.at(var_name).loc, "original local memory region defined here");
+									exit(1);
+								}
+								else if (program.memories.count(var_name))
+								{
+									print_error_at_loc(tok.loc, "redefinition of global memory region '" + var_name + "' as a let-bound variable");
+									print_note_at_loc(program.memories.at(var_name).loc, "original global memory region defined here");
+									exit(1);
+								}
+							}
+							else if (tok.type == TOKEN_INT)
+							{
+								print_error_at_loc(tok.loc, "let-bound variable name cannot be an integer");
+								exit(1);
+							}
+							else if (tok.type == TOKEN_STRING)
+							{
+								print_error_at_loc(tok.loc, "let-bound variable name cannot be a string");
+								exit(1);
+							}
+							else if (tok.type == TOKEN_C_STRING)
+							{
+								print_error_at_loc(tok.loc, "let-bound variable name cannot be a C-string");
+								exit(1);
+							}
+							
+							let_bound_vars.insert({tok.value, let_bound_var_offset});
+							let_bound_var_offset++;
+							f_op.int_operand++;
+							i++;
+							if (i > tokens.size() - 1)
+							{
+								print_error_at_loc(tok.loc, "unexpected EOF found while parsing 'let' binding");
+								exit(1);
+							}
+						}
+						recursion_stack.push_back(OP_LET);
+						function_ops.push_back(f_op);
+						recursion_level++;
+					}
 					else if (f_op.type == OP_INCLUDE)
 					{
 						print_error_at_loc(f_op.loc, "unexpected 'include' keyword found while parsing. files cannot be included inside functions.");
@@ -621,13 +713,25 @@ Program parse_tokens(std::vector<Token> tokens)
 							function_found_end = true;
 							break;
 						}
+
+						if (recursion_stack.back() == OP_LET)
+						{
+							let_bound_vars.clear();
+							let_bound_var_offset = 0;
+						}
+
+						recursion_stack.pop_back();
 						recursion_level--;
+
 						function_ops.push_back(f_op);
 					}	
 					else function_ops.push_back(f_op);
 
 					if (f_op.type == OP_IF || f_op.type == OP_WHILE)
+					{
 						recursion_level++;
+						recursion_stack.push_back(f_op.type);
+					}
 
 					i++;
 				}

@@ -1,0 +1,15 @@
+# let bindings
+
+def main in
+	34 34 +
+	let N in
+		N 1 + dump
+		N 1 - dump
+	end
+
+	69 420 let S N in
+		S N + dump
+		N S - dump
+		S N * dump
+	end
+end

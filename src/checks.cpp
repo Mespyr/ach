@@ -40,13 +40,14 @@ void verify_program(Program program)
 
 void type_check_program(Program program)
 {
-	static_assert(OP_COUNT == 57, "unhandled op types in type_check_program()");
+	static_assert(OP_COUNT == 59, "unhandled op types in type_check_program()");
 	static_assert(DATATYPE_COUNT == 2, "unhandled datatypes in type_check_program()");
 
 	for (auto fn_key = program.functions.begin(); fn_key != program.functions.end(); fn_key++)
 	{
 		std::vector<TypeAtLoc> type_stack;
 		std::vector<StackSnapshot> stack_snapshots;
+		std::vector<TypeAtLoc> let_bound_vars;
 		Function function = fn_key->second;
 
 		for (TypeAtLoc t : function.arg_stack)
@@ -832,13 +833,32 @@ void type_check_program(Program program)
 				stack_snapshots.push_back(StackSnapshot(type_stack, op.type));
 				type_stack = snapshot.type_stack;
 			}
+			else if (op.type == OP_LET)
+			{
+				stack_snapshots.push_back(StackSnapshot({}, op.type));
+
+				let_bound_vars.clear();
+				std::vector<TypeAtLoc> l;
+				for (int a = 0; a < op.int_operand; a++)
+				{
+					l.push_back(type_stack.back());
+					type_stack.pop_back();
+				}
+				std::reverse(l.begin(), l.end());
+				for (TypeAtLoc t : l)
+					let_bound_vars.push_back(t);
+			}
 			else if (op.type == OP_END)
 			{
 				StackSnapshot snapshot = stack_snapshots.back(); stack_snapshots.pop_back();
-				bool type_stack_equal = compare_type_stacks(snapshot.type_stack, type_stack);
 
-				if (snapshot.type == OP_IF)
+				if (snapshot.type == OP_LET)
 				{
+					let_bound_vars.clear();
+				}
+				else if (snapshot.type == OP_IF)
+				{
+					bool type_stack_equal = compare_type_stacks(snapshot.type_stack, type_stack);
 					if (!type_stack_equal)
 					{
 						print_error_at_loc(op.loc, "if statements are not allowed to change the types of items on stack");
@@ -848,6 +868,7 @@ void type_check_program(Program program)
 				}
 				else if (snapshot.type == OP_ELSE)
 				{
+					bool type_stack_equal = compare_type_stacks(snapshot.type_stack, type_stack);
 					if (!type_stack_equal)
 					{
 						print_error_at_loc(op.loc, "both branches of if-else statements must produce the same types on the stack");
@@ -857,6 +878,7 @@ void type_check_program(Program program)
 				}
 				else if (snapshot.type == OP_DO)
 				{
+					bool type_stack_equal = compare_type_stacks(snapshot.type_stack, type_stack);
 					if (!type_stack_equal)
 					{
 						print_error_at_loc(op.loc, "while loop are not allowed to change the types of the items on the stack");
@@ -940,6 +962,10 @@ void type_check_program(Program program)
 			else if (op.type == OP_PUSH_LOCAL_MEM)
 			{
 				type_stack.push_back(TypeAtLoc(op.loc, DATATYPE_PTR));
+			}
+			else if (op.type == OP_PUSH_LET_BOUND_VAR)
+			{
+				type_stack.push_back(let_bound_vars.at(op.int_operand));
 			}
 
 			// unreachable

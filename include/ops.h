@@ -64,6 +64,7 @@ enum OpType
 	OP_DEF,
 	OP_CONST,
 	OP_MEMORY,
+	OP_LET,
 	OP_END,
 	OP_INCLUDE,
 	// type checking
@@ -79,8 +80,18 @@ enum OpType
 	OP_FUNCTION_CALL,
 	OP_PUSH_GLOBAL_MEM,
 	OP_PUSH_LOCAL_MEM,
+	OP_PUSH_LET_BOUND_VAR,
 	// count | must always be last
 	OP_COUNT
+};
+
+enum EndBlockType
+{
+	IF_BLOCK_END,
+	WHILE_BLOCK_END,
+	LET_BLOCK_END,
+
+	BLOCK_END_COUNT
 };
 
 class Op
@@ -108,7 +119,8 @@ public:
 
 	long long int_operand;
 	std::string str_operand;
-	bool link_back;
+	
+	EndBlockType end_type;
 };
 
 bool is_builtin_word(std::string word);

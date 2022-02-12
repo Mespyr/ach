@@ -7,7 +7,7 @@ All examples are located in [examples/](examples/)
 ## quick start
 Clone this repo and run:
 ```
-./build.sh
+make
 ```
 There should be an executeable called `ach` which you can run.
 
@@ -215,12 +215,13 @@ end
 # fairly useless function
 def cstrlen2 str str -> int int in
   let str_a str_b in
-  str_a cstrlen
-  str_b cstrlen
+    str_a cstrlen
+    str_b cstrlen
+  end
 end
 
 def main in
-  Struct let my_struct in
+  Struct set my_struct end
 
   my_struct "Hello"c !Struct.string
   my_struct 69       !Struct.num

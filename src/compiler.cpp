@@ -2,7 +2,7 @@
 
 void compile_to_asm(Program program, std::string output_filename, ASSEMBLER assembler)
 {
-	static_assert(OP_COUNT == 57, "unhandled op types in compile_to_asm()");
+	static_assert(OP_COUNT == 59, "unhandled op types in compile_to_asm()");
 	static_assert(ASSEMBLER_COUNT == 2, "unhandled assemblers in compile_to_asm()");
 
 	File outfile(output_filename, MODE_WRITE);
@@ -441,15 +441,38 @@ void compile_to_asm(Program program, std::string output_filename, ASSEMBLER asse
 				outfile.writeln("\tjmp addr_" + std::to_string(function.addr) + "_" + std::to_string(op.int_operand));
 				outfile.writeln("addr_" + std::to_string(function.addr) + "_" + std::to_string(ip) + ":");
 			}
+			else if (op.type == OP_LET)
+			{
+				outfile.writeln("\t; OP_LET");
+				outfile.writeln("\tmov rax, [ret_stack_rsp]");
+				outfile.writeln("\tsub rax, " + std::to_string(op.int_operand * 8));
+				outfile.writeln("\tmov [ret_stack_rsp], rax");
+				while (op.int_operand > 0)
+				{
+					outfile.writeln("\tpop rbx");
+					outfile.writeln("\tmov [rax+" + std::to_string((op.int_operand - 1) * 8 + function.memory_capacity) + "], rbx");
+					op.int_operand--;
+				}
+			}
 			else if (op.type == OP_END)
 			{
 				outfile.writeln("\t; OP_END");
-				if (op.link_back)
+				if (op.end_type == LET_BLOCK_END)
+				{
+					outfile.writeln("\tmov rax, [ret_stack_rsp]");
+					outfile.writeln("\tadd rax, " + std::to_string(op.int_operand * 8 + program.memory_capacity));
+					outfile.writeln("\tmov [ret_stack_rsp], rax");
+				}
+				else if (op.end_type == WHILE_BLOCK_END)
+				{
 					outfile.writeln("\tjmp addr_" + std::to_string(function.addr) + "_" + std::to_string(op.int_operand));
-				outfile.writeln("addr_" + std::to_string(function.addr) + "_" + std::to_string(ip) + ":");
+					outfile.writeln("addr_" + std::to_string(function.addr) + "_" + std::to_string(ip) + ":");
+				}
+				else if (op.end_type == IF_BLOCK_END)
+					outfile.writeln("addr_" + std::to_string(function.addr) + "_" + std::to_string(ip) + ":");
 			}
 
-			// other 
+			// other
 			else if (op.type == OP_PUSH_INT)
 			{
 				outfile.writeln("\t; OP_PUSH_INT");
@@ -494,6 +517,13 @@ void compile_to_asm(Program program, std::string output_filename, ASSEMBLER asse
 				outfile.writeln("\tmov rax, [ret_stack_rsp]");
 				outfile.writeln("\tadd rax, " + std::to_string(function.memories.at(op.str_operand).offset));
 				outfile.writeln("\tpush rax");
+			}
+			else if (op.type == OP_PUSH_LET_BOUND_VAR)
+			{
+				outfile.writeln("\t; OP_PUSH_LET_BOUND_VAR");
+				outfile.writeln("\tmov rax, [ret_stack_rsp]");
+				outfile.writeln("\tadd rax, " + std::to_string(op.int_operand * 8 + function.memory_capacity));
+				outfile.writeln("\tpush QWORD [rax]");
 			}
 
 			// unreachable

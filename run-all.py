@@ -9,8 +9,8 @@ def main(argv):
             if os.system(f"./ach {argv[1]}{f}") != 0: exit(1)
             print(f"Running {f}:")
             if os.system(f"time ./out") != 0: exit(1)
-    os.system("./clean.sh")
+    os.system("make clean")
 
 if __name__ == "__main__":
-    if os.system("./build.sh") != 0: exit(1)
+    if os.system("make") != 0: exit(1)
     main(sys.argv)
