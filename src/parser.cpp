@@ -13,18 +13,18 @@ std::string add_escapes_to_string(std::string str)
 	{
 		buf = str.substr(i, 2);
 
-		if (buf == "\\a")		ret.push_back('\a');
-		else if (buf == "\\b")	ret.push_back('\b');
-		else if (buf == "\\f")	ret.push_back('\f');
-		else if (buf == "\\n")	ret.push_back('\n');
-		else if (buf == "\\r")	ret.push_back('\r');
-		else if (buf == "\\t")	ret.push_back('\t');
-		else if (buf == "\\v")	ret.push_back('\v');
+		if (buf == "\\a")       ret.push_back('\a');
+		else if (buf == "\\b")  ret.push_back('\b');
+		else if (buf == "\\f")  ret.push_back('\f');
+		else if (buf == "\\n")  ret.push_back('\n');
+		else if (buf == "\\r")  ret.push_back('\r');
+		else if (buf == "\\t")  ret.push_back('\t');
+		else if (buf == "\\v")  ret.push_back('\v');
 		else if (buf == "\\\\") ret.push_back('\\');
-		else if (buf == "\\'")	ret.push_back('\'');
+		else if (buf == "\\'")  ret.push_back('\'');
 		else if (buf == "\\\"") ret.push_back('\"');
 		else if (buf == "\\\?") ret.push_back('\?');
-		else if (buf == "\\0")	ret.push_back('\0');
+		else if (buf == "\\0")  ret.push_back('\0');
 		else
 		{
 			// if escape sequence not found, shift buffer over by one char to next section
@@ -424,7 +424,7 @@ Program parse_tokens(std::vector<Token> tokens)
 				{
 					if (is_builtin_word(func_name))
 					{
-						print_error_at_loc(func_name_token.loc, "const name cannot be a built-in word");
+						print_error_at_loc(func_name_token.loc, "function name cannot be a built-in word");
 						exit(1);
 					}
 					else if (program.consts.count(func_name))

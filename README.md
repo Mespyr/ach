@@ -213,7 +213,7 @@ struct Struct
 end
 
 # fairly useless function
-def cstrlen2(str str) int int in
+def cstrlen2 str str -> int int in
   let str_a str_b in
   str_a cstrlen
   str_b cstrlen
