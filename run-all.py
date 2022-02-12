@@ -4,9 +4,9 @@ import sys
 
 def main(argv):
     for f in os.listdir(argv[1]):
-        if f.endswith(".ilu"):
+        if f.endswith(".ach"):
             print(f"Compiling {f}:")
-            if os.system(f"./ilu {argv[1]}{f}") != 0: exit(1)
+            if os.system(f"./ach {argv[1]}{f}") != 0: exit(1)
             print(f"Running {f}:")
             if os.system(f"time ./out") != 0: exit(1)
     os.system("./clean.sh")

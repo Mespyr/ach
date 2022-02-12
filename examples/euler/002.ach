@@ -1,4 +1,4 @@
-include "std/core.ilu"
+include "std/core.ach"
 
 def main in
 	0 1 2 while over 4000000 < do

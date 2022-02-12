@@ -2,7 +2,7 @@
 ./clean.sh
 
 SOURCES=""
-EXEC="ilu"
+EXEC="ach"
 
 for f in src/* 
 do

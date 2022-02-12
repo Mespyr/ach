@@ -1,4 +1,4 @@
-# ilu!
+# ach
 A stack-based programming language which compiles to assembly.
 
 ## examples
@@ -9,11 +9,11 @@ Clone this repo and run:
 ```
 ./build.sh
 ```
-There should be an executeable called `ilu` which you can run.
+There should be an executeable called `ach` which you can run.
 
 ## usage
 ```
-USAGE: ./ilu <FILENAME> <OPTIONS>
+USAGE: ./ach <FILENAME> <OPTIONS>
 OPTIONS:
 	-h, --help	show help
 	-f, --fasm	use fasm to compile program
@@ -102,7 +102,7 @@ end
 ```
 
 #### expressions
-ilu uses [reverse polish notation](https://en.wikipedia.org/wiki/Reverse_Polish_notation) for all expressions and function calls.
+ach uses [reverse polish notation](https://en.wikipedia.org/wiki/Reverse_Polish_notation) for all expressions and function calls.
 the following operations are supported:
 
 If the stack is currently [a, b]
@@ -205,7 +205,7 @@ Based off [https://gitlab.com/tsoding/porth/-/tree/master](Porth).
 
 ## what i want the language to look like in the future (sort of)
 ```ruby
-include "std/core.ilu"
+include "std/core.ach"
 
 struct Struct
   num int

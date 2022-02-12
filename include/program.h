@@ -1,5 +1,5 @@
-#ifndef ILU_PROGRAM_H
-#define ILU_PROGRAM_H
+#ifndef _ACH_PROGRAM_H_
+#define _ACH_PROGRAM_H_
 
 #include "location.h"
 #include "datatype.h"

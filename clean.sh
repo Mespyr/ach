@@ -1,3 +1,3 @@
 #!/bin/sh
 set -x
-rm ilu *.asm out *.o
+rm ach *.asm out *.o

@@ -1,5 +1,5 @@
-#ifndef ILU_ERROR_H
-#define ILU_ERROR_H
+#ifndef _ACH_ERROR_H_
+#define _ACH_ERROR_H_
 
 #include "location.h"
 #include "token.h"

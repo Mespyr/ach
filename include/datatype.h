@@ -1,5 +1,5 @@
-#ifndef ILU_DATATYPE_H
-#define ILU_DATATYPE_H
+#ifndef _ACH_DATATYPE_H_
+#define _ACH_DATATYPE_H_
 
 #include "location.h"
 #include <string>

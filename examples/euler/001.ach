@@ -1,4 +1,4 @@
-include "std/core.ilu"
+include "std/core.ach"
 
 def main in
 	0 3 while dup 1000 < do

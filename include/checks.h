@@ -1,5 +1,5 @@
-#ifndef ILU_CHECKS_H
-#define ILU_CHECKS_H
+#ifndef _ACH_CHECKS_H_
+#define _ACH_CHECKS_H_
 
 #include "error.h"
 #include "ops.h"

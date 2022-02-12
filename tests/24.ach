@@ -1,0 +1,8 @@
+# protection against including same file more than once
+include "tests/test_lib/main.ach"
+include "tests/test_lib/main.ach"
+include "tests/test_lib/util.ach"
+
+def main in
+	8 4 add_div dump
+end

@@ -1,5 +1,5 @@
-#ifndef ILU_LEXER_H
-#define ILU_LEXER_H
+#ifndef _ACH_LEXER_H_
+#define _ACH_LEXER_H_
 
 #include "token.h"
 #include "error.h"
