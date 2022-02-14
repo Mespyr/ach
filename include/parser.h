@@ -23,7 +23,7 @@ struct ConstValueWithContext
 std::string add_escapes_to_string(std::string str);
 std::vector<Op> link_ops(std::vector<Op> ops);
 ConstValueWithContext eval_const_value(Program program, std::vector<Token> tokens, long unsigned int i, long long iota, Location definition_loc);
-Op convert_token_to_op(Token tok, Program program, bool in_function = false, std::string current_func_name = "", std::map<std::string, long unsigned int> let_bound_vars = {});
+Op convert_token_to_op(Token tok, Program program, bool in_function = false, std::string current_func_name = "", std::vector<std::map<std::string, long unsigned int>> let_bound_vars = {});
 Program parse_tokens(std::vector<Token> tokens);
 
 #endif

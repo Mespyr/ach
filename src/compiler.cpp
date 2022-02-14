@@ -443,14 +443,18 @@ void compile_to_asm(Program program, std::string output_filename, ASSEMBLER asse
 			}
 			else if (op.type == OP_LET)
 			{
+				// let's op.int_operand should equal the number of let-binds
+				// let's op.offset should equal the number of let-binds defined before it
 				outfile.writeln("\t; OP_LET");
 				outfile.writeln("\tmov rax, [ret_stack_rsp]");
-				outfile.writeln("\tsub rax, " + std::to_string(op.int_operand * 8));
+				outfile.writeln("\tsub rax, " + std::to_string(op.int_operand * 8 + function.memory_capacity));
 				outfile.writeln("\tmov [ret_stack_rsp], rax");
+
+				// if only one item to push onto ret stack
 				while (op.int_operand > 0)
 				{
 					outfile.writeln("\tpop rbx");
-					outfile.writeln("\tmov [rax+" + std::to_string((op.int_operand - 1) * 8 + function.memory_capacity) + "], rbx");
+					outfile.writeln("\tmov [rax+" + std::to_string((op.int_operand - 1 + op.offset) * 8 + function.memory_capacity) + "], rbx");
 					op.int_operand--;
 				}
 			}
@@ -460,7 +464,7 @@ void compile_to_asm(Program program, std::string output_filename, ASSEMBLER asse
 				if (op.end_type == LET_BLOCK_END)
 				{
 					outfile.writeln("\tmov rax, [ret_stack_rsp]");
-					outfile.writeln("\tadd rax, " + std::to_string(op.int_operand * 8 + program.memory_capacity));
+					outfile.writeln("\tadd rax, " + std::to_string((op.int_operand) * 8 + function.memory_capacity));
 					outfile.writeln("\tmov [ret_stack_rsp], rax");
 				}
 				else if (op.end_type == WHILE_BLOCK_END)

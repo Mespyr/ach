@@ -47,7 +47,7 @@ void type_check_program(Program program)
 	{
 		std::vector<TypeAtLoc> type_stack;
 		std::vector<StackSnapshot> stack_snapshots;
-		std::vector<TypeAtLoc> let_bound_vars;
+		std::vector<std::vector<TypeAtLoc>> let_bindings_stack;
 		Function function = fn_key->second;
 
 		for (TypeAtLoc t : function.arg_stack)
@@ -837,16 +837,27 @@ void type_check_program(Program program)
 			{
 				stack_snapshots.push_back(StackSnapshot({}, op.type));
 
-				let_bound_vars.clear();
-				std::vector<TypeAtLoc> l;
+				if ((long long) type_stack.size() < op.int_operand)
+				{
+					print_not_enough_arguments_error(op.loc, op.int_operand, type_stack.size(), "let", "let binding", true);
+					exit(1);
+				}
+
+				std::vector<TypeAtLoc> vars;
 				for (int a = 0; a < op.int_operand; a++)
 				{
-					l.push_back(type_stack.back());
+					vars.push_back(type_stack.back());
 					type_stack.pop_back();
 				}
-				std::reverse(l.begin(), l.end());
-				for (TypeAtLoc t : l)
-					let_bound_vars.push_back(t);
+				std::reverse(vars.begin(), vars.end());
+				if (let_bindings_stack.size() > 0)
+				{
+					std::vector<TypeAtLoc> all_vars = let_bindings_stack.back();
+					for (TypeAtLoc t : vars)
+						all_vars.push_back(t);
+					let_bindings_stack.push_back(all_vars);
+				}
+				else let_bindings_stack.push_back(vars);
 			}
 			else if (op.type == OP_END)
 			{
@@ -854,7 +865,8 @@ void type_check_program(Program program)
 
 				if (snapshot.type == OP_LET)
 				{
-					let_bound_vars.clear();
+					assert(let_bindings_stack.size() > 0);
+					let_bindings_stack.pop_back();
 				}
 				else if (snapshot.type == OP_IF)
 				{
@@ -965,7 +977,8 @@ void type_check_program(Program program)
 			}
 			else if (op.type == OP_PUSH_LET_BOUND_VAR)
 			{
-				type_stack.push_back(let_bound_vars.at(op.int_operand));
+				assert(let_bindings_stack.size() > 0);
+				type_stack.push_back(let_bindings_stack.back().at(op.int_operand));
 			}
 
 			// unreachable

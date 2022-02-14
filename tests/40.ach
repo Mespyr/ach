@@ -1,0 +1,27 @@
+include "std/core.ach"
+
+const ARRAY_SIZE 8 end
+
+def main in
+	memory array
+		sizeof(ptr) ARRAY_SIZE *
+	end
+
+	# fill array
+	0 while dup ARRAY_SIZE < do
+		let i in
+			array i 8 * + "Hello\n"c !64
+			i 1 +
+		end
+	end pop
+	
+	# print array contents
+	0 while dup ARRAY_SIZE < do
+		let i in
+			# get string
+			array i 8 * + @64 cast(ptr)
+			dup cstrlen swp puts
+			i 1 +
+		end
+	end pop
+end

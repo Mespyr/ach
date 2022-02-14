@@ -151,6 +151,7 @@ std::vector<Op> link_ops(std::vector<Op> ops)
 			{
 				current_op.end_type = LET_BLOCK_END;
 				current_op.int_operand = linker_op.int_operand;
+				current_op.offset = linker_op.offset;
 				ops.at(ip) = current_op;
 			}
 			else
@@ -160,7 +161,6 @@ std::vector<Op> link_ops(std::vector<Op> ops)
 			}
 		}
 	}
-
 	return ops;
 }
 
@@ -245,7 +245,7 @@ ConstValueWithContext eval_const_value(Program program, std::vector<Token> token
 	return ConstValueWithContext { stack.back(), iota, i };
 }
 
-Op convert_token_to_op(Token tok, Program program, bool in_function, std::string current_func_name, std::map<std::string, long unsigned int> let_bound_vars)
+Op convert_token_to_op(Token tok, Program program, bool in_function, std::string current_func_name, std::vector<std::map<std::string, long unsigned int>> let_bound_vars)
 {
 	static_assert(OP_COUNT == 59, "unhandled op types in convert_tokens_to_ops()");
 	static_assert(TOKEN_TYPE_COUNT == 4, "unhandled token types in convert_token_to_op()");
@@ -388,8 +388,9 @@ Op convert_token_to_op(Token tok, Program program, bool in_function, std::string
 			return Op(tok.loc, OP_PUSH_LOCAL_MEM, tok.value);
 		else if (program.memories.count(tok.value))
 			return Op(tok.loc, OP_PUSH_GLOBAL_MEM, tok.value);
-		else if (let_bound_vars.count(tok.value))
-			return Op(tok.loc, OP_PUSH_LET_BOUND_VAR, let_bound_vars.at(tok.value));
+		else if (let_bound_vars.size() > 0)
+			if (let_bound_vars.back().count(tok.value))
+				return Op(tok.loc, OP_PUSH_LET_BOUND_VAR, let_bound_vars.back().at(tok.value));
 	}
 
 	// other
@@ -536,12 +537,12 @@ Program parse_tokens(std::vector<Token> tokens)
 				bool function_found_end = false;
 				int recursion_level = 0;
 
-				std::map<std::string, long unsigned int> let_bound_vars;
-				long unsigned int let_bound_var_offset = 0;
+				std::vector<std::map<std::string, long unsigned int>> let_bindings_stack;
+				std::vector<long unsigned int> let_binding_offsets;
 
 				while (i < tokens.size())
 				{
-					Op f_op = convert_token_to_op(tokens.at(i), program, true, func_name, let_bound_vars);
+					Op f_op = convert_token_to_op(tokens.at(i), program, true, func_name, let_bindings_stack);
 
 					if (f_op.type == OP_DEF)
 					{
@@ -628,8 +629,17 @@ Program parse_tokens(std::vector<Token> tokens)
 							print_error_at_loc(f_op.loc, "unexpected EOF while parsing 'let' binding");
 							exit(1);
 						}
+						
+						long unsigned int offset = 0;
+						if (let_binding_offsets.size() > 0)
+							offset = let_binding_offsets.back();
+
+						std::map<std::string, long unsigned int> vars;
+						if (let_bindings_stack.size() > 0)
+							vars = let_bindings_stack.back();
 
 						f_op.int_operand = 0;
+
 						while (tokens.at(i).value != "in")
 						{
 							Token tok = tokens.at(i);
@@ -681,9 +691,12 @@ Program parse_tokens(std::vector<Token> tokens)
 								print_error_at_loc(tok.loc, "let-bound variable name cannot be a C-string");
 								exit(1);
 							}
-							
-							let_bound_vars.insert({tok.value, let_bound_var_offset});
-							let_bound_var_offset++;
+							// set vars.at[tok.value] to the offset
+							if (vars.count(tok.value))
+								vars.at(tok.value) = offset;
+							else vars.insert({tok.value, offset});
+
+							offset++;
 							f_op.int_operand++;
 							i++;
 							if (i > tokens.size() - 1)
@@ -692,7 +705,17 @@ Program parse_tokens(std::vector<Token> tokens)
 								exit(1);
 							}
 						}
+
+						if (let_binding_offsets.size() > 0)
+							f_op.offset = let_binding_offsets.back();
+						else f_op.offset = 0;
+
+						let_binding_offsets.push_back(offset);
+						let_bindings_stack.push_back(vars);
+
 						recursion_stack.push_back(OP_LET);
+
+
 						function_ops.push_back(f_op);
 						recursion_level++;
 					}
@@ -716,8 +739,8 @@ Program parse_tokens(std::vector<Token> tokens)
 
 						if (recursion_stack.back() == OP_LET)
 						{
-							let_bound_vars.clear();
-							let_bound_var_offset = 0;
+							let_bindings_stack.pop_back();
+							let_binding_offsets.pop_back();
 						}
 
 						recursion_stack.pop_back();

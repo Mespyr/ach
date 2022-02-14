@@ -1,0 +1,16 @@
+include "std/core.ach"
+
+def main in
+	2 2 let a b in
+		a b *
+		a b +
+		let c d in
+			c d *
+			c d +
+			let a b in
+				a putu "\n" puts
+				b putu "\n" puts
+			end
+		end
+	end
+end

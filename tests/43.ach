@@ -1,0 +1,12 @@
+memory M 8 end
+
+def set_M int in
+	let num in
+		M num !64
+	end
+end
+
+def main in
+	69 set_M
+	M @64 dump
+end

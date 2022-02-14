@@ -1,0 +1,11 @@
+include "std/core.ach"
+
+def main in
+	1 let a in
+		a dump
+		2 3 let b c in
+		b dump
+			c dump
+		end
+	end
+end

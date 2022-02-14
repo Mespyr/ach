@@ -13,8 +13,8 @@
 [*] - negative numbers
 [ ] - chars
 [*] - let bindings
-	[ ] - recursive let bindings
+	[*] - recursive let bindings
+	[ ] - make local memory regions work inside let bindings and be accessable
 [ ] - add static asserts
 [ ] - add support for inline functions
 [ ] - structs
-[ ] - namespaces!
