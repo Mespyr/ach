@@ -118,7 +118,6 @@ public:
 	OpType type;
 
 	long long int_operand;
-	long unsigned int offset;
 	std::string str_operand;
 	
 	EndBlockType end_type;

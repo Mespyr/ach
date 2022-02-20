@@ -151,7 +151,6 @@ std::vector<Op> link_ops(std::vector<Op> ops)
 			{
 				current_op.end_type = LET_BLOCK_END;
 				current_op.int_operand = linker_op.int_operand;
-				current_op.offset = linker_op.offset;
 				ops.at(ip) = current_op;
 			}
 			else
@@ -245,7 +244,7 @@ ConstValueWithContext eval_const_value(Program program, std::vector<Token> token
 	return ConstValueWithContext { stack.back(), iota, i };
 }
 
-Op convert_token_to_op(Token tok, Program program, bool in_function, std::string current_func_name, std::vector<std::map<std::string, long unsigned int>> let_bound_vars)
+Op convert_token_to_op(Token tok, Program program, bool in_function, std::string current_func_name, std::vector<BindTable> let_bound_vars)
 {
 	static_assert(OP_COUNT == 59, "unhandled op types in convert_tokens_to_ops()");
 	static_assert(TOKEN_TYPE_COUNT == 4, "unhandled token types in convert_token_to_op()");
@@ -537,8 +536,7 @@ Program parse_tokens(std::vector<Token> tokens)
 				bool function_found_end = false;
 				int recursion_level = 0;
 
-				std::vector<std::map<std::string, long unsigned int>> let_bindings_stack;
-				std::vector<long unsigned int> let_binding_offsets;
+				std::vector<BindTable> let_bindings_stack;
 
 				while (i < tokens.size())
 				{
@@ -617,6 +615,8 @@ Program parse_tokens(std::vector<Token> tokens)
 								// TODO: once negative numbers are added as parsable values, make sure value is greater than 0
 								exit(1);
 							}
+							// align m.value
+							m.value = (m.value + 7) / 8 * 8;
 							program.functions.at(func_name).memories.insert({mem_name, Memory(mem_name_token.loc, program.functions.at(func_name).memory_capacity)});
 							program.functions.at(func_name).memory_capacity += m.value;
 						}
@@ -630,14 +630,7 @@ Program parse_tokens(std::vector<Token> tokens)
 							exit(1);
 						}
 						
-						long unsigned int offset = 0;
-						if (let_binding_offsets.size() > 0)
-							offset = let_binding_offsets.back();
-
-						std::map<std::string, long unsigned int> vars;
-						if (let_bindings_stack.size() > 0)
-							vars = let_bindings_stack.back();
-
+						std::vector<std::string> vars;
 						f_op.int_operand = 0;
 
 						while (tokens.at(i).value != "in")
@@ -691,12 +684,8 @@ Program parse_tokens(std::vector<Token> tokens)
 								print_error_at_loc(tok.loc, "let-bound variable name cannot be a C-string");
 								exit(1);
 							}
-							// set vars.at[tok.value] to the offset
-							if (vars.count(tok.value))
-								vars.at(tok.value) = offset;
-							else vars.insert({tok.value, offset});
 
-							offset++;
+							vars.push_back(tok.value);
 							f_op.int_operand++;
 							i++;
 							if (i > tokens.size() - 1)
@@ -706,15 +695,12 @@ Program parse_tokens(std::vector<Token> tokens)
 							}
 						}
 
-						if (let_binding_offsets.size() > 0)
-							f_op.offset = let_binding_offsets.back();
-						else f_op.offset = 0;
-
-						let_binding_offsets.push_back(offset);
-						let_bindings_stack.push_back(vars);
-
+						BindTable back;
+						if (let_bindings_stack.size() > 0)
+							back = let_bindings_stack.back();
+						back.reg(vars);
+						let_bindings_stack.push_back(back);
 						recursion_stack.push_back(OP_LET);
-
 
 						function_ops.push_back(f_op);
 						recursion_level++;
@@ -738,10 +724,7 @@ Program parse_tokens(std::vector<Token> tokens)
 						}
 
 						if (recursion_stack.back() == OP_LET)
-						{
 							let_bindings_stack.pop_back();
-							let_binding_offsets.pop_back();
-						}
 
 						recursion_stack.pop_back();
 						recursion_level--;
@@ -895,6 +878,8 @@ Program parse_tokens(std::vector<Token> tokens)
 					// TODO: once negative numbers are added as parsable values, make sure value is greater than 0
 					exit(1);
 				}
+				// align m.value
+				m.value = (m.value + 7) / 8 * 8;
 				program.memories.insert({mem_name, Memory(mem_name_token.loc, program.memory_capacity)});
 				program.memory_capacity += m.value;
 			}

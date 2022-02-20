@@ -1,0 +1,21 @@
+# output should be:
+# 69
+# 69
+# 420
+# 69
+
+def main in
+	memory LOCAL 8 end
+	LOCAL 69 !64
+
+	LOCAL @64 dump
+
+	420 let a in
+		LOCAL @64 dump
+		a dump
+
+		LOCAL a !64
+	end
+
+	LOCAL @64 dump
+end

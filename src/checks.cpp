@@ -1016,7 +1016,6 @@ void type_check_program(Program program)
 				std::vector<DATATYPE> types;
 				for (TypeAtLoc t : type_stack)
 					types.push_back(t.type);
-
 				print_invalid_combination_of_types_error(function.loc, types, func_name, "", false, true);
 				for (TypeAtLoc t : type_stack)
 					print_note_at_loc(t.loc, "argument pushed here (" + human_readable_type(t.type) + ")");
