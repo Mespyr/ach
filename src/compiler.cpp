@@ -512,14 +512,14 @@ void compile_to_asm(Program program, std::string output_filename, ASSEMBLER asse
 			{
 				outfile.writeln("\t; OP_PUSH_GLOBAL_MEM");
 				outfile.writeln("\tmov rax, mem");
-				outfile.writeln("\tadd rax, " + std::to_string(program.memories.at(op.str_operand).offset));
+				outfile.writeln("\tadd rax, " + std::to_string(op.int_operand));
 				outfile.writeln("\tpush rax");
 			}
 			else if (op.type == OP_PUSH_LOCAL_MEM)
 			{
 				outfile.writeln("\t; OP_PUSH_LOCAL_MEM");
 				outfile.writeln("\tmov rax, [ret_stack_rsp]");
-				outfile.writeln("\tadd rax, " + std::to_string(function.memories.at(op.str_operand).offset));
+				outfile.writeln("\tadd rax, " + std::to_string(op.int_operand));
 				outfile.writeln("\tpush rax");
 			}
 			else if (op.type == OP_PUSH_LET_BOUND_VAR)

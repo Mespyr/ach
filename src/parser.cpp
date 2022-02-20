@@ -384,9 +384,14 @@ Op convert_token_to_op(Token tok, Program program, bool in_function, std::string
 			return Op(tok.loc, OP_FUNCTION_CALL, tok.value);
 		// make local memory have presedence over global memory
 		else if (in_function && program.functions.at(current_func_name).memories.count(tok.value))
-			return Op(tok.loc, OP_PUSH_LOCAL_MEM, tok.value);
+		{
+			long long offset = program.functions.at(current_func_name).memories.at(tok.value).offset;
+			if (let_bound_vars.size() > 0)
+				offset += let_bound_vars.back().keys.size() * 8;
+			return Op(tok.loc, OP_PUSH_LOCAL_MEM, offset);
+		}
 		else if (program.memories.count(tok.value))
-			return Op(tok.loc, OP_PUSH_GLOBAL_MEM, tok.value);
+			return Op(tok.loc, OP_PUSH_GLOBAL_MEM, program.memories.at(tok.value).offset);
 		else if (let_bound_vars.size() > 0)
 			if (let_bound_vars.back().count(tok.value))
 				return Op(tok.loc, OP_PUSH_LET_BOUND_VAR, let_bound_vars.back().at(tok.value));

@@ -14,7 +14,7 @@
 [ ] - chars
 [*] - let bindings
 	[*] - recursive let bindings
-	[ ] - make local memory regions work inside let bindings
+	[*] - make local memory regions work inside let bindings
 [ ] - add static asserts
 [ ] - add support for inline functions
 [ ] - structs

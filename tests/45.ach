@@ -2,18 +2,19 @@
 # 69
 # 69
 # 420
-# 69
+# 420
 
 def main in
 	memory LOCAL 8 end
-	LOCAL 69 !64
 
+	# set LOCAL to 69
+	LOCAL 69 !64
 	LOCAL @64 dump
 
 	420 let a in
 		LOCAL @64 dump
 		a dump
-
+		# set LOCAL to a
 		LOCAL a !64
 	end
 
