@@ -12,5 +12,5 @@ def main(argv):
     os.system("make clean")
 
 if __name__ == "__main__":
-    if os.system("make") != 0: exit(1)
+    if os.system("make -j$(nproc)") != 0: exit(1)
     main(sys.argv)

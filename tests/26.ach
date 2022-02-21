@@ -2,7 +2,7 @@ include "std/core.ach"
 
 def main in
 	"Hello World!"                                         cstrlen
-	"Length using strlen: "                                puts dump # length of string by strlen function (doesn't include \0 as it counts up to \0)
+	"Length using strlen: "                                puts dump # length of string by strlen function
 	"Length provided by pushing string onto stack: "       puts dump # length of string provided by pushing string onto stack (includes \0)
 
 	"--------------------------------------------------\n" puts

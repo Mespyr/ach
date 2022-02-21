@@ -849,15 +849,19 @@ void type_check_program(Program program)
 					vars.push_back(type_stack.back());
 					type_stack.pop_back();
 				}
-				std::reverse(vars.begin(), vars.end());
 				if (let_bindings_stack.size() > 0)
 				{
-					std::vector<TypeAtLoc> all_vars = let_bindings_stack.back();
-					for (TypeAtLoc t : vars)
-						all_vars.push_back(t);
-					let_bindings_stack.push_back(all_vars);
+					std::vector<TypeAtLoc> scoped_vars = let_bindings_stack.back();
+					std::reverse(scoped_vars.begin(), scoped_vars.end());
+					for (TypeAtLoc t : vars) scoped_vars.push_back(t);
+					std::reverse(scoped_vars.begin(), scoped_vars.end());
+					let_bindings_stack.push_back(scoped_vars);
 				}
-				else let_bindings_stack.push_back(vars);
+				else
+				{
+					std::reverse(vars.begin(), vars.end());
+					let_bindings_stack.push_back(vars);
+				}
 			}
 			else if (op.type == OP_END)
 			{

@@ -1,0 +1,27 @@
+# recursive let bindings
+include "std/core.ach"
+
+def main in
+	0 while dup argc != do
+		let argv_idx in
+			0 argv argv_idx sizeof(ptr) * + @64 cast(ptr)
+			cstr-to-str
+
+			while
+				let start size str in
+					start size str
+					start size !=
+				end
+			do
+				let start size str in
+					size start - str puts
+					"\n" puts
+					start 1 +
+					size str
+				end
+			end pop pop pop
+
+			argv_idx 1 +
+		end
+	end pop
+end

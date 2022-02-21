@@ -31,5 +31,7 @@
 *.out
 *.app
 
+obj/
 out
 out.asm
+ach
