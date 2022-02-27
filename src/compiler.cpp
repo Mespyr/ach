@@ -431,9 +431,6 @@ void compile_to_asm(Program program, std::string output_filename, ASSEMBLER asse
 			else if (op.type == OP_IF)
 			{
 				outfile.writeln("\t; OP_IF");
-				outfile.writeln("\tpop rax");
-				outfile.writeln("\ttest rax, rax");
-				outfile.writeln("\tjz addr_" + std::to_string(function.addr) + "_" + std::to_string(op.int_operand));
 			}
 			else if (op.type == OP_ELSE)
 			{
@@ -461,18 +458,18 @@ void compile_to_asm(Program program, std::string output_filename, ASSEMBLER asse
 			else if (op.type == OP_END)
 			{
 				outfile.writeln("\t; OP_END");
-				if (op.end_type == LET_BLOCK_END)
+				if (op.block_type == LET_BLOCK)
 				{
 					outfile.writeln("\tmov rax, [ret_stack_rsp]");
 					outfile.writeln("\tadd rax, " + std::to_string(op.int_operand * 8));
 					outfile.writeln("\tmov [ret_stack_rsp], rax");
 				}
-				else if (op.end_type == WHILE_BLOCK_END)
+				else if (op.block_type == WHILE_BLOCK)
 				{
 					outfile.writeln("\tjmp addr_" + std::to_string(function.addr) + "_" + std::to_string(op.int_operand));
 					outfile.writeln("addr_" + std::to_string(function.addr) + "_" + std::to_string(ip) + ":");
 				}
-				else if (op.end_type == IF_BLOCK_END)
+				else if (op.block_type == IF_BLOCK)
 					outfile.writeln("addr_" + std::to_string(function.addr) + "_" + std::to_string(ip) + ":");
 			}
 

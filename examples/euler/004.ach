@@ -1,7 +1,7 @@
 # find largest palindrome made by the product of 2 3-digit numbers
 include "std/core.ach"
 
-def is_palindrome
+def palindrome?
 	int -> int in
 
 	dup 0 while over 0 > do
@@ -20,8 +20,8 @@ def main in
 		100 while dup 1000 < do
 			over over *
 
-			dup is_palindrome if
-				dup num @64 > if
+			if dup palindrome? do
+				if dup num @64 > do
 					num swp !64
 				else pop end
 			else pop end

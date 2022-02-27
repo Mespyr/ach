@@ -1,7 +1,7 @@
 include "std/core.ach"
 
 def print-verse int in
-	dup 1 = if
+	if dup 1 = do
 		"1 bottle of beer on the wall, 1 bottle of beer,\n" puts
 		"Take one down, pass it around, no more bottles of beer on the wall!\n" puts
 		pop

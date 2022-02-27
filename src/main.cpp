@@ -31,13 +31,14 @@ struct Options
 };
 Options parse_argv(std::vector<std::string> argv)
 {
+	static_assert(ASSEMBLER_COUNT == 2, "unhandled assemblers in parse_argv()");
+
 	Options options;
 	options.assembler = FASM;
 	options.filename = "";
 	options.help = false;
 	options.unsafe = false;
 
-	static_assert(ASSEMBLER_COUNT == 2, "unhandled assemblers in parse_argv()");
 	for (long unsigned int i = 1; i < argv.size(); i++)
 	{
 		std::string arg = argv.at(i);

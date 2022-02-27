@@ -13,7 +13,7 @@ def rule110 in
 
 	0 while dup BOARD_SIZE 2 - < do
 		0 while dup BOARD_SIZE < do
-			dup row + @8 if
+			if dup row + @8 do
 				dup display + 46 !8
 			else
 				dup display + 32 !8

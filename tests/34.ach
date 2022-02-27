@@ -13,7 +13,7 @@ memory ops sizeof(Op) OP_LIMIT * end
 def exec_op ptr in
 	dup Op.type + @64 # op type
 
-	dup OP_DUMP = if
+	if dup OP_DUMP = do
 		pop
 		Op.operand + @64 dump
 	else

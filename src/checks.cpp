@@ -787,44 +787,38 @@ void type_check_program(Program program)
 			{
 				if (type_stack.size() < 1)
 				{
-					print_not_enough_arguments_error(op.loc, 1, 0, "do", "while loop", true);
+					if (op.block_type == IF_BLOCK)
+						print_not_enough_arguments_error(op.loc, 1, 0, "do", "if statement", true);
+					else if (op.block_type == WHILE_BLOCK)
+						print_not_enough_arguments_error(op.loc, 1, 0, "do", "while loop", true);
 					exit(1);
 				}
 
 				TypeAtLoc a = type_stack.back(); type_stack.pop_back();
 				if (a.type != DATATYPE_INT)
 				{
-					print_invalid_type_error(op.loc, DATATYPE_INT, a.type, "do", "while loop", true);
+					if (op.block_type == IF_BLOCK)
+						print_invalid_type_error(op.loc, DATATYPE_INT, a.type, "do", "if statement", true);
+					else if (op.block_type == WHILE_BLOCK)
+						print_invalid_type_error(op.loc, DATATYPE_INT, a.type, "do", "while loop", true);
 					print_note_at_loc(a.loc, "first value pushed here");
 					exit(1);
 				}
 				
 				StackSnapshot snapshot = stack_snapshots.back(); stack_snapshots.pop_back();
-				bool type_stack_equal = compare_type_stacks(snapshot.type_stack, type_stack);
-
-				if (!type_stack_equal)
+				if (op.block_type == WHILE_BLOCK)
 				{
-					print_error_at_loc(op.loc, "while loops are not allowed to change the types and amount of items on stack in the condition");
-					// TODO: add notes for state of stack
-					exit(1);
+					if (!compare_type_stacks(snapshot.type_stack, type_stack))
+					{
+						print_error_at_loc(op.loc, "while loops are not allowed to change the types and amount of items on stack in the condition");
+						// TODO: add notes for state of stack
+						exit(1);
+					}
 				}
 				stack_snapshots.push_back(StackSnapshot(type_stack, op.type));
 			}
 			else if (op.type == OP_IF)
 			{
-				if (type_stack.size() < 1)
-				{
-					print_not_enough_arguments_error(op.loc, 1, 0, "if", "", true);
-					exit(1);
-				}
-
-				TypeAtLoc a = type_stack.back(); type_stack.pop_back();
-				if (a.type != DATATYPE_INT)
-				{
-					print_invalid_type_error(op.loc, DATATYPE_INT, a.type, "if", "", true);
-					print_note_at_loc(a.loc, "first value pushed here");
-					exit(1);
-				}
 				stack_snapshots.push_back(StackSnapshot(type_stack, op.type));
 			}
 			else if (op.type == OP_ELSE)

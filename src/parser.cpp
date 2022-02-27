@@ -43,7 +43,7 @@ std::string add_escapes_to_string(std::string str)
 std::vector<Op> link_ops(std::vector<Op> ops)
 {
 	static_assert(OP_COUNT == 59, "unhandled op types in link_ops()");
-	static_assert(BLOCK_END_COUNT == 3, "unhandled end block types in link_ops()");
+	static_assert(BLOCK_TYPE_COUNT == 3, "unhandled end block types in link_ops()");
 
 	// track location of newest block parsed
 	std::vector<long unsigned int> ip_stack;
@@ -72,17 +72,17 @@ std::vector<Op> link_ops(std::vector<Op> ops)
 			long unsigned int linker_ip = ip_stack.back();
 			ip_stack.pop_back();
 
-			if (ops.at(linker_ip).type != OP_WHILE)
+			if (ops.at(linker_ip).type == OP_WHILE)
+				current_op.block_type = WHILE_BLOCK;
+			else if (ops.at(linker_ip).type == OP_IF)
+				current_op.block_type = IF_BLOCK;
+			else
 			{
 				print_error_at_loc(current_op.loc, "Unexpected 'do' keyword");
 				exit(1);
 			}
-			
-			// set ip of 'do' keyword to ip of 'while' on stack
 			current_op.int_operand = linker_ip;
 			ops.at(ip) = current_op;
-
-			// push 'do' ip onto stack
 			ip_stack.push_back(ip);
 		}
 
@@ -97,16 +97,16 @@ std::vector<Op> link_ops(std::vector<Op> ops)
 			long unsigned int linker_ip = ip_stack.back();
 			ip_stack.pop_back();
 
-			// get 'if' op from ops
+			// get 'do-if' op from ops
 			Op linker_op = ops.at(linker_ip);
 
-			if (linker_op.type != OP_IF)
+			if (linker_op.type != OP_DO && linker_op.block_type != IF_BLOCK)
 			{
 				print_error_at_loc(current_op.loc, "Unexpected 'else' keyword");
 				exit(1);
 			}
 			
-			// link 'if' op to 'else'
+			// link 'do-if' op to 'else'
 			linker_op.int_operand = ip;
 			ops.at(linker_ip) = linker_op;
 
@@ -128,19 +128,19 @@ std::vector<Op> link_ops(std::vector<Op> ops)
 			// get op at ip on top of stack
 			Op linker_op = ops.at(linker_ip);
 
-			if (linker_op.type == OP_IF || linker_op.type == OP_ELSE)
+			if ((linker_op.type == OP_DO && linker_op.block_type == IF_BLOCK) || linker_op.type == OP_ELSE)
 			{
 				ops.at(ip) = current_op;
-				current_op.end_type = IF_BLOCK_END;
+				current_op.block_type = IF_BLOCK;
 
 				// link linker op to 'end' op ip
 				linker_op.int_operand = ip;
 				ops.at(linker_ip) = linker_op;
 			}
-			else if (linker_op.type == OP_DO)
+			else if (linker_op.type == OP_DO && linker_op.block_type == WHILE_BLOCK)
 			{
 				current_op.int_operand = linker_op.int_operand;
-				current_op.end_type = WHILE_BLOCK_END;
+				current_op.block_type = WHILE_BLOCK;
 				ops.at(ip) = current_op;
 
 				// link 'do' op to 'end' op's ip
@@ -149,7 +149,7 @@ std::vector<Op> link_ops(std::vector<Op> ops)
 			}
 			else if (linker_op.type == OP_LET)
 			{
-				current_op.end_type = LET_BLOCK_END;
+				current_op.block_type = LET_BLOCK;
 				current_op.int_operand = linker_op.int_operand;
 				ops.at(ip) = current_op;
 			}

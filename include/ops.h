@@ -85,13 +85,13 @@ enum OpType
 	OP_COUNT
 };
 
-enum EndBlockType
+enum BlockType
 {
-	IF_BLOCK_END,
-	WHILE_BLOCK_END,
-	LET_BLOCK_END,
+	IF_BLOCK,
+	WHILE_BLOCK,
+	LET_BLOCK,
 
-	BLOCK_END_COUNT
+	BLOCK_TYPE_COUNT
 };
 
 class Op
@@ -120,7 +120,7 @@ public:
 	long long int_operand;
 	std::string str_operand;
 	
-	EndBlockType end_type;
+	BlockType block_type;
 };
 
 bool is_builtin_word(std::string word);

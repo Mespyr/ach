@@ -1,0 +1,95 @@
+include "std/core.ach"
+
+const ARG_HELP  1 offset end
+const ARG_PRINT 1 offset end
+const ARG_CLEAR 1 offset end
+const ARG_COUNT reset    end
+
+const Argslots.help?   sizeof(int) offset end
+const Argslots.print?  sizeof(int) offset end
+const Argslots.clear?  sizeof(int) offset end
+const Argslots.string  sizeof(ptr) offset end
+const sizeof(Argslots) reset end
+
+def next ptr -> ptr in 8 + end
+
+def parse-argv ptr in
+	let argslots in
+		# initialize values
+		argslots Argslots.help?  + 0 !64
+		argslots Argslots.print? + 0 !64
+		argslots Argslots.clear? + 0 !64
+
+		if argc 1 != do
+			argv
+			while
+				let a in a
+					a argv -
+					argc 8 *
+					!=
+				end
+			do
+				let args in
+					args @64 cast(ptr)
+					let arg in
+						# if value is a option (starts with '-')
+						if arg @8 45 = do
+							if arg "-h"c cstreq do
+								argslots Argslots.help? + 1 !64
+							else if arg "-p"c cstreq do
+								argslots Argslots.print? + 1 !64
+							else if arg "-c"c cstreq do
+								argslots Argslots.clear? + 1 !64
+							else if arg "-cp"c cstreq do
+								argslots Argslots.clear? + 1 !64
+								argslots Argslots.print? + 1 !64
+							else if arg "-pc"c cstreq do
+								argslots Argslots.clear? + 1 !64
+								argslots Argslots.print? + 1 !64
+							else
+								"error: unknown option '" eputs
+								arg cstr-to-str eputs
+								"'\n" eputs
+								1 exit
+							end end end end end
+						else
+							argslots Argslots.string + arg !64
+						end
+					end
+					args next
+				end
+			end pop
+		end
+	end
+end
+
+def usage ptr in
+	let exec in
+		"Usage: "                   puts
+		exec cstr-to-str puts " <OPTIONS>\n" puts
+		"<OPTIONS>:\n"              puts
+		"  -h  show this message\n" puts
+		"  -p  print\n"             puts
+		"  -c  clear\n"             puts
+	end
+end
+
+def main in
+	memory argslots sizeof(Argslots) end
+	argslots parse-argv
+
+	if argslots Argslots.help? + @64 do
+		argv @64 cast(ptr)
+		usage
+	end
+
+	if argslots Argslots.clear? + @64 do
+		"[2J[;H" puts
+	end
+
+	if argslots Argslots.print? + @64 do
+		argslots Argslots.string + @64 cast(ptr)
+		cstr-to-str puts
+		"\n"        puts
+	end
+end

@@ -1,11 +1,19 @@
 def main in
-	34 35 + 220 200 - > if
+	if
+		34 35 +
+		220 200 -
+		>
+	do
 		1 dump
 	else
 		0 dump
 	end
 
-	3 7 * 400 50 / pop < if
+	if
+		3 7 *
+		400 50 / pop
+		<
+	do
 		1 dump
 	else
 		0 dump

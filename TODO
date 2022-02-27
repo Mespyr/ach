@@ -11,10 +11,14 @@
 [*] - c-strings
 [*] - return exit code from syscalls and syscall0
 [*] - negative numbers
-[ ] - chars
 [*] - let bindings
 	[*] - recursive let bindings
 	[*] - make local memory regions work inside let bindings
+
+[*] - new syntax for if statements to make them similar to while loops
+[ ] - add elsif keyword
+
+[ ] - chars
 [ ] - add static asserts
 [ ] - add support for inline functions
 [ ] - structs

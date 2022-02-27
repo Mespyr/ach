@@ -2,9 +2,10 @@ include "std/core.ach"
 
 def main in
 	0 3 while dup 1000 < do
-		dup 3 modulo 0 =
-		over 5 modulo 0 =
-		or if
+		if
+			dup 3 modulo 0 =
+			over 5 modulo 0 = or
+		do
 			swp over + swp
 		end
 

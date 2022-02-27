@@ -3,7 +3,8 @@ memory mem 640000 end
 def main in
 	1 mem 2 0 syscall3 pop
 
-	mem @8 48 = if
+	mem @8
+	if 48 = do
 		mem 121 !8
 		mem 1 + 101 !8
 		mem 2 + 115 !8

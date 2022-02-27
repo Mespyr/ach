@@ -1,9 +1,9 @@
 def main in
-	34 35 + 67 = if
+	if 34 35 + 67 = do
 		67 dump
 	end
 
-	200 220 + 420 = if
+	if 200 220 + 420 = do
 		420 dump
 	end
 end

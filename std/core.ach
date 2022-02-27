@@ -21,7 +21,7 @@ in
 
 	swp fd swp !64
 
-	dup 0 = if
+	if dup 0 = do
 		fd @64 "0" swp
 	else
 		buffer PUTU_BUFFER_CAP +
@@ -67,6 +67,29 @@ in
 	dup while dup @8 0 != do
 		1 +
 	end swp -
+end
+
+def cstreq
+	ptr ptr -> int
+in
+	while
+		let s1 s2 in s1 s2
+			if s1 @8 0 != s2 @8 0 != and do
+				s1 @8 s2 @8 =
+			else 0 end
+		end
+	do
+		let s1 s2 in
+			s1 1 +
+			s2 1 +
+		end
+	end
+	
+	let s1 s2 in
+		s1 @8 0 =
+		s2 @8 0 =
+		and
+	end
 end
 
 def cstr-to-str ptr -> int ptr in dup cstrlen swp end

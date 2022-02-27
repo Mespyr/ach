@@ -7,32 +7,32 @@
 
 def main in
 	# 11 >= 12
-	11 12 >= if
+	if 11 12 >= do
 		0 dump
 	end
 
 	# 12 >= 12
-	12 12 >= if
+	if 12 12 >= do
 		1 dump
 	end
 
 	# 13 >= 12
-	13 12 >= if
+	if 13 12 >= do
 		2 dump
 	end
 
 	# 11 <= 12
-	11 12 <= if
+	if 11 12 <= do
 		3 dump
 	end
 
 	# 12 <= 12
-	12 12 <= if
+	if 12 12 <= do
 		4 dump
 	end
 
 	# 13 <= 12
-	13 12 <= if
+	if 13 12 <= do
 		5 dump
 	end
 end

@@ -2,7 +2,8 @@ include "std/core.ach"
 
 def main in
 	600851475143 2 while over 1 > do
-		over over modulo 0 = if
+		over over modulo
+		if 0 = do
 			swp over div swp
 		else
 			1 +
