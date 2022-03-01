@@ -2,7 +2,7 @@
 
 void compile_to_asm(Program program, std::string output_filename, ASSEMBLER assembler)
 {
-	static_assert(OP_COUNT == 59, "unhandled op types in compile_to_asm()");
+	static_assert(OP_COUNT == 60, "unhandled op types in compile_to_asm()");
 	static_assert(ASSEMBLER_COUNT == 2, "unhandled assemblers in compile_to_asm()");
 
 	File outfile(output_filename, MODE_WRITE);
@@ -431,6 +431,12 @@ void compile_to_asm(Program program, std::string output_filename, ASSEMBLER asse
 			else if (op.type == OP_IF)
 			{
 				outfile.writeln("\t; OP_IF");
+			}
+			else if (op.type == OP_ELIF)
+			{
+				outfile.writeln("\t; OP_ELIF");
+				outfile.writeln("\tjmp addr_" + std::to_string(function.addr) + "_" + std::to_string(op.int_operand));
+				outfile.writeln("addr_" + std::to_string(function.addr) + "_" + std::to_string(ip) + ":");
 			}
 			else if (op.type == OP_ELSE)
 			{

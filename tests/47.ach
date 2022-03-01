@@ -1,0 +1,13 @@
+def main in
+	if 2 1 = do
+		69  dump
+	elif 0 2 = do
+		420 dump
+	elif 1 1 = do
+		21 dump
+	elif 1 2 = do
+		40 dump
+	else
+		0 dump
+	end
+end

@@ -42,7 +42,7 @@ std::string add_escapes_to_string(std::string str)
 
 std::vector<Op> link_ops(std::vector<Op> ops)
 {
-	static_assert(OP_COUNT == 59, "unhandled op types in link_ops()");
+	static_assert(OP_COUNT == 60, "unhandled op types in link_ops()");
 	static_assert(BLOCK_TYPE_COUNT == 3, "unhandled end block types in link_ops()");
 
 	// track location of newest block parsed
@@ -53,7 +53,11 @@ std::vector<Op> link_ops(std::vector<Op> ops)
 		Op current_op = ops.at(ip);
 		
 		if (current_op.type == OP_IF)
+		{
+			current_op.int_operand = -1;
+			ops.at(ip) = current_op;
 			ip_stack.push_back(ip);
+		}
 
 		else if (current_op.type == OP_WHILE)
 			ip_stack.push_back(ip);
@@ -69,12 +73,11 @@ std::vector<Op> link_ops(std::vector<Op> ops)
 				exit(1);
 			}
 			
-			long unsigned int linker_ip = ip_stack.back();
-			ip_stack.pop_back();
+			long unsigned int linker_ip = ip_stack.back(); ip_stack.pop_back();
 
 			if (ops.at(linker_ip).type == OP_WHILE)
 				current_op.block_type = WHILE_BLOCK;
-			else if (ops.at(linker_ip).type == OP_IF)
+			else if (ops.at(linker_ip).type == OP_IF || ops.at(linker_ip).type == OP_ELIF)
 				current_op.block_type = IF_BLOCK;
 			else
 			{
@@ -86,6 +89,33 @@ std::vector<Op> link_ops(std::vector<Op> ops)
 			ip_stack.push_back(ip);
 		}
 
+		else if (current_op.type == OP_ELIF)
+		{
+			if (ip_stack.size() == 0)
+			{
+				print_error_at_loc(current_op.loc, "Unexpected 'elif' keyword");
+				exit(1);
+			}
+			long unsigned int linker_ip = ip_stack.back(); ip_stack.pop_back();
+			Op linker_op = ops.at(linker_ip);
+
+			if (linker_op.type != OP_DO && linker_op.block_type != IF_BLOCK)
+			{
+				print_error_at_loc(current_op.loc, "Unexpected 'elif' keyword");
+				exit(1);
+			}
+
+			// link elif to previous elif (ip of previous is in int_operand of 'do')
+			current_op.int_operand = linker_op.int_operand;
+			ops.at(ip) = current_op;
+
+			// link 'do' op to current_op
+			linker_op.int_operand = ip;
+			ops.at(linker_ip) = linker_op;
+
+			ip_stack.push_back(ip);
+		}
+
 		else if (current_op.type == OP_ELSE)
 		{
 			if (ip_stack.size() == 0)
@@ -94,10 +124,7 @@ std::vector<Op> link_ops(std::vector<Op> ops)
 				exit(1);
 			}
 
-			long unsigned int linker_ip = ip_stack.back();
-			ip_stack.pop_back();
-
-			// get 'do-if' op from ops
+			long unsigned int linker_ip = ip_stack.back(); ip_stack.pop_back();
 			Op linker_op = ops.at(linker_ip);
 
 			if (linker_op.type != OP_DO && linker_op.block_type != IF_BLOCK)
@@ -105,12 +132,14 @@ std::vector<Op> link_ops(std::vector<Op> ops)
 				print_error_at_loc(current_op.loc, "Unexpected 'else' keyword");
 				exit(1);
 			}
-			
-			// link 'do-if' op to 'else'
+			// link 'else' to previous 'elif' (ip of previous is in int_operand of 'do')
+			current_op.int_operand = linker_op.int_operand;
+			ops.at(ip) = current_op;
+
+			// link 'do' op to current_op
 			linker_op.int_operand = ip;
 			ops.at(linker_ip) = linker_op;
 
-			// push 'else' ip onto stack
 			ip_stack.push_back(ip);
 		}
 
@@ -130,12 +159,26 @@ std::vector<Op> link_ops(std::vector<Op> ops)
 
 			if ((linker_op.type == OP_DO && linker_op.block_type == IF_BLOCK) || linker_op.type == OP_ELSE)
 			{
-				ops.at(ip) = current_op;
 				current_op.block_type = IF_BLOCK;
+				ops.at(ip) = current_op;
+				
+				long long current_op_ip;
+				if (linker_op.type == OP_DO)
+					current_op_ip = linker_op.int_operand;
+				else current_op_ip = linker_ip;
 
-				// link linker op to 'end' op ip
-				linker_op.int_operand = ip;
-				ops.at(linker_ip) = linker_op;
+				if (ops.at(current_op_ip).type == OP_IF)
+				{
+					linker_op.int_operand = ip;
+					ops.at(linker_ip) = linker_op;
+				}
+				else while (current_op_ip != -1)
+				{
+					long long temp = current_op_ip;
+					std::cout << temp << std::endl;
+					current_op_ip = ops.at(current_op_ip).int_operand;
+					ops.at(temp).int_operand = ip;
+				}
 			}
 			else if (linker_op.type == OP_DO && linker_op.block_type == WHILE_BLOCK)
 			{
@@ -165,7 +208,7 @@ std::vector<Op> link_ops(std::vector<Op> ops)
 
 ConstValueWithContext eval_const_value(Program program, std::vector<Token> tokens, long unsigned int i, long long iota, Location definition_loc)
 {
-	static_assert(OP_COUNT == 59, "unhandled op types in eval_const_value()");
+	static_assert(OP_COUNT == 60, "unhandled op types in eval_const_value()");
 
 	// subset of language supports:
 	// pushing integers
@@ -246,7 +289,7 @@ ConstValueWithContext eval_const_value(Program program, std::vector<Token> token
 
 Op convert_token_to_op(Token tok, Program program, bool in_function, std::string current_func_name, std::vector<BindTable> let_bound_vars)
 {
-	static_assert(OP_COUNT == 59, "unhandled op types in convert_tokens_to_ops()");
+	static_assert(OP_COUNT == 60, "unhandled op types in convert_tokens_to_ops()");
 	static_assert(TOKEN_TYPE_COUNT == 4, "unhandled token types in convert_token_to_op()");
 
 	if (tok.type == TOKEN_WORD)
@@ -356,6 +399,8 @@ Op convert_token_to_op(Token tok, Program program, bool in_function, std::string
 			return Op(tok.loc, OP_DO);
 		else if (tok.value == "if")
 			return Op(tok.loc, OP_IF);
+		else if (tok.value == "elif")
+			return Op(tok.loc, OP_ELIF);
 		else if (tok.value == "else")
 			return Op(tok.loc, OP_ELSE);
 		else if (tok.value == "def")
@@ -411,7 +456,7 @@ Op convert_token_to_op(Token tok, Program program, bool in_function, std::string
 
 Program parse_tokens(std::vector<Token> tokens)
 {
-	static_assert(OP_COUNT == 59, "unhandled op types in parse_tokens()");
+	static_assert(OP_COUNT == 60, "unhandled op types in parse_tokens()");
 
 	Program program;
 

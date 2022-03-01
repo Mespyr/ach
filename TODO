@@ -16,7 +16,8 @@
 	[*] - make local memory regions work inside let bindings
 
 [*] - new syntax for if statements to make them similar to while loops
-[ ] - add elsif keyword
+[*] - add elif keyword
+	[ ] - type checks
 
 [ ] - chars
 [ ] - add static asserts

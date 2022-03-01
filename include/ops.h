@@ -60,6 +60,7 @@ enum OpType
 	OP_WHILE,
 	OP_DO,
 	OP_IF,
+	OP_ELIF,
 	OP_ELSE,
 	OP_DEF,
 	OP_CONST,
